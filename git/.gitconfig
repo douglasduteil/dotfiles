@@ -1,21 +1,21 @@
 
 # core {{{
 [core]
-	editor = subl -n -w
-	excludesfile = ~/.gitignore_global
+  editor = subl -n -w
+  excludesfile = ~/.gitignore_global
   pager=less -x4
 
 #}}}
 # user {{{
 [user]
-	email = douglasduteil@gmail.com
-	name = Douglas Duteil
+  email = douglasduteil@gmail.com
+  name = Douglas Duteil
   signingkey =
 
 #}}}
 # color {{{
 [color]
-	ui = auto
+  ui = auto
 
 [color "branch"]
   current = red reverse
@@ -37,7 +37,7 @@
 #}}}
 # credential {{{
 [credential]
-	helper = cache
+  helper = cache
 #}}}
 # push/pull/diff/options {{{
 [push]
@@ -191,4 +191,4 @@
 [rerere]
   enabled = true
 [commit]
-	gpgsign = true
+  gpgsign = true
