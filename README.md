@@ -3,7 +3,9 @@
 ## Install
 
 ```sh
-curl -L -o - https://raw.githubusercontent.com/douglasduteil/dotfiles/master/install.sh  | sh
+git clone https://github.com/douglasduteil/dotfiles.git ~/.dotfiles && \
+cd ~/.dotfiles && \
+./install.sh
 ```
 
 ## Inspired by
