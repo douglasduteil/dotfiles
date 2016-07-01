@@ -1,0 +1,28 @@
+# =================================================================
+
+# =================== ORIGINAL CUSTOM PROMPT ======================
+
+# Enable colors in prompt
+# This is enabled in 100.init.zsh
+# autoload -U colors && colors 
+
+for color in RED GREEN YELLOW BLUE MAGENTA CYAN WHITE GREY BROWN; do
+   eval "FG_${color:u}=\"%{${fg_no_bold[${color:l}]}%}\""
+   eval "FG_BOLD_${color:u}=\"%{${fg_bold[${color:l}]}%}\""
+   (( count = $count + 1 ))
+done
+FG_DEFAULT="%{${fg_no_bold[default]}${bg[default]}%}"
+ 
+PS1=$'\n'\
+"%(!.${FG_BOLD_RED}!!!WARNING!!! .${FG_BOLD_GREEN})%(!.$FG_BOLD_RED.$FG_BOLD_GREEN)%(!.${USERNAME:u} USER.%n@%M)%(!.${FG_BOLD_RED}!!!.${FG_BOLD_GREEN}) ${FG_DEFAULT}"\
+"${FG_WHITE}zsh ${ZSH_VERSION} ${FG_YELLOW}%D{%a %B %d %Y} %D{%I:%M:%S %p} "\
+$'\n'\
+"${FG_MAGENTA}%80<...<Current Dir: ${FG_CYAN}%d%<<"\
+$'\n'\
+"${FG_DEFAULT}%# "
+
+PS2='>'
+
+# =================================================================
+
+# =================================================================
