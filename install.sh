@@ -11,12 +11,16 @@ DOTFILES_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 # Bunch of symlinks
 
-ln -sfv "$DOTFILES_DIR/zsh/.zsh" ~
 ln -sfv "$DOTFILES_DIR/git/.gitconfig" ~
 ln -sfv "$DOTFILES_DIR/git/.gitignore_global" ~
+ln -sfv "$DOTFILES_DIR/npm/.npmrc" ~
+ln -sfv "$DOTFILES_DIR/zsh/.zprofile" ~
+ln -sfv "$DOTFILES_DIR/zsh/.zshenv" ~
+ln -sfv "$DOTFILES_DIR/zsh/.zshrc" ~
 
 # Package managers & packages
 
 . "$DOTFILES_DIR/install/npm.sh"
 . "$DOTFILES_DIR/install/zsh.sh"
+. "$DOTFILES_DIR/install/fzf.sh"
 . "$DOTFILES_DIR/install/zplug.sh"
