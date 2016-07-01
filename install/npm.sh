@@ -1,4 +1,4 @@
-#
+#!/bin/bash
 
 nvm install stable
 nvm use stable
