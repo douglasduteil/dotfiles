@@ -2,7 +2,7 @@
 # zPlug Config
 # =================================================================
 
-export ZPLUG_HOME=$XDG_PROGRAMS_DIR/zplug
+export ZPLUG_HOME="$XDG_PROGRAMS_DIR/zplug"
 
 # =================================================================
 #

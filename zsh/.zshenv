@@ -1,12 +1,7 @@
-XDG_CONFIG_HOME=$HOME/.config
-ZSH_HOME=$XDG_CONFIG_HOME/zsh
-local ENV_PARTS_DIR=$ZSH_HOME/zshenv.d
+#!/bin/zsh
 
-local parts=($ENV_PARTS_DIR)
-
-# Load everything from parts directories
-for dir in $parts; do
-    for name in $dir/*.zsh; do
-	source $name
-    done
-done
+if [ -d $HOME/.dotfiles/zsh/zshenv.d ]; then
+  for file in $HOME/.dotfiles/zsh/zshenv.d/*.zsh; do
+    source $file
+  done
+fi

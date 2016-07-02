@@ -1,14 +1,8 @@
 # =================================================================
-# XDG Config
+# NVM Config
 # =================================================================
 
-# User specific data files
-export DOTFILES_DIR=~/.dotfiles
-
-export XDG_CACHE_HOME="$HOME/.cache"
-export XDG_CONFIG_DIR="$HOME/config"
-export XDG_DOTFILES_DIR="$HOME/.dotfiles"
-export XDG_PROGRAMS_DIR="$HOME/programs"
+export NVM_DIR="$XDG_PROGRAMS_DIR/nvm"
 
 # =================================================================
 #

@@ -1,8 +1,10 @@
 # =================================================================
-# zPlug Config
+# enhancd config
 # =================================================================
 
-export ZPLUG_HOME=$XDG_PROGRAMS_DIR/zplug
+export ENHANCD_DIR="$XDG_CACHE_HOME/enhancd"
+export ENHANCD_COMMAND="c"
+export ENHANCD_FILTER="fzf:peco --layout=bottom-up"
 
 # =================================================================
 #

@@ -1,7 +1,8 @@
 #!/bin/zsh
 
-source ~/.dotfiles/zsh/zshenv.d/002-nvm.zsh
-
 [[ -d $NVM_DIR ]] || {
-  git clone https://github.com/creationix/nvm.git $NVM_DIR && cd $NVM_DIR&& git checkout `git describe --abbrev=0 --tags`
+  echo ""
+  echo "=> Installing nvm in $NVM_DIR"
+  git clone --depth 1 https://github.com/creationix/nvm.git $NVM_DIR
+  cd $NVM_DIR && git checkout `git describe --abbrev=0 --tags`
 }

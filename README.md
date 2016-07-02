@@ -4,8 +4,7 @@
 
 ```sh
 git clone https://github.com/douglasduteil/dotfiles.git ~/.dotfiles && \
-cd ~/.dotfiles && \
-./install.sh
+./.dotfiles/install.sh
 ```
 
 ## Inspired by

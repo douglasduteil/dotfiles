@@ -10,7 +10,6 @@
 [user]
   email = douglasduteil@gmail.com
   name = Douglas Duteil
-  signingkey =
 
 #}}}
 # color {{{
@@ -192,3 +191,5 @@
   enabled = true
 [commit]
   gpgsign = true
+[include]
+  path = ~/.config/git/gitconfig

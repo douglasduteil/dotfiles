@@ -1,10 +1,12 @@
-local RC_PARTS_DIR=$ZSH_HOME/zshrc.d
+#!/bin/zsh
 
-local parts=($RC_PARTS_DIR)
+if [[ $- != *i* ]] ; then
+  # shell is non-interactive. be done now!
+  return
+fi
 
-# Load everything from parts directories
-for dir in $parts; do
-    for name in $dir/*.zsh; do
-	source $name
-    done
-done
+if [ -d $HOME/.dotfiles/zsh/zshrc.d ]; then
+  for file in $HOME/.dotfiles/zsh/zshrc.d/*.zsh; do
+    source $file
+  done
+fi

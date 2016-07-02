@@ -1,10 +1,7 @@
-local PROFILE_PARTS=$ZSH_HOME/zprofile.d
+#!/bin/zsh
 
-local parts=($PROFILE_PARTS)
-
-# Load everything from parts directories
-for dir in $parts; do
-    for name in $dir/*.zsh; do
-	source $name
-    done
-done
+if [ -d $HOME/.dotfiles/zsh/zprofile.d ]; then
+  for file in $HOME/.dotfiles/zsh/zprofile.d/*.zsh; do
+    source $file
+  done
+fi
