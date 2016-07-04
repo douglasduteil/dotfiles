@@ -21,6 +21,7 @@ zplug "zplug/zplug"
 
 # Plugins
 zplug "zsh-users/zsh-syntax-highlighting", nice:10
+zplug "zsh-users/zsh-autosuggestions", nice:10
 zplug "zsh-users/zsh-history-substring-search"
 zplug "zsh-users/zsh-completions"
 zplug "mafredri/zsh-async"
@@ -76,6 +77,10 @@ fi
 # ===========================================================================
 
 zplug load
+
+# HACK(douglasduteil): enforcing zsh autosuggestions highlight color
+# Strangely on my Terminator the autosuggestions highlight color stays white...
+source $DOTFILES_DIR/zsh/zshenv.d/013-zsh-autosuggest.zsh
 
 # ===========================================================================
 #
