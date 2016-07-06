@@ -51,22 +51,14 @@ zplug "supercrabtree/k"
 # Theme
 zplug "sindresorhus/pure", nice:1
 
-# Install plugins that have not been installed yet
-if ! zplug check --verbose; then
-  zplug install
-fi
-
-zplug load
-
-
-
 # ===========================================================================
 # Install plugins
 # ===========================================================================
 
 # Install plugins if they've not been installed
 if ! zplug check --verbose; then
-  printf "Install? [y/N]: "
+  printf "A new zplug version is available ! "
+  printf "Would you like to install it ? [y/N]: "
   if read -q; then
     echo; zplug install
   fi
