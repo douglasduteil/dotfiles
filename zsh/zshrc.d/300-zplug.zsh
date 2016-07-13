@@ -30,12 +30,16 @@ zplug "lib/clipboard", from:oh-my-zsh, ignore:oh-my-zsh.sh
 zplug "lib/completion", from:oh-my-zsh, ignore:oh-my-zsh.sh
 zplug "lib/correction", from:oh-my-zsh, ignore:oh-my-zsh.sh
 zplug "lib/directories", from:oh-my-zsh, ignore:oh-my-zsh.sh
-zplug "lib/grep", from:oh-my-zsh, ignore:oh-my-zsh.s
-zplug "lib/history", from:oh-my-zsh, ignore:oh-my-zsh.shh
+zplug "lib/grep", from:oh-my-zsh, ignore:oh-my-zsh.sh
+zplug "lib/history", from:oh-my-zsh, ignore:oh-my-zsh.sh
 zplug "lib/key-bindings", from:oh-my-zsh, ignore:oh-my-zsh.sh
 zplug "lib/misc", from:oh-my-zsh, ignore:oh-my-zsh.sh
 zplug "lib/spectrum", from:oh-my-zsh, ignore:oh-my-zsh.sh
 
+
+zplug "plugins/cp", from:oh-my-zsh
+zplug "plugins/common-aliases", from:oh-my-zsh
+zplug "plugins/rvm", from:oh-my-zsh
 zplug "plugins/docker", from:oh-my-zsh, ignore:oh-my-zsh.sh
 zplug "plugins/history", from:oh-my-zsh, ignore:oh-my-zsh.sh
 zplug "plugins/sudo", from:oh-my-zsh, ignore:oh-my-zsh.sh
@@ -68,7 +72,7 @@ fi
 # Load plugins
 # ===========================================================================
 
-zplug load
+zplug load --verbose
 
 # HACK(douglasduteil): enforcing zsh autosuggestions highlight color
 # Strangely on my Terminator the autosuggestions highlight color stays white...

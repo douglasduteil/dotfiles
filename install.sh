@@ -23,7 +23,9 @@ ln -sfv "$DOTFILES_DIR/zsh/.zshrc" ~
 
 # Package managers & packages
 . "$DOTFILES_DIR/install/zsh.sh"
+. "$DOTFILES_DIR/install/zplug.sh"
+. "$DOTFILES_DIR/install/fzf.sh"
 . "$DOTFILES_DIR/install/nvm.sh"
 . "$DOTFILES_DIR/install/npm.sh"
-. "$DOTFILES_DIR/install/fzf.sh"
-. "$DOTFILES_DIR/install/zplug.sh"
+. "$DOTFILES_DIR/install/rvm.sh"
+. "$DOTFILES_DIR/install/ngrok.sh"
