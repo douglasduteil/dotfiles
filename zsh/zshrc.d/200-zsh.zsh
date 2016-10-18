@@ -32,6 +32,9 @@ setopt multios
 # zmv allow smart file renaming
 autoload -U zmv
 
+# add node-inspect : the "node --inspect --debug-brk" alias
+alias node-inspect='node --inspect --debug-brk'
+
 # ===========================================================================
 #
 # ===========================================================================
