@@ -25,7 +25,7 @@ packages=(
   flow-bin
   greenkeeper
   mocha
-  updtr
+  npm-check
 )
 
 npm install -g "${packages[@]}"
