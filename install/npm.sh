@@ -23,6 +23,7 @@ packages=(
   chokidar-cli
   devtool
   flow-bin
+  greenkeeper
   mocha
   updtr
 )
