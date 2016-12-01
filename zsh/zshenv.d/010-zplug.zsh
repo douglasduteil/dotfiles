@@ -3,6 +3,8 @@
 # =================================================================
 
 export ZPLUG_HOME="$XDG_PROGRAMS_DIR/zplug"
+export ZPLUG_USE_CACHE=true
+export ZPLUG_CACHE_FILE="$XDG_CACHE_HOME/zplug"
 
 # =================================================================
 #
