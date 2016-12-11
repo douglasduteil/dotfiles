@@ -26,6 +26,7 @@ packages=(
   greenkeeper
   mocha
   npm-check
+  yarn
 )
 
 npm install -g "${packages[@]}"
