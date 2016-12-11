@@ -4,7 +4,8 @@
 # Init
 # ===========================================================================
 
-export PATH="$PATH:$XDG_BIN_DIR"
+### Added by the Heroku Toolbelt
+export PATH="/usr/local/heroku/bin:$PATH:$XDG_BIN_DIR"
 
 # ===========================================================================
 #

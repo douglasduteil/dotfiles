@@ -10,6 +10,3 @@ if [ -d $HOME/.dotfiles/zsh/zshrc.d ]; then
     source $file
   done
 fi
-
-### Added by the Heroku Toolbelt
-export PATH="/usr/local/heroku/bin:$PATH"
