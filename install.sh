@@ -28,4 +28,5 @@ ln -sfv "$DOTFILES_DIR/zsh/.zshrc" ~
 . "$DOTFILES_DIR/install/nvm.sh"
 . "$DOTFILES_DIR/install/npm.sh"
 . "$DOTFILES_DIR/install/rvm.sh"
+. "$DOTFILES_DIR/install/rsvm.sh"
 . "$DOTFILES_DIR/install/ngrok.sh"
