@@ -14,4 +14,12 @@ packages=(
 
 echo "=> Install basic cargo packages"
 
-cargo install "${packages[@]}"
+for package in $packages
+do
+  echo "==> run 'cargo install $package'";
+  cargo install $package &;
+done
+
+wait
+
+echo "=> Cargo packages installed"
