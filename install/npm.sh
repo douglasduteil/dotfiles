@@ -21,12 +21,10 @@ echo "=> Install global NPM packages"
 
 packages=(
   chokidar-cli
-  devtool
   flow-bin
-  greenkeeper
   mocha
   npm-check
-  yarn
+  typescript
 )
 
 npm install -g "${packages[@]}"
