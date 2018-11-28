@@ -11,6 +11,7 @@ export XDG_CONFIG_DIR="$HOME/.config"
 export XDG_CONFIG_DIR="$HOME/.config"
 export XDG_LOCAL_DIR="$HOME/.local"
 export XDG_PROGRAMS_DIR="$HOME/programs"
+export XDG_TEMPLATES_DIR="$HOME/Templates"
 
 # =================================================================
 #
