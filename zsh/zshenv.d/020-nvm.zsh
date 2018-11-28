@@ -2,6 +2,9 @@
 # NVM Config
 # =================================================================
 
+# From https://github.com/lukechilds/zsh-nvm#lazy-loading
+export NVM_LAZY_LOAD=true
+
 export NVM_DIR="$XDG_PROGRAMS_DIR/nvm"
 
 # =================================================================
