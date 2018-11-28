@@ -1,7 +1,7 @@
 
 # core {{{
 [core]
-  editor = subl -n -w
+  editor = code -n -w
   excludesfile = ~/.gitignore_global
   pager=less -x4
 
@@ -159,13 +159,26 @@
   #   \______/  \______/  \______/    |__/   \______/ |__/     |__/
 
   # fetch and rebase interactive to the origin master
-  free = "!f() { git fetch && git rebase -i origin/master; }; f"
+  free = "!f() { \
+    git fetch -p && \
+    git rebase -i origin/master; \
+  }; f"
 
   # back to the master branch and pull the origin master
-  root = "!f() { git co master && git fetch && git pull origin master; }; f"
+  root = "!f() { \
+    git co master && \
+    git fetch -p && \
+    git pull origin master; \
+  }; f"
 
   # back to the master branch, pull the super master, RESET HARD the current master to super and push the changes to the origin
-  superroot = "!f() { git co master && git fetch super && git reset --hard super/master && git push origin master; }; f"
+  superroot = "!f() {\
+    git co master && \
+    git fetch super -p && \
+    git fetch -p && \
+    git reset --hard super/master && \
+    git push origin master; \
+   }; f"
 
   # amend the last commit (don't change the commit message)
   caca = commit --amend --no-edit
@@ -182,7 +195,22 @@
   # create a branch and a commit wtth same naames
   cmm = "!f() {\
       branchName=$(echo $1 | sed 's/[^a-zA-Z0-9.]\\+/-/g');\
+      branchName=douglasduteil/$(echo $branchName | sed 's/-$//g');\
       git co -b $branchName && git commit -m \"$1\";\
+  }; f"
+
+  # stash, go back to the master root branch and stash pop
+  superstash = "!f() {\
+    git stash && \
+    git superroot && \
+    git stash pop; \
+  }; f"
+
+  # rebase on the super master root branch
+  superrebase = "!f() {\
+    git superroot && \
+    git co - && \
+    git rebase -i super/master; \
   }; f"
   ### / CUSTOM
 
@@ -193,3 +221,5 @@
   gpgsign = true
 [include]
   path = ~/.config/git/gitconfig
+[gpg]
+  program = gpg2
