@@ -5,7 +5,7 @@
 # ===========================================================================
 
 ### Added by the Heroku Toolbelt
-export PATH="/usr/local/heroku/bin:$PATH:$XDG_BIN_DIR"
+export PATH="/usr/local/heroku/bin:$PATH:$XDG_BIN_DIR:$XDG_LOCAL_DIR/bin"
 
 # ===========================================================================
 #
