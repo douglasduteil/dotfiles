@@ -5,57 +5,67 @@
 clear-cache() {
 
   rmm () {
-    rm -rv $1 | pv -l -s $( du -a $1 | wc -c ) > /dev/null
+    rm -rv $1
   }
 
-  echo "Remove Pacman and Pacaur cache"
-  pacaur -Sc
+  echo "* Remove Yay cache"
+  yay -Sc
 
-  echo "Removing Docker stuff"
+  echo "* Remove Pacman cache"
+  pacman -Sc
+
+  echo "* Removing Docker stuff"
   docker system prune
 
-  echo "Removing nvm cache"
+  echo "* Removing nvm cache"
   nvm cache clear
 
-  echo "Removing yarn cache"
+  echo "* Removing yarn cache"
   yarn cache clean
 
-  echo "Removing npm cache"
+  echo "* Removing npm cache"
   npm cache clean --force
 
-  echo "Removing Opera Developer cache"
+  echo "* Removing Opera Developer cache"
   rmm ~/.config/opera-developer/File\ System/*
+  rmm ~/.config/opera-developer/Service\ Worker/CacheStorage/*
+  rmm ~/.config/opera-developer/Service\ Worker/ScriptCache/*
+  rmm ~/.config/opera-developer/GPUCache/*
 
-  echo "Removing Chromium cache"
-  rmm ~/.config/chromium/(Default|Profile*)/File\ System/*
+  echo "* Removing Chromium cache"
+  rmm ~/.config/chromium/*/Application\ Cache/*
+  rmm ~/.config/chromium/*/Cache/*
+  rmm ~/.config/chromium/*/Code\ Cache/*
+  rmm ~/.config/chromium/*/File\ System/*
+  rmm ~/.config/chromium/*/GPUCache/*
+  rmm ~/.config/chromium/*/Media\ Cache/*
+  rmm ~/.config/chromium/*/Service\ Worker/CacheStorage/*
+  rmm ~/.config/chromium/*/Service\ Worker/ScriptCache/*
 
-  echo "Removing all github node_modules"
+  echo "* Removing all github node_modules"
   rmm ~/zzz/github/*/*/node_modules
 
-  echo "Removing ~/tmp/* node_modules"
+  echo "* Removing ~/tmp/* node_modules"
   rmm ~/tmp/*/node_modules
 
-  echo "Removing ~/.local/share/Trash node_modules"
+  echo "* Removing ~/.local/share/Trash node_modules"
   rmm ~/.local/share/Trash/files/*
   rmm ~/.local/share/Trash/info/*
 
-  echo "Removing ~/.Trash node_modules"
+  echo "* Removing ~/.Trash node_modules"
   rmm ~/.Trash
 
-  echo "Removing ~/.cache/bazel"
+  echo "* Removing ~/.cache/bazel"
   rmm ~/.cache/bazel
 
-  echo "Removing ~/.cache/Cypress"
+  echo "* Removing ~/.cache/Cypress"
   rmm ~/.cache/Cypress
 
-  echo "Removing ~/.cache/typescript"
+  echo "* Removing ~/.cache/typescript"
   rmm ~/.cache/typescript
 
-  echo "Removing google-chrome-beta cache"
+  echo "* Removing google-chrome-beta cache"
   rmm ~/.cache/google-chrome-beta/(Default|Profile*)/File\ System/*
-
-  echo "Removing ~/.cache/chromium/*/?(Media\ )Cache/*"
-  rmm ~/.cache/chromium/*/?(Media\ )Cache/*
 
   echo "=== All Cache/Tmp Deleted ==="
 }
