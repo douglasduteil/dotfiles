@@ -212,6 +212,17 @@
     git co - && \
     git rebase -i super/master; \
   }; f"
+
+  #
+  deforestation = "!f() {\
+    git branch | xargs -I{} \
+      sh -c 'git ls-remote --exit-code --heads $(git remote get-url origin) {} || git br -D {}';\
+  }; f"
+  superdeforestation = "!f() {\
+    git branch | xargs -I{} \
+      sh -c 'git ls-remote --exit-code --heads $(git remote get-url super) {} || git br -D {}';\
+  }; f"
+
   ### / CUSTOM
 
 # }}}
