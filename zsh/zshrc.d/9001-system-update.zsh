@@ -17,7 +17,7 @@ system_update() {
 
   #
 
-  local lts_version=$(nvm list lts/* --no-colors | sed 's/[> *-]*//g')
+  local lts_version=$(nvm list 'lts/*' --no-colors | sed 's/[> *-]*//g')
   local stable_version=$(nvm list stable --no-colors | sed 's/[> *-]*//g')
 
   nvm ls --no-colors \
