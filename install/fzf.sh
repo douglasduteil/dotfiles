@@ -6,5 +6,5 @@ local FZF_DIR=$XDG_PROGRAMS_DIR/fzf
   echo ""
   echo "=> Installing fzf in $FZF_DIR"
   git clone --depth 1 https://github.com/junegunn/fzf.git $FZF_DIR
-  $FZF_DIR/install
+  $FZF_DIR/install --key-bindings --completion --no-update-rc
 }

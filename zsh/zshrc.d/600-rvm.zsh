@@ -1,3 +1,5 @@
 #!/bin/zsh
 
-source $rvm_path/scripts/rvm
+[[ -d $rvm_pat ]] && {
+  source $rvm_path/scripts/rvm
+}

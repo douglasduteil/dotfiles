@@ -9,6 +9,7 @@ echo ""
 echo "=> Set NVM to latest node version"
 . "$NVM_DIR/nvm.sh"
 
+nvm install "lts/*"
 nvm install stable
 nvm use stable
 nvm alias default stable
@@ -21,10 +22,9 @@ echo "=> Install global NPM packages"
 
 packages=(
   chokidar-cli
-  flow-bin
-  mocha
-  npm-check
+  gitmoji
   typescript
+  ynpx
 )
 
 npm install -g "${packages[@]}"

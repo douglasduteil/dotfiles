@@ -1,7 +1,7 @@
 
 # core {{{
 [core]
-  editor = code -n -w
+  editor = code --wait --new-window
   excludesfile = ~/.gitignore_global
   pager=less -x4
 
@@ -9,7 +9,8 @@
 # user {{{
 [user]
   email = douglasduteil@gmail.com
-  name = Douglas Duteil
+  name = Douglas DUTEIL
+  signingkey = 011030E8C9C53FB5
 
 #}}}
 # color {{{
@@ -43,8 +44,11 @@
   default = upstream
 [pull]
   default = current
+  rebase = true
 [diff]
   memonicprefix = true
+[difftool "default-difftool"]
+  cmd = code --wait --diff $LOCAL $REMOTE
 [branch]
   autosetuprebase = always
 [apply]

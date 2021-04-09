@@ -35,6 +35,15 @@ autoload -U zmv
 # add node-inspect : the "node --inspect --debug-brk" alias
 alias node-inspect='node --inspect --debug-brk'
 
+# Move trailling ~/.wget-hsts file to
+# see https://stackoverflow.com/questions/47548271/disable-wget-history-tracking
+alias wget="wget --hsts-file ${XDG_CONFIG_DIR}/wget/wget-hsts"
+
+alias regctl='docker container run -it --rm --net host \
+  -u "$(id -u):$(id -g)" -e HOME -v $HOME:$HOME \
+  -v /etc/docker/certs.d:/etc/docker/certs.d:ro \
+  regclient/regctl:latest'
+
 # ===========================================================================
 #
 # ===========================================================================
