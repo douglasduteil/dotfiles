@@ -16,7 +16,7 @@ export DOTFILES_DIR
 DOTFILES_DIR=~/.dotfiles
 #DOTFILES_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-# Updat e dotfiles itself first
+# Update e dotfiles itself first
 
 [ -d "$DOTFILES_DIR/.git" ] && git --work-tree="$DOTFILES_DIR" --git-dir="$DOTFILES_DIR/.git" pull origin master
 
@@ -50,7 +50,7 @@ nix --version
 
 # Allow flakes
 echo "experimental-features = nix-command flakes" | sudo tee -a /etc/nix/nix.
-nix-shell -p nixUnstable --command "nix build --experimental-features 'nix-command flakes' --file $DOTFILES_DIR/flake.nix"
+nix-shell -p nixUnstable --command "nix build --experimental-features 'nix-command flakes' --file $DOTFILES_DIR/nixpkgs"
 
 
 nix-shell -p nix-info --run "nix-info -m"
