@@ -3,30 +3,53 @@
 
   inputs = {
     nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+
     flake-utils.url = "github:numtide/flake-utils";
+    flake-utils.inputs.nixpkgs.follows = "nixpkgs";
 
     darwin.url = "github:lnl7/nix-darwin";
     darwin.inputs.nixpkgs.follows = "nixpkgs";
-    home.url = "github:nix-community/home-manager";
-    home.inputs.nixpkgs.follows = "nixpkgs";
 
+    home-manager.url = "github:nix-community/home-manager/master";
+    home-manager.inputs.nixpkgs.follows = "nixpkgs";
   };
 
-  outputs = inputs:
-    let
-      inherit (import ./lib inputs) switchers overlays importModulesDir;
-    in
-      {
-        inherit overlays;
-        inherit (switchers) apps devShell;
+  outputs = { self, darwin, nixpkgs, home-manager, flake-utils }:
+  {
 
-        darwinModules = importModulesDir ./darwin/modules;
-        darwinConfigurations = import ./darwin/configurations inputs;
+    nixosConfigurations.x = darwin.lib.darwinSystem {
+      modules = [
+        home-manager.darwinModules.home-manager
+        self.nixosModules.darwin
+        ./nix/vic.nix
+      ];
+    };
 
-        homeModules = importModulesDir ./home/modules;
-        homeManagerConfigurations = import ./home/configurations inputs;
+    nixosModules.darwin = {
+      imports = [
+        ./nix/system.nix
+        ./nix/overlays.nix
+        # ./nix/hm-link-apps.nix
+      ];
+    };
 
-        nixosModules = importModulesDir ./nixos/modules;
-        nixosConfigurations = import ./nixos/configurations inputs;
-      };
+    packages.x86_64-darwin =
+      self.nixosConfigurations.x.pkgs;
+
+    defaultPackage.x86_64-darwin =
+      self.nixosConfigurations.x.system;
+
+    defaultApp.x86_64-darwin = {
+      type = "app";
+      program =
+        let
+          program =
+            with self.nixosConfigurations.x.pkgs;
+            writeScriptBin "activate" ''
+              sudo ${self.nixosConfigurations.x.system}/activate
+            '';
+        in "${program}/bin/activate";
+    };
+
+  };
 }

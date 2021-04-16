@@ -35,7 +35,7 @@
         "type": "github"
       }
     },
-    "home": {
+    "home-manager": {
       "inputs": {
         "nixpkgs": [
           "nixpkgs"
@@ -51,6 +51,7 @@
       },
       "original": {
         "owner": "nix-community",
+        "ref": "master",
         "repo": "home-manager",
         "type": "github"
       }
@@ -75,7 +76,7 @@
       "inputs": {
         "darwin": "darwin",
         "flake-utils": "flake-utils",
-        "home": "home",
+        "home-manager": "home-manager",
         "nixpkgs": "nixpkgs"
       }
     }
