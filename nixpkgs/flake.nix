@@ -2,69 +2,31 @@
   description = "dougalsduteil home-manager";
 
   inputs = {
-    nixpkgs = {
-      url = "github:nixos/nixpkgs/nixos-unstable";
-    };
+    nixpkgs.url = "github:nixos/nixpkgs/nixpkgs-unstable";
+    flake-utils.url = "github:numtide/flake-utils";
 
-    home-manager = {
-      url = "github:nix-community/home-manager";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
-
-    flake-utils = {
-      url = "github:numtide/flake-utils";
-    };
+    darwin.url = "github:lnl7/nix-darwin";
+    darwin.inputs.nixpkgs.follows = "nixpkgs";
+    home.url = "github:nix-community/home-manager";
+    home.inputs.nixpkgs.follows = "nixpkgs";
 
   };
 
+  outputs = inputs:
+    let
+      inherit (import ./lib inputs) switchers overlays importModulesDir;
+    in
+      {
+        inherit overlays;
+        inherit (switchers) apps devShell;
 
-  outputs = inputs@{ self, nixpkgs, home-manager, flake-utils, ... }:
-    flake-utils.lib.eachDefaultSystem (system:
-        let
-          pkgs = nixpkgs.legacyPackages.${system};
-          scripts = import ./lib/scripts.nix { inherit pkgs; };
-        in
-        {
-          devShell = pkgs.mkShell {
-            name = "teste";
-            nativeBuildInputs = [
-              pkgs.git
-              scripts.update-flake
-              scripts.home-switch
-              scripts.update-system
-              scripts.flake-mgr
-            ];
-          };
-        }
-      ) //
-    {
-      nixosConfigurations = {
-        watchmen = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          modules = [
-            ./host/configuration.nix
-          ];
-          specialArgs = { inherit inputs; };
-        };
-      };
+        darwinModules = importModulesDir ./darwin/modules;
+        darwinConfigurations = import ./darwin/configurations inputs;
 
-      homeManagerConfigurations = {
-        thiago = home-manager.lib.homeManagerConfiguration {
-          configuration = { pkgs, lib, ... }: {
-            nixpkgs = {
-              config = {
-                allowUnfree = true;
-              };
-            };
-            imports = [
-              ./home/home.nix
-              ./overlays
-            ];
-          };
-          system = "x86_64-linux";
-          homeDirectory = "/home/x/";
-          username = "x";
-        };
+        homeModules = importModulesDir ./home/modules;
+        homeManagerConfigurations = import ./home/configurations inputs;
+
+        nixosModules = importModulesDir ./nixos/modules;
+        nixosConfigurations = import ./nixos/configurations inputs;
       };
-    };
 }
