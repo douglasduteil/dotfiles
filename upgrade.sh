@@ -5,7 +5,7 @@ DOTFILES_ROOT="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 if [[ $(uname -s) == 'Darwin' ]]; then
   sudo -i zsh -c '
     nix-channel --update &&
-    nix-env -iA nixpkgs.nix &&
+    nix-env -iA nixpkgs.nixUnstable &&
     launchctl remove org.nixos.nix-daemon &&
     launchctl load /Library/LaunchDaemons/org.nixos.nix-daemon.plist
   '
