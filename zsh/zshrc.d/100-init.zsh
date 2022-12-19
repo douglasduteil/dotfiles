@@ -20,6 +20,9 @@ export $(dbus-launch)
 ## see https://blog.eleven-labs.com/fr/le-developpement-sous-linux-depuis-windows-10-avec-wsl-2/
 export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2; exit;}'):0.0
 
+### Most Oh My Zsh themes use this option.
+setopt promptsubst
+
 # ===========================================================================
 #
 # ===========================================================================

@@ -3,15 +3,13 @@
 [core]
   editor = code --wait --new-window
   excludesfile = ~/.gitignore_global
-  pager=less -x4
-
+  pager=delta
 #}}}
 # user {{{
 [user]
   email = douglasduteil@gmail.com
   name = Douglas DUTEIL
   signingkey = 7C9834656A4AAB61
-
 #}}}
 # color {{{
 [color]
@@ -32,8 +30,6 @@
   added = yellow
   changed = green
   untracked = cyan
-
-
 #}}}
 # credential {{{
 [credential]
@@ -47,13 +43,13 @@
   rebase = true
 [diff]
   memonicprefix = true
+  colorMoved = default
 [difftool "default-difftool"]
   cmd = code --wait --diff $LOCAL $REMOTE
 [branch]
   autosetuprebase = always
 [apply]
   whitespace = nowarn
-
 #}}}
 # alias {{{
 [alias]
@@ -238,3 +234,11 @@
   path = ~/.config/git/gitconfig
 [gpg]
   program = gpg2
+[interactive]
+  diffFilter = delta --color-only
+[delta]
+  navigate = true
+  light = false
+  side-by-side = true
+[merge]
+  conflictstyle = diff3

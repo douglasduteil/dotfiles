@@ -1,0 +1,3 @@
+bun-bin
+yay-bin
+snm

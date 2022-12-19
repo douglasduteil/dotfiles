@@ -1,11 +1,9 @@
 # =================================================================
-# NVM Config
+# skim config
 # =================================================================
 
-# From https://github.com/lukechilds/zsh-nvm#lazy-loading
-export NVM_LAZY_LOAD=true
-
-export NVM_DIR="$XDG_PROGRAMS_DIR/nvm"
+export SKIM_DEFAULT_OPTIONS="--multi --layout=reverse"
+export SKIM_DEFAULT_COMMAND="fd --type f || git ls-tree -r --name-only HEAD || rg --files || find ."
 
 # =================================================================
 #
