@@ -31,7 +31,7 @@ ln -sfv "$DOTFILES_DIR/zsh/.zshrc" ~
 # . "$DOTFILES_DIR/install/svm.sh"
 # # . "$DOTFILES_DIR/install/rvm.sh"
 . "$DOTFILES_DIR/install/rustup.sh"
-# . "$DOTFILES_DIR/install/cargo.sh"
+. "$DOTFILES_DIR/install/cargo.sh"
 # # . "$DOTFILES_DIR/install/ngrok.sh"
 . "$DOTFILES_DIR/install/yay.sh"
 . "$DOTFILES_DIR/install/snm.sh"

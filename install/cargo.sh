@@ -6,10 +6,7 @@
 }
 
 packages=(
-  cargo-fmt
-  racer
-  rustfmt
-  rustsym
+  cargo-watch
 )
 
 echo "=> Install basic cargo packages"
