@@ -23,6 +23,10 @@ export DISPLAY=$(cat /etc/resolv.conf | grep nameserver | awk '{print $2; exit;}
 ### Most Oh My Zsh themes use this option.
 setopt promptsubst
 
+### Temporary solution to harassing ssh passwords on my WSL...
+keychain -q --nogui $HOME/.ssh/github
+source $HOME/.keychain/$HOST-sh
+
 # ===========================================================================
 #
 # ===========================================================================

@@ -29,12 +29,12 @@ ln -sfv "$DOTFILES_DIR/zsh/.zshrc" ~
 . "$DOTFILES_DIR/install/zinit.sh"
 # . "$DOTFILES_DIR/install/fzf.sh"
 # . "$DOTFILES_DIR/install/svm.sh"
-# . "$DOTFILES_DIR/install/npm.sh"
 # # . "$DOTFILES_DIR/install/rvm.sh"
 . "$DOTFILES_DIR/install/rustup.sh"
 # . "$DOTFILES_DIR/install/cargo.sh"
 # # . "$DOTFILES_DIR/install/ngrok.sh"
 . "$DOTFILES_DIR/install/yay.sh"
+. "$DOTFILES_DIR/install/snm.sh"
 
 # . "$DOTFILES_DIR/zsh/zshrc.d/200-zinit.zsh"
 # . "$DOTFILES_DIR/zsh/zshrc.d/201-zinit-load.zsh"
