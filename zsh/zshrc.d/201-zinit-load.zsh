@@ -23,7 +23,7 @@ zinit wait lucid for \
   OMZL::key-bindings.zsh \
   OMZL::spectrum.zsh \
   OMZL::termsupport.zsh \
-  # OMZL::misc.zsh \
+  OMZL::misc.zsh \
 
 ### Oh My Zsh Plugins
 
