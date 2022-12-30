@@ -11,6 +11,7 @@ ffmpeg
 git
 git-delta
 hyperfine
+jq
 keychain
 pacman-mirrorlist
 procs

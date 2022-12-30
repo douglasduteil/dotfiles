@@ -69,7 +69,6 @@ zinit wait lucid \
     bindkey '^[[B' history-substring-search-down
   " \
 for @zsh-users/zsh-history-substring-search
-
 ### Completion
 
 ### :: https://github.com/zsh-users/zsh-completions
@@ -121,7 +120,17 @@ zinit wait is-snippet lucid \
   has="code" if='[[ "$TERM_PROGRAM" == "vscode" ]]' for \
   "$(code --locate-shell-integration-path zsh)" \
 
+### fzf
 
+### https://github.com/zdharma-continuum/zinit-packages/tree/main/fzf
+zinit pack"binary" for fzf
+
+### https://github.com/joshskidmore/zsh-fzf-history-search
+### https://github.com/paulirish/git-open
+### https://github.com/Aloxaf/fzf-tab
+zinit wait lucid light-mode for \
+  paulirish/git-open \
+  joshskidmore/zsh-fzf-history-search \
 
 ### Prompt
 
