@@ -11,3 +11,6 @@ cd && . ~/.dotfiles/install.sh
 
 - https://github.com/DriesSchulten/dotfiles
 - https://github.com/arielmakestuff/zshconfig
+
+## Next
+- use ` _ pacman -S stow`
