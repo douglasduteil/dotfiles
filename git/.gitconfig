@@ -7,9 +7,9 @@
 #}}}
 # user {{{
 [user]
-  email = douglasduteil@gmail.com
+	email = 730511+douglasduteil@users.noreply.github.com
   name = Douglas DUTEIL
-  signingkey = 833EFC1AD399B2C3
+	signingkey = 6A9CDBD0EECAD3DAFB82F0756E8270736987027B
 #}}}
 # color {{{
 [color]
