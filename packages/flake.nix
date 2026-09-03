@@ -23,14 +23,12 @@
           gcc
           git
           git-open
-          gnupg
           jq
           kubernetes-helm
           mkcert
           neovim
           nodejs
           oh-my-zsh
-          pinentry-curses
           ripgrep
           sops
           starship

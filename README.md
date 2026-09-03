@@ -7,7 +7,7 @@ User-level Nix profile for NixOS-WSL machines: stow-managed dotfiles plus a lock
 ## Contents
 
 - `nix` (stow package) — `~/.config/nix/nix.conf` (enables `nix-command`/`flakes`) and `~/.config/nixpkgs/config.nix` (`allowUnfree`)
-- `git` (stow package) — `~/.gitconfig` and `~/.gitignore_global`
+- `git` (stow package) — `~/.gitconfig`, `~/.gitignore_global`, and `~/.config/git/allowed_signers` (FIDO2 SSH signing verification; `user.signingkey` itself is set per-machine via the untracked `~/.config/git/gitconfig` include)
 - `nvim` (stow package) — LazyVim config vendored from [LazyVim/starter](https://github.com/LazyVim/starter) into `~/.config/nvim`
 - `zsh` (stow package) — `~/.zshenv` (XDG vars) and `~/.zshrc` (oh-my-zsh libs/plugins, autosuggestions, syntax highlighting, history search, fzf, starship — all nix-managed, no runtime plugin manager)
 - `claude` (stow package) — `~/.config/claude/settings.json` (theme, attribution trailers off, etc.). `zsh/.zshenv` sets `CLAUDE_CONFIG_DIR` to relocate Claude Code's whole config dir here (settings, credentials, transcripts, caches) instead of `~/.claude` -- only `settings.json` is version-controlled

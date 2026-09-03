@@ -97,14 +97,6 @@ source <(fzf --zsh)
 source "$HOME/.nix-profile/share/zsh-fzf-history-search/zsh-fzf-history-search.zsh"
 
 # ===========================================================================
-# GPG / YubiKey
-# ===========================================================================
-
-# pinentry needs to know which terminal to draw its prompt in.
-export GPG_TTY=$(tty)
-gpg-connect-agent updatestartuptty /bye >/dev/null 2>&1
-
-# ===========================================================================
 # Prompt
 # ===========================================================================
 
