@@ -14,6 +14,10 @@ export XDG_STATE_HOME="$HOME/.local/state"
 export XDG_PROGRAMS_DIR="$HOME/programs"
 export XDG_TEMPLATES_DIR="$HOME/Templates"
 
+# :: https://code.claude.com/docs/en/authentication -- relocates
+# settings.json, credentials, transcripts, etc. out of ~/.claude
+export CLAUDE_CONFIG_DIR="$HOME/.config/claude"
+
 # =================================================================
 #
 # =================================================================

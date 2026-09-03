@@ -10,7 +10,7 @@ User-level Nix profile for NixOS-WSL machines: stow-managed dotfiles plus a lock
 - `git` (stow package) — `~/.gitconfig` and `~/.gitignore_global`
 - `nvim` (stow package) — LazyVim config vendored from [LazyVim/starter](https://github.com/LazyVim/starter) into `~/.config/nvim`
 - `zsh` (stow package) — `~/.zshenv` (XDG vars) and `~/.zshrc` (oh-my-zsh libs/plugins, autosuggestions, syntax highlighting, history search, fzf, starship — all nix-managed, no runtime plugin manager)
-- `claude` (stow package) — `~/.claude/settings.json` (theme, attribution trailers off, etc. — not the rest of `~/.claude`, which is local runtime state: credentials, transcripts, caches)
+- `claude` (stow package) — `~/.config/claude/settings.json` (theme, attribution trailers off, etc.). `zsh/.zshenv` sets `CLAUDE_CONFIG_DIR` to relocate Claude Code's whole config dir here (settings, credentials, transcripts, caches) instead of `~/.claude` -- only `settings.json` is version-controlled
 - `packages` (flake, not stowed) — a locked `flake.lock` pinning the exact nixpkgs revision for everything above plus the rest of the CLI toolset; see `packages/flake.nix` for the current list rather than duplicating it here
 
 ## Install
@@ -39,6 +39,15 @@ Set zsh as the login shell separately, declaratively, in `/etc/nixos/configurati
 programs.zsh.enable = true;
 users.users.<you>.shell = pkgs.zsh;
 ```
+
+`CLAUDE_CONFIG_DIR` doesn't migrate an existing install automatically -- on a machine with prior Claude Code state, move it over once, in a fresh shell that already has `CLAUDE_CONFIG_DIR` set:
+
+```sh
+rsync -a ~/.claude/ ~/.config/claude/   # skip settings.json, which stow provides
+cp -a ~/.claude.json ~/.config/claude/.claude.json   # this one lives in $HOME, not ~/.claude/
+```
+
+Do this before first starting `claude` in the new shell -- otherwise it finds no `.claude.json` at the new path and silently starts a fresh one, and the real state has to be copied over it afterward.
 
 ## Updating the package set
 
