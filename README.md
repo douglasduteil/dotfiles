@@ -10,6 +10,7 @@ User-level Nix profile for NixOS-WSL machines: stow-managed dotfiles plus a lock
 - `git` (stow package) — `~/.gitconfig` and `~/.gitignore_global`
 - `nvim` (stow package) — LazyVim config vendored from [LazyVim/starter](https://github.com/LazyVim/starter) into `~/.config/nvim`
 - `zsh` (stow package) — `~/.zshenv` (XDG vars) and `~/.zshrc` (oh-my-zsh libs/plugins, autosuggestions, syntax highlighting, history search, fzf, starship — all nix-managed, no runtime plugin manager)
+- `claude` (stow package) — `~/.claude/settings.json` (theme, attribution trailers off, etc. — not the rest of `~/.claude`, which is local runtime state: credentials, transcripts, caches)
 - `packages` (flake, not stowed) — a locked `flake.lock` pinning the exact nixpkgs revision for everything above plus the rest of the CLI toolset; see `packages/flake.nix` for the current list rather than duplicating it here
 
 ## Install
@@ -17,8 +18,8 @@ User-level Nix profile for NixOS-WSL machines: stow-managed dotfiles plus a lock
 ```sh
 git clone -b nixos-wsl --single-branch git@github.com:douglasduteil/dotfiles.git ~/.dotfiles
 
-# dotfiles: nix.conf/config.nix, git identity, neovim config, zsh config
-nix-shell -p stow --run 'stow -d ~/.dotfiles -t ~ nix git nvim zsh'
+# dotfiles: nix.conf/config.nix, git identity, neovim config, zsh config, claude settings
+nix-shell -p stow --run 'stow -d ~/.dotfiles -t ~ nix git nvim zsh claude'
 
 # packages: pinned via packages/flake.lock
 nix profile install ~/.dotfiles/packages#default
