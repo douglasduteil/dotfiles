@@ -28,6 +28,7 @@
           kubernetes-helm
           mkcert
           neovim
+          nodejs
           oh-my-zsh
           pinentry-curses
           ripgrep
