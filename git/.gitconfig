@@ -9,7 +9,6 @@
 [user]
 	email = 730511+douglasduteil@users.noreply.github.com
   name = Douglas DUTEIL
-	signingkey = 6A9CDBD0EECAD3DAFB82F0756E8270736987027B
 #}}}
 # color {{{
 [color]
@@ -233,7 +232,9 @@
 [include]
   path = ~/.config/git/gitconfig
 [gpg]
-  program = gpg2
+  format = ssh
+[gpg "ssh"]
+  allowedSignersFile = ~/.config/git/allowed_signers
 [interactive]
   diffFilter = delta --color-only
 [delta]
