@@ -97,6 +97,17 @@ source <(fzf --zsh)
 source "$HOME/.nix-profile/share/zsh-fzf-history-search/zsh-fzf-history-search.zsh"
 
 # ===========================================================================
+# SSH
+# ===========================================================================
+
+# The session sets SSH_ASKPASS to a KDE ksshaskpass binary that hangs with no
+# visible window in this WSL setup (fails to register with the desktop
+# portal) instead of falling back to a terminal prompt. Force ssh to always
+# prompt on the terminal -- needed for FIDO2 PIN entry on every signing/auth
+# operation.
+export SSH_ASKPASS_REQUIRE=never
+
+# ===========================================================================
 # Prompt
 # ===========================================================================
 
