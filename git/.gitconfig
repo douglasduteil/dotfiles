@@ -163,11 +163,13 @@
     git rebase -i origin/master; \
   }; f"
 
-  # back to the master branch and pull the origin master
+  # back to the root branch (main if it exists, else master) and pull it
   root = "!f() { \
-    git co master && \
+    branch=master; \
+    (git show-ref --verify --quiet refs/heads/main || git show-ref --verify --quiet refs/remotes/origin/main) && branch=main; \
+    git co $branch && \
     git fetch -p && \
-    git pull origin master; \
+    git pull origin $branch; \
   }; f"
 
   # back to the master branch, pull the super master, RESET HARD the current master to super and push the changes to the origin
@@ -193,8 +195,8 @@
 
   # create a branch and a commit wtth same naames
   cmm = "!f() {\
-      branchName=$(echo $1 | sed 's/[^a-zA-Z0-9.]\\+/-/g');\
-      branchName=douglasduteil/$(echo $branchName | sed 's/-$//g');\
+      branchName=$(echo \"$1\" | sed -E 's/[^a-zA-Z0-9.]+/-/g; s/^-+//; s/-+$//');\
+      branchName=douglasduteil/$branchName;\
       git co -b $branchName && git commit -m \"$1\";\
   }; f"
 
