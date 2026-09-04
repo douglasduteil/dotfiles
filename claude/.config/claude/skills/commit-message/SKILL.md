@@ -1,6 +1,6 @@
 ---
 name: commit-message
-description: Format a git commit message following this repo's CONTRIBUTING.md and actual commit history conventions (Gitmoji subject with optional scope, Problem/Proposal body). Use whenever drafting or writing a commit message for proconnect-identite, or when the user asks to "write a commit", "commit this", or review a commit message's format.
+description: Format a git commit message by deriving this repo's actual conventions from its CONTRIBUTING.md and commit history, rather than a generic style. Use whenever drafting or writing a commit message, or when the user asks to "write a commit", "commit this", or review a commit message's format — in any repo, not just one project.
 user-invocable: true
 allowed-tools:
   - Bash(git status:*)
@@ -10,63 +10,69 @@ allowed-tools:
   - Bash(git commit:*)
 ---
 
-# Commit message conventions — proconnect-identite
+# Commit message conventions
 
-Source of truth: `CONTRIBUTING.md`, cross-checked against real history
-(`git log --no-verify -p`). Follow this instead of a generic commit style.
+This skill is global — it loads in whatever repo you're in. It has no
+built-in house style; every repo writes commits differently. Derive the
+convention from *this* repo each time, don't assume gitmoji or any other
+scheme carries over from elsewhere.
+
+## Step 0: derive this repo's convention
+
+1. Look for a contributing guide (`CONTRIBUTING.md`, `.github/CONTRIBUTING.md`,
+   or commit-message rules in `README.md`) and follow it as source of truth.
+2. Cross-check against real history: `git log --no-merges -20 --format='%s'`
+   for subject-line shape (prefix style, emoji or none, scope conventions,
+   case, punctuation), and `git log --no-merges -5 -p` for whether bodies
+   are used and how they're structured.
+3. Check for a linted convention (`commitlint.config.*`, `.commitlintrc*`,
+   a `commit-msg` hook) — if present, it's binding, not just a pattern to
+   imitate.
+4. If history is sparse or inconsistent, default to: present-tense,
+   imperative, no trailing period, no emoji, a body only when the change
+   isn't self-explanatory from the diff — and say you're using this
+   fallback rather than presenting it as a discovered convention.
+
+Don't reuse a convention from a *different* project (including gitmoji,
+Problem/Proposal bodies, or any other scheme you've used elsewhere) unless
+this repo's own CONTRIBUTING.md or history actually shows it.
 
 ## Scope of a commit
 
-- One micro-commit per logical change. Don't mix unrelated files.
+- One logical change per commit. Don't mix unrelated files.
 - If a diff touches more than one concern, say so and propose splitting it
   rather than writing one commit that covers everything.
 
 ## Subject line
 
-`<gitmoji> [<scope>: ]<short description>`
+Shape it per what Step 0 found. Regardless of the repo's specific scheme:
 
-- **Gitmoji**: one emoji from https://gitmoji.dev matching the change type.
-  Pick from what this repo actually uses, most → least common:
-  `♻️` refactor, `✨` feature, `🔖` release/version bump (automated, don't
-  use by hand), `💬` copy/wording fix, `💄` UI/style tweak, `🐛` bug fix,
-  `🗑️` remove code, `🔧` config, `📝` docs, `⬆️`/`⬇️` dependency bump,
-  `⚡️` perf, `🔒` security, `✏️` typo, `⏪️` revert.
-- **Scope** (optional, no brackets, lowercase, followed by `: `): either a
-  conventional-commit-style keyword (`fix:`, `feat:`, `refactor:`, `perf:`,
-  `security:`, `chore(deps):`) or a domain/directory name that matches
-  where the change lives (`identite:`, `personal-information:`). Both
-  styles coexist in history — pick whichever names the change better;
-  it's fine to omit the scope entirely for a small, obvious change.
-- **Description**: short, present tense, no trailing period. It becomes
-  the changelog line and (for single-commit PRs) the PR title, so it must
-  stand alone without the body.
-- Do not add a PR number by hand — GitHub appends `(#123)` on merge.
+- Short, present tense, stands alone without the body (it becomes the
+  changelog line and, for single-commit PRs, often the PR title).
+- Don't add a PR number by hand — hosts like GitHub append it on merge.
+- If the repo uses gitmoji, pick the emoji from what that repo's own
+  history actually uses, most → least common — don't guess from
+  gitmoji.dev's full list.
 
 ## Body
 
-Skip the body only for genuinely trivial, self-explanatory changes
-(typo fixes, a one-line copy tweak). Otherwise structure it as:
+Skip it only for genuinely trivial, self-explanatory changes. When a repo's
+convention calls for a structured body (e.g. Problem/Proposal, or
+conventional-commit footers), match that structure exactly — see example
+below for what a Problem/Proposal-style repo looks like. Otherwise:
 
-```
-**Problem**
-
-What was wrong or missing, and why it mattered. State the user-visible
-or code-level symptom, not just "X was refactored".
-
-**Proposal**
-
-What this commit does about it, and any rationale for the approach taken
-over alternatives. Mention follow-up work left out of scope if relevant.
-```
-
-- Prose, wrapped to ~72–80 columns, no bullet-only bodies unless the
-  content is genuinely a list.
+- Prose wrapped to ~72–80 columns, or bullets if the repo's history favors
+  bullets.
 - Explain *why*, not a restatement of the diff — that's what `git diff`
   is for.
-- Never put PR discussion only in chat/Slack/Tchap — put it in the
-  commit body per CONTRIBUTING.md.
+- If the repo's CONTRIBUTING.md says design discussion belongs in the
+  commit body (not only chat/Slack/PR comments), follow that.
 
-## Example (matches real history)
+## Example of a derived, repo-specific convention
+
+This is what Step 0 previously found for one particular repo
+(gitmoji subject + Problem/Proposal body) — illustrative of the *method*,
+not a default to apply elsewhere:
 
 ```
 ✨ personal-information: allow disconnecting FranceConnect identity
@@ -86,25 +92,20 @@ editable fields everywhere. Covered by a new cypress e2e spec.
 
 ## Workflow when invoked
 
-1. Run `git status` and `git diff` (staged + unstaged) to see what would
-   be committed; run `git log --no-merges -5` if unsure how a similar
-   past change was described.
-2. Draft the subject + body per the rules above.
-3. Commit with native multiple `-m` flags, one per paragraph, instead of
+1. Do Step 0 above to establish this repo's actual convention.
+2. Run `git status` and `git diff` (staged + unstaged) to see what would
+   be committed.
+3. Draft the subject + body per the convention derived in Step 0.
+4. Commit with native multiple `-m` flags, one per paragraph, instead of
    a heredoc — git already blank-line-separates each `-m` into its own
-   paragraph, so this maps directly onto the subject / **Problem** /
-   **Proposal** structure with no manual blank-line wrangling:
+   paragraph, so this maps directly onto subject / body-section /
+   body-section with no manual blank-line wrangling:
 
    ```
    git commit \
-     -m "🐛 personal-information: fix inconsistent date/time timezone display" \
-     -m "**Problem**
-   The FranceConnect last-update date was formatted with \`timeZone: \"UTC\"\`
-   while the time right below it used the server's local timezone. Near
-   midnight this could show a date that didn't match the displayed time." \
-     -m "**Proposal**
-   Drop the UTC override so the date and time render in the same (local)
-   timezone, consistent with each other."
+     -m "<subject line>" \
+     -m "<first body paragraph or section>" \
+     -m "<second body paragraph or section, if any>"
    ```
 
    Still follow this session's other git-commit protocol (staging
