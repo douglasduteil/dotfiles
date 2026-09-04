@@ -12,7 +12,8 @@
   },
   "enabledPlugins": {
     "ponytail@ponytail": true,
-    "caveman@caveman": true
+    "caveman@caveman": true,
+    "superpowers@claude-plugins-official": true
   },
   "extraKnownMarketplaces": {
     "ponytail": {
