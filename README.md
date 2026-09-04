@@ -8,7 +8,7 @@ User-level Nix profile for NixOS-WSL machines: stow-managed dotfiles plus a lock
 
 - `nix` (stow package) — `~/.config/nix/nix.conf` (enables `nix-command`/`flakes`) and `~/.config/nixpkgs/config.nix` (`allowUnfree`)
 - `git` (stow package) — `~/.gitconfig` (identity, plus `[include] path = ~/.config/git/gitconfig` for the untracked per-machine default signing key) and `~/.config/git/allowed_signers` (FIDO2 SSH signing verification, both keys)
-- `ssh` (stow package) — `~/.ssh/config`, pointing github.com at both FIDO2 signing keys via `IdentityFile` (`IdentitiesOnly yes`); ssh tries the first and falls back to the second, so whichever key is physically plugged in works. No key material lives here -- only paths (see SSH commit signing)
+- `ssh` (stow package) — `~/.ssh/config` and `~/.ssh/update-signing-key-symlink`. A `Match exec` block runs the script before auth to detect (via `ykman list --serials`, no touch needed) which of the two FIDO2 keys is physically plugged in, and points `~/.ssh/git_signing_key_active` at its handle file; `IdentityFile` then offers only that one. Avoids `ssh` blindly trying (and touching) the unplugged key first. No key material lives here -- only paths and serials (see SSH commit signing)
 - `nvim` (stow package) — LazyVim config vendored from [LazyVim/starter](https://github.com/LazyVim/starter) into `~/.config/nvim`
 - `zsh` (stow package) — `~/.zshenv` (XDG vars) and `~/.zshrc` (oh-my-zsh libs/plugins, autosuggestions, syntax highlighting, history search, fzf, starship — all nix-managed, no runtime plugin manager)
 - `claude` (stow package) — `~/.config/claude/settings.json` (theme, attribution trailers off, etc.) and `~/.config/claude/skills/`. `zsh/.zshenv` sets `CLAUDE_CONFIG_DIR` to relocate Claude Code's whole config dir here (settings, credentials, transcripts, caches) instead of `~/.claude` -- only `settings.json` and `skills/` are version-controlled. `~/.claude` itself is kept as a plain symlink to `~/.config/claude` (see Install) so anything that still hardcodes the old path lands on the same live state instead of silently writing to a stale duplicate
@@ -103,7 +103,7 @@ mv id_ed25519_sk_rk.pub ~/.ssh/git_signing_key_<model>-<alpha|beta>-<serial>.pub
 
 Run it once per physical key (swap in the other YubiKey and re-run to recover that one too). `git`/`ssh` are already stowed and need nothing else once the file's in place.
 
-`ssh/.ssh/config` lists both as `IdentityFile`s unconditionally, so `ssh` (and therefore `git push`/`fetch`) transparently uses whichever key is physically plugged in. Commit *signing* needs one definite default though (`user.signingkey` can't try-and-fall-back like `ssh` does), so that part alone stays a small per-machine, untracked include -- picking which of the two keys this machine reaches for first:
+`ssh/.ssh/config` detects the plugged-in key at connect time (see `ssh` package above) rather than listing both `IdentityFile`s unconditionally, so `ssh` (and therefore `git push`/`fetch`) transparently uses whichever key is physically plugged in, with a single touch/PIN prompt instead of trying the absent key first. Commit *signing* needs one definite default though (`user.signingkey` can't try-and-fall-back like `ssh` does), so that part alone stays a small per-machine, untracked include -- picking which of the two keys this machine reaches for first:
 
 ```sh
 # machine-local, not tracked -- swap to the other filename any time
