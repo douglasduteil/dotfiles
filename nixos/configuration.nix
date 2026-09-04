@@ -32,8 +32,27 @@
   wsl.usbip.enable = true;
   wsl.usbip.autoAttach = [ "<busid>" ];
 
+  # nixos-wsl's usbip module ships modprobe but never loads vhci-hcd itself,
+  # so without this the auto-attach service retries every ~2s forever
+  # (blinking LED, repeated Windows attach/detach notifications) because
+  # /sys/devices/platform/vhci_hcd.0 never exists.
+  boot.kernelModules = [ "vhci-hcd" ];
+
   # Smartcard daemon so gpg's scdaemon can talk to the YubiKey once attached.
   services.pcscd.enable = true;
+
+  # ykman (YubiKey Manager CLI) -- inspecting/managing the physical keys
+  # (ykman info, ykman fido info, etc.) is host-level tooling, not something
+  # tied to a per-user profile, so it lives here rather than in
+  # packages/flake.nix.
+  environment.systemPackages = [ pkgs.yubikey-manager ];
+
+  # Rootless container runtime. dockerCompat aliases `docker` to podman for
+  # tools that shell out to the docker CLI by name.
+  virtualisation.podman = {
+    enable = true;
+    dockerCompat = true;
+  };
 
   # udev rules so the FIDO2 HID interface (SSH signing/auth, separate from
   # the CCID/smartcard interface pcscd handles above) is usable without
