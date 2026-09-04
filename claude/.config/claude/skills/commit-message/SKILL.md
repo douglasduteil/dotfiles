@@ -96,9 +96,9 @@ editable fields everywhere. Covered by a new cypress e2e spec.
 2. Run `git status` and `git diff` (staged + unstaged) to see what would
    be committed.
 3. Draft the subject + body per the convention derived in Step 0.
-4. Commit with native multiple `-m` flags, one per paragraph, instead of
-   a heredoc — git already blank-line-separates each `-m` into its own
-   paragraph, so this maps directly onto subject / body-section /
+4. Build the commit with native multiple `-m` flags, one per paragraph,
+   instead of a heredoc — git already blank-line-separates each `-m` into
+   its own paragraph, so this maps directly onto subject / body-section /
    body-section with no manual blank-line wrangling:
 
    ```
@@ -107,6 +107,13 @@ editable fields everywhere. Covered by a new cypress e2e spec.
      -m "<first body paragraph or section>" \
      -m "<second body paragraph or section, if any>"
    ```
+
+5. Before running it, print this exact command to the user (as text, not
+   just inside the tool call) and only then execute it — don't run it
+   silently. The user needs to see it ahead of execution: some repos here
+   sign commits with a hardware key (YubiKey/FIDO2), so they may need to
+   have the key ready to tap, and seeing the literal command lets them
+   verify the message before it's committed rather than after.
 
    Still follow this session's other git-commit protocol (staging
    specific files, any required trailer as its own trailing `-m`) and
