@@ -10,18 +10,25 @@
   "permissions": {
     "defaultMode": "auto"
   },
+  "enabledPlugins": {
+    "ponytail@ponytail": true,
+    "caveman@caveman": true
+  },
   "extraKnownMarketplaces": {
     "ponytail": {
       "source": {
         "source": "github",
         "repo": "DietrichGebert/ponytail"
       }
+    },
+    "caveman": {
+      "source": {
+        "source": "github",
+        "repo": "JuliusBrussee/caveman"
+      }
     }
   },
   "tui": "fullscreen",
   "theme": "dark",
-  "agentPushNotifEnabled": true,
-  "enabledPlugins": {
-    "ponytail@ponytail": true
-  }
+  "agentPushNotifEnabled": true
 }
