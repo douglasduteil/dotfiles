@@ -57,6 +57,42 @@ mv ~/.claude ~/.claude.bak-$(date +%Y%m%d-%H%M%S)   # keep as a safety net, don'
 ln -s ~/.config/claude ~/.claude
 ```
 
+## SSH commit signing
+
+Commits are signed with a hardware-backed FIDO2 key (`sk-ssh-ed25519`), one per machine, matching the `work`/`home` labels already used in `ssh/.ssh/config` and `git/.config/git/allowed_signers`. The private key file is bound to the physical security key it was generated on and is never tracked by `~/.dotfiles`.
+
+**A machine that already has its key** (e.g. reinstalling `work` or `home`) just needs the per-machine include pointing at it -- the `git` package's `[include] path = ~/.config/git/gitconfig` picks this up automatically once stowed:
+
+```sh
+mkdir -p ~/.config/git
+cat > ~/.config/git/gitconfig <<'EOF'
+# machine-local git config, not tracked by ~/.dotfiles
+# sets which physical FIDO2 key this machine currently signs with
+
+[user]
+	signingkey = ~/.ssh/git_signing_key_<work|home>
+EOF
+```
+
+**A genuinely new machine/key** needs a key generated and registered in three places:
+
+```sh
+# 1. generate a new hardware-backed key -- prompts for a security-key
+#    touch (and possibly a PIN, depending on the key's own FIDO2 policy)
+ssh-keygen -t ed25519-sk -f ~/.ssh/git_signing_key_<label> -C git-signing-<label>
+
+# 2. register the public half for local signature verification
+#    (tracked -- commit and push this from ~/.dotfiles)
+echo "$(git config user.email) $(cat ~/.ssh/git_signing_key_<label>.pub)" \
+  >> ~/.dotfiles/git/.config/git/allowed_signers
+
+# 3. point this machine at it (untracked, per-machine -- same file as above)
+mkdir -p ~/.config/git
+printf '[user]\n\tsigningkey = ~/.ssh/git_signing_key_%s\n' <label> > ~/.config/git/gitconfig
+```
+
+Then also add a matching `IdentityFile ~/.ssh/git_signing_key_<label>` line to `ssh/.ssh/config` (tracked -- commit and push), and register the same public key on GitHub itself under *Settings → SSH and GPG keys*: once as an **Authentication Key** (needed for `git push`/`fetch` over SSH) and once as a **Signing Key** (needed for the green "Verified" badge on GitHub -- `allowed_signers` only covers local `git log --show-signature` verification, GitHub keeps its own copy).
+
 ## Updating the package set
 
 Edit `packages/flake.nix`, then from `packages/`:
