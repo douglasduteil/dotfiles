@@ -1,5 +1,5 @@
 # git-agnostic allowed signers file for `gpg.ssh.allowedSignersFile`
 # format: <principal> <key-type> <base64-key> [comment]
 # principal here is the git commit email, must match user.email
-730511+douglasduteil@users.noreply.github.com sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIGbpAWw0Pnqf1YwZZPUyQJMx764/aEuXCAP+JXAUOIDSAAAABHNzaDo= git-signing-work
-730511+douglasduteil@users.noreply.github.com sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIKfLqCyjAD4oWcvVyLkn5+EuXAWOYwLw4N4/CWRi42U3AAAABHNzaDo= git-signing-home
+730511+douglasduteil@users.noreply.github.com sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIGbpAWw0Pnqf1YwZZPUyQJMx764/aEuXCAP+JXAUOIDSAAAABHNzaDo= git-signing-Y5C-beta-36628851
+730511+douglasduteil@users.noreply.github.com sk-ssh-ed25519@openssh.com AAAAGnNrLXNzaC1lZDI1NTE5QG9wZW5zc2guY29tAAAAIKfLqCyjAD4oWcvVyLkn5+EuXAWOYwLw4N4/CWRi42U3AAAABHNzaDo= git-signing-Y5C-alpha-25938082

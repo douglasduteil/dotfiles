@@ -7,8 +7,8 @@ User-level Nix profile for NixOS-WSL machines: stow-managed dotfiles plus a lock
 ## Contents
 
 - `nix` (stow package) — `~/.config/nix/nix.conf` (enables `nix-command`/`flakes`) and `~/.config/nixpkgs/config.nix` (`allowUnfree`)
-- `git` (stow package) — `~/.gitconfig`, `~/.gitignore_global`, and `~/.config/git/allowed_signers` (FIDO2 SSH signing verification; `user.signingkey` itself is set per-machine via the untracked `~/.config/git/gitconfig` include)
-- `ssh` (stow package) — `~/.ssh/config`, pointing github.com at both the work and home FIDO2 signing keys via `IdentityFile` (`IdentitiesOnly yes`); listing both unconditionally is what makes the one file work on every machine, since ssh silently skips whichever IdentityFile doesn't exist locally. No key material lives here -- only paths, and the actual private/public key pairs stay untracked per machine
+- `git` (stow package) — `~/.gitconfig` (identity, plus `[include] path = ~/.config/git/gitconfig` for the untracked per-machine default signing key) and `~/.config/git/allowed_signers` (FIDO2 SSH signing verification, both keys)
+- `ssh` (stow package) — `~/.ssh/config`, pointing github.com at both FIDO2 signing keys via `IdentityFile` (`IdentitiesOnly yes`); ssh tries the first and falls back to the second, so whichever key is physically plugged in works. No key material lives here -- only paths (see SSH commit signing)
 - `nvim` (stow package) — LazyVim config vendored from [LazyVim/starter](https://github.com/LazyVim/starter) into `~/.config/nvim`
 - `zsh` (stow package) — `~/.zshenv` (XDG vars) and `~/.zshrc` (oh-my-zsh libs/plugins, autosuggestions, syntax highlighting, history search, fzf, starship — all nix-managed, no runtime plugin manager)
 - `claude` (stow package) — `~/.config/claude/settings.json` (theme, attribution trailers off, etc.) and `~/.config/claude/skills/`. `zsh/.zshenv` sets `CLAUDE_CONFIG_DIR` to relocate Claude Code's whole config dir here (settings, credentials, transcripts, caches) instead of `~/.claude` -- only `settings.json` and `skills/` are version-controlled. `~/.claude` itself is kept as a plain symlink to `~/.config/claude` (see Install) so anything that still hardcodes the old path lands on the same live state instead of silently writing to a stale duplicate
@@ -59,39 +59,37 @@ ln -s ~/.config/claude ~/.claude
 
 ## SSH commit signing
 
-Commits are signed with a hardware-backed FIDO2 key (`sk-ssh-ed25519`), one per machine, matching the `work`/`home` labels already used in `ssh/.ssh/config` and `git/.config/git/allowed_signers`. The private key file is bound to the physical security key it was generated on and is never tracked by `~/.dotfiles`.
+Commits are signed with a hardware-backed FIDO2 key (`sk-ssh-ed25519`). There are two physical YubiKeys, `alpha` and `beta` -- **not** one per machine; either one works from any machine, each acting as the other's backup. Both keys' private-key handle files (the FIDO2 credential wrapper OpenSSH stores on disk -- not the underlying secret, which never leaves the hardware) are copied to *every* machine, named `~/.ssh/git_signing_key_<model>-<alpha|beta>-<serial>`, e.g. `git_signing_key_Y5C-beta-36628851` for a YubiKey 5C NFC (`ykman info` prints model/serial). These files are never tracked by `~/.dotfiles`.
 
-**A machine that already has its key** (e.g. reinstalling `work` or `home`) just needs the per-machine include pointing at it -- the `git` package's `[include] path = ~/.config/git/gitconfig` picks this up automatically once stowed:
+`ssh/.ssh/config` lists both as `IdentityFile`s unconditionally, so `ssh` (and therefore `git push`/`fetch`) transparently uses whichever key is physically plugged in. Commit *signing* needs one definite default though (`user.signingkey` can't try-and-fall-back like `ssh` does), so that part alone stays a small per-machine, untracked include -- picking which of the two keys this machine reaches for first:
 
 ```sh
+# machine-local, not tracked -- swap to the other filename any time
+# you're signing with the other physical key instead
 mkdir -p ~/.config/git
-cat > ~/.config/git/gitconfig <<'EOF'
-# machine-local git config, not tracked by ~/.dotfiles
-# sets which physical FIDO2 key this machine currently signs with
-
-[user]
-	signingkey = ~/.ssh/git_signing_key_<work|home>
-EOF
+printf '[user]\n\tsigningkey = ~/.ssh/git_signing_key_<model>-<alpha|beta>-<serial>\n' \
+  > ~/.config/git/gitconfig
 ```
 
-**A genuinely new machine/key** needs a key generated and registered in three places:
+(To sign a single commit with the *other* key without changing the default: `git -c user.signingkey=~/.ssh/git_signing_key_<other> commit ...`.)
+
+**A machine that already has both keys' handle files** just needs that one file dropped in -- `git`/`ssh` are already stowed and need nothing else.
+
+**A genuinely new key** (replacing a lost/retired YubiKey) needs generating once and registering in two places -- the only steps that can't be done by `stow`, since they're either hardware-bound or live on GitHub's own servers:
 
 ```sh
-# 1. generate a new hardware-backed key -- prompts for a security-key
-#    touch (and possibly a PIN, depending on the key's own FIDO2 policy)
-ssh-keygen -t ed25519-sk -f ~/.ssh/git_signing_key_<label> -C git-signing-<label>
+# generate -- prompts for a security-key touch (and possibly a PIN,
+# depending on the key's own FIDO2 policy)
+ssh-keygen -t ed25519-sk -f ~/.ssh/git_signing_key_<model>-<alpha|beta>-<serial> \
+  -C "git-signing-<model>-<alpha|beta>-<serial>"
 
-# 2. register the public half for local signature verification
-#    (tracked -- commit and push this from ~/.dotfiles)
-echo "$(git config user.email) $(cat ~/.ssh/git_signing_key_<label>.pub)" \
+# register the public half for local signature verification
+# (tracked -- commit and push this from ~/.dotfiles)
+echo "$(git config user.email) $(cat ~/.ssh/git_signing_key_<...>.pub)" \
   >> ~/.dotfiles/git/.config/git/allowed_signers
-
-# 3. point this machine at it (untracked, per-machine -- same file as above)
-mkdir -p ~/.config/git
-printf '[user]\n\tsigningkey = ~/.ssh/git_signing_key_%s\n' <label> > ~/.config/git/gitconfig
 ```
 
-Then also add a matching `IdentityFile ~/.ssh/git_signing_key_<label>` line to `ssh/.ssh/config` (tracked -- commit and push), and register the same public key on GitHub itself under *Settings → SSH and GPG keys*: once as an **Authentication Key** (needed for `git push`/`fetch` over SSH) and once as a **Signing Key** (needed for the green "Verified" badge on GitHub -- `allowed_signers` only covers local `git log --show-signature` verification, GitHub keeps its own copy).
+Then also add its `IdentityFile` line to `ssh/.ssh/config` (tracked -- commit and push), copy the new handle file to every other machine, and register the same public key on GitHub itself under *Settings → SSH and GPG keys*: once as an **Authentication Key** (needed for `git push`/`fetch` over SSH) and once as a **Signing Key** (needed for the green "Verified" badge -- `allowed_signers` only covers local `git log --show-signature` verification, GitHub keeps its own separate copy).
 
 ## Updating the package set
 
