@@ -41,6 +41,7 @@ Thumbs.db
 .idea
 .vscode
 .claude
+.agents
 .opencode
 AGENTS.md
 CLAUDE.md
