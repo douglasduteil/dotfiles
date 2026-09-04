@@ -18,6 +18,10 @@ export XDG_TEMPLATES_DIR="$HOME/Templates"
 # settings.json, credentials, transcripts, etc. out of ~/.claude
 export CLAUDE_CONFIG_DIR="$HOME/.config/claude"
 
+# GUI PIN prompt for FIDO2/YubiKey SSH signing when no tty is attached
+# (e.g. commits run by Claude Code). Interactive terminal use is unaffected.
+export SSH_ASKPASS="$HOME/.nix-profile/bin/ssh-askpass"
+
 # =================================================================
 #
 # =================================================================

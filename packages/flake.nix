@@ -32,6 +32,7 @@
           oh-my-zsh
           ripgrep
           sops
+          (pkgs.writeShellScriptBin "ssh-askpass" ''exec ${pkgs.x11_ssh_askpass}/libexec/x11-ssh-askpass "$@"'')
           starship
           tree-sitter
           yt-dlp

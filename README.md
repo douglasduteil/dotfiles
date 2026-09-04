@@ -84,7 +84,9 @@ ln -s ~/.config/claude ~/.claude
 
 ## SSH commit signing
 
-`ssh-keygen -K` below, signing a commit, and `ssh -T git@github.com` all need a real interactive terminal -- each prompts for the key's PIN and needs a physical touch, so none of them can be scripted or run non-interactively. If Claude is walking through this README to set up a machine, it can prepare everything up to one of these commands, but has to hand that specific command back to the human to run themselves, then resume for the file-placement/config steps after.
+`ssh-keygen -K` below and `ssh -T git@github.com` need a real interactive terminal -- each prompts for the key's PIN and needs a physical touch, so neither can be scripted or run non-interactively. If Claude is walking through this README to set up a machine, it can prepare everything up to one of these commands, but has to hand that specific command back to the human to run themselves, then resume for the file-placement/config steps after.
+
+Signing a commit is the exception: `SSH_ASKPASS` (set in `zsh/.zshenv`) makes `ssh-keygen -Y sign` fall back to a GUI PIN prompt whenever there's no tty attached -- e.g. Claude Code running `git commit` itself. The human still enters the PIN and touches the key, just through a popup instead of the terminal; a plain interactive `git commit` in a real terminal keeps prompting there as before, since OpenSSH's askpass fallback only fires when there's no tty to use.
 
 Commits are signed with a hardware-backed FIDO2 key (`sk-ssh-ed25519`). There are two physical YubiKeys, `alpha` and `beta` -- **not** one per machine; either one works from any machine, each acting as the other's backup. Locally each is a private-key handle file (the FIDO2 credential wrapper OpenSSH stores on disk -- not the underlying secret, which never leaves the hardware), named `~/.ssh/git_signing_key_<model>-<alpha|beta>-<serial>`, e.g. `git_signing_key_Y5C-beta-36628851` for a YubiKey 5C NFC (`ykman info` prints model/serial). These files are never tracked by `~/.dotfiles`.
 
