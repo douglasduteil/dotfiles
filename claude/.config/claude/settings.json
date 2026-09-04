@@ -1,16 +1,27 @@
 {
-  "theme": "dark",
-  "agentPushNotifEnabled": true,
-  "tui": "fullscreen",
   "env": {
     "SSH_ASKPASS_REQUIRE": "force"
-  },
-  "permissions": {
-    "defaultMode": "auto"
   },
   "attribution": {
     "commit": "",
     "pr": "",
     "sessionUrl": false
+  },
+  "permissions": {
+    "defaultMode": "auto"
+  },
+  "extraKnownMarketplaces": {
+    "ponytail": {
+      "source": {
+        "source": "github",
+        "repo": "DietrichGebert/ponytail"
+      }
+    }
+  },
+  "tui": "fullscreen",
+  "theme": "dark",
+  "agentPushNotifEnabled": true,
+  "enabledPlugins": {
+    "ponytail@ponytail": true
   }
 }
