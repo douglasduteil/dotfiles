@@ -13,11 +13,23 @@ User-level Nix profile for NixOS-WSL machines: stow-managed dotfiles plus a lock
 - `zsh` (stow package) — `~/.zshenv` (XDG vars) and `~/.zshrc` (oh-my-zsh libs/plugins, autosuggestions, syntax highlighting, history search, fzf, starship — all nix-managed, no runtime plugin manager)
 - `claude` (stow package) — `~/.config/claude/settings.json` (theme, attribution trailers off, etc.) and `~/.config/claude/skills/`. `zsh/.zshenv` sets `CLAUDE_CONFIG_DIR` to relocate Claude Code's whole config dir here (settings, credentials, transcripts, caches) instead of `~/.claude` -- only `settings.json` and `skills/` are version-controlled. `~/.claude` itself is kept as a plain symlink to `~/.config/claude` (see Install) so anything that still hardcodes the old path lands on the same live state instead of silently writing to a stale duplicate
 - `packages` (flake, not stowed) — a locked `flake.lock` pinning the exact nixpkgs revision for everything above plus the rest of the CLI toolset; see `packages/flake.nix` for the current list rather than duplicating it here
+- `nixos/configuration.nix` (template, not stowed) — a copy-paste starting point for `/etc/nixos/configuration.nix`: zsh shell, YubiKey USB/IP passthrough, `pcscd`, and the FIDO2/`plugdev` udev fix SSH commit signing depends on. Not stowed because most of it is genuinely per-machine (USB busids, `stateVersion`, the username); see Install
 
 ## Install
 
 ```sh
-git clone -b nixos-wsl --single-branch git@github.com:douglasduteil/dotfiles.git ~/.dotfiles
+git clone -b main --single-branch git@github.com:douglasduteil/dotfiles.git ~/.dotfiles
+
+# Create these as real directories *before* stowing -- if a stow target
+# directory doesn't exist yet, stow folds the whole package subtree into
+# one directory symlink instead of symlinking individual files. For most
+# packages that's fine, but ~/.config/claude and ~/.config/git each also
+# need to hold real, untracked, per-machine files alongside the symlinked
+# ones (Claude Code's credentials/sessions/caches; git's per-machine
+# signingkey include) -- folding would make stow symlink the whole
+# directory into ~/.dotfiles, so anything written there afterward lands
+# physically inside the git working tree instead of staying untracked.
+mkdir -p ~/.config/claude ~/.config/git
 
 # dotfiles: nix.conf/config.nix, git identity, ssh config, neovim config, zsh config, claude settings
 nix-shell -p stow --run 'stow -d ~/.dotfiles -t ~ nix git ssh nvim zsh claude'
@@ -34,12 +46,25 @@ nix --extra-experimental-features "nix-command flakes" profile install ~/.dotfil
 
 `nix-shell -p stow` (rather than `nix profile install nixpkgs#stow`) sidesteps a chicken-and-egg problem: a flake install needs `nix-command`/`flakes` already enabled, which is exactly what the stowed `nix.conf` provides.
 
-Set zsh as the login shell separately, declaratively, in `/etc/nixos/configuration.nix`:
+A few more things need to be declared separately in `/etc/nixos/configuration.nix` -- system-level, not stowed, and (for the YubiKey block) a hard prerequisite for the SSH commit signing section below to work at all. `nixos/configuration.nix` in this repo is a copy-paste template covering all of it (zsh shell, YubiKey USB/IP passthrough, pcscd, and the FIDO2/plugdev udev fix) -- it's not stowed because most of it is genuinely per-machine (USB busids, `stateVersion`, the username), so copy it over and fill in the `<placeholders>`:
 
-```nix
-programs.zsh.enable = true;
-users.users.<you>.shell = pkgs.zsh;
+```sh
+sudo cp /etc/nixos/configuration.nix /etc/nixos/configuration.nix.bak-$(date +%Y%m%d-%H%M%S)   # keep as a safety net, don't delete
+sudo cp ~/.dotfiles/nixos/configuration.nix /etc/nixos/configuration.nix
+sudo $EDITOR /etc/nixos/configuration.nix   # fill in <you>, <busid> (from `usbipd.exe list` on Windows), <nixos-release>
+sudo nixos-rebuild switch
 ```
+
+If a YubiKey was already plugged in *before* this rebuild, the already-created `/dev/hidraw*` nodes won't pick up the new rule on their own -- either replug the key or re-trigger udev:
+
+```sh
+sudo udevadm control --reload
+sudo udevadm trigger --subsystem-match=hidraw
+```
+
+Group membership (`plugdev`) is cached at login, so open a fresh shell (or fully re-login) afterward before relying on it.
+
+**Don't run `claude` at all until after both `mkdir -p ~/.config/claude` and `stow ... claude` above have run, in a shell that has since been restarted** (so the stowed `.zshenv` has actually set `CLAUDE_CONFIG_DIR`). Starting it any earlier makes Claude Code fall back to the old default `~/.claude` location instead of the intended relocated one, on top of the stow-folding risk `mkdir -p` above already heads off.
 
 `CLAUDE_CONFIG_DIR` doesn't migrate an existing install automatically -- on a machine with prior Claude Code state, move it over once, in a fresh shell that already has `CLAUDE_CONFIG_DIR` set:
 
@@ -59,6 +84,8 @@ ln -s ~/.config/claude ~/.claude
 
 ## SSH commit signing
 
+`ssh-keygen -K` below, signing a commit, and `ssh -T git@github.com` all need a real interactive terminal -- each prompts for the key's PIN and needs a physical touch, so none of them can be scripted or run non-interactively. If Claude is walking through this README to set up a machine, it can prepare everything up to one of these commands, but has to hand that specific command back to the human to run themselves, then resume for the file-placement/config steps after.
+
 Commits are signed with a hardware-backed FIDO2 key (`sk-ssh-ed25519`). There are two physical YubiKeys, `alpha` and `beta` -- **not** one per machine; either one works from any machine, each acting as the other's backup. Locally each is a private-key handle file (the FIDO2 credential wrapper OpenSSH stores on disk -- not the underlying secret, which never leaves the hardware), named `~/.ssh/git_signing_key_<model>-<alpha|beta>-<serial>`, e.g. `git_signing_key_Y5C-beta-36628851` for a YubiKey 5C NFC (`ykman info` prints model/serial). These files are never tracked by `~/.dotfiles`.
 
 Both credentials are resident (discoverable) on the hardware, so a machine missing the handle file for a given key doesn't need it copied over by hand -- plug that physical key in and pull it straight from the device instead:
@@ -69,6 +96,8 @@ ssh-keygen -K   # prompts for the key's PIN + a touch; downloads every
 mv id_ed25519_sk_rk ~/.ssh/git_signing_key_<model>-<alpha|beta>-<serial>
 mv id_ed25519_sk_rk.pub ~/.ssh/git_signing_key_<model>-<alpha|beta>-<serial>.pub
 ```
+
+`ssh-keygen -K` downloads *every* resident credential on the plugged-in key, not just the git-signing one -- if the same physical YubiKey also holds other resident keys (e.g. a separate SSH-auth key for another service), it saves those too, under names like `id_ed25519_sk_rk_<label>`. Match each recovered `.pub` file's base64 blob against the entry already in `~/.dotfiles/git/.config/git/allowed_signers` to identify which downloaded file is actually the git-signing key before renaming it.
 
 Run it once per physical key (swap in the other YubiKey and re-run to recover that one too). `git`/`ssh` are already stowed and need nothing else once the file's in place.
 

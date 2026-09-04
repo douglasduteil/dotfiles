@@ -1,0 +1,66 @@
+# Template for /etc/nixos/configuration.nix on a NixOS-WSL machine using
+# this dotfiles repo. Not stowed -- most of the block below is genuinely
+# per-machine (USB busids, stateVersion, the username), so this is a
+# copy-paste starting point, not a symlink target. Copy it to
+# /etc/nixos/configuration.nix, fill in the <placeholders>, then
+# `sudo nixos-rebuild switch`.
+#
+# See README.md's "Install" section for how this maps to the rest of the
+# dotfiles setup, and "SSH commit signing" for why the FIDO2/udev block
+# below is required.
+
+{ config, lib, pkgs, ... }:
+
+{
+  imports = [
+    # include NixOS-WSL modules
+    <nixos-wsl/modules>
+  ];
+
+  wsl.enable = true;
+  wsl.defaultUser = "<you>";
+
+  # USB/IP passthrough for the YubiKey(s). Busid is tied to the physical
+  # Windows USB port, not the device -- read it back with `usbipd.exe
+  # list` on Windows (look for the Yubico VID:PID, 1050:xxxx) after
+  # attaching. List every external port you might plug a YubiKey into on
+  # this machine, so either physical key auto-attaches from any of them
+  # without this needing to be touched again -- update it if it ever
+  # drifts (moving to a different physical port changes the busid).
+  # Auto-attaches on boot via the usbip-auto-attach systemd service
+  # nixos-wsl provides.
+  wsl.usbip.enable = true;
+  wsl.usbip.autoAttach = [ "<busid>" ];
+
+  # Smartcard daemon so gpg's scdaemon can talk to the YubiKey once attached.
+  services.pcscd.enable = true;
+
+  # udev rules so the FIDO2 HID interface (SSH signing/auth, separate from
+  # the CCID/smartcard interface pcscd handles above) is usable without
+  # root. libfido2's own rules only TAG+="security-device" -- they don't
+  # chgrp the hidraw node -- and WSL sessions have no systemd-logind seat,
+  # so the usual uaccess ACL fallback (which auto-grants the console user
+  # access on a real desktop) never fires either. So: define plugdev
+  # explicitly and add the missing rule ourselves.
+  services.udev.packages = [ pkgs.libfido2 ];
+  services.udev.extraRules = ''
+    TAG=="security-device", GROUP="plugdev", MODE="0660"
+  '';
+  users.groups.plugdev = { };
+  users.users.<you>.extraGroups = [ "plugdev" ];
+
+  # zsh config lives in ~/.dotfiles (stow-managed). programs.zsh.enable
+  # wires up nix's PATH/directories into zsh's system-level init --
+  # required by NixOS's own assertion, not just a formality (without it,
+  # login as a zsh user can break).
+  programs.zsh.enable = true;
+  users.users.<you>.shell = pkgs.zsh;
+
+  # This value determines the NixOS release from which the default
+  # settings for stateful data, like file locations and database versions
+  # on your system were taken. Do NOT copy this value from another
+  # machine -- set it once, to whatever release you're installing with,
+  # then leave it alone forever. Before ever changing it, read
+  # `man configuration.nix` / https://nixos.org/nixos/options.html.
+  system.stateVersion = "<nixos-release>"; # e.g. "26.05"
+}
