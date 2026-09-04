@@ -8,6 +8,7 @@ User-level Nix profile for NixOS-WSL machines: stow-managed dotfiles plus a lock
 
 - `nix` (stow package) — `~/.config/nix/nix.conf` (enables `nix-command`/`flakes`) and `~/.config/nixpkgs/config.nix` (`allowUnfree`)
 - `git` (stow package) — `~/.gitconfig`, `~/.gitignore_global`, and `~/.config/git/allowed_signers` (FIDO2 SSH signing verification; `user.signingkey` itself is set per-machine via the untracked `~/.config/git/gitconfig` include)
+- `ssh` (stow package) — `~/.ssh/config`, pointing github.com at both the work and home FIDO2 signing keys via `IdentityFile` (`IdentitiesOnly yes`); listing both unconditionally is what makes the one file work on every machine, since ssh silently skips whichever IdentityFile doesn't exist locally. No key material lives here -- only paths, and the actual private/public key pairs stay untracked per machine
 - `nvim` (stow package) — LazyVim config vendored from [LazyVim/starter](https://github.com/LazyVim/starter) into `~/.config/nvim`
 - `zsh` (stow package) — `~/.zshenv` (XDG vars) and `~/.zshrc` (oh-my-zsh libs/plugins, autosuggestions, syntax highlighting, history search, fzf, starship — all nix-managed, no runtime plugin manager)
 - `claude` (stow package) — `~/.config/claude/settings.json` (theme, attribution trailers off, etc.) and `~/.config/claude/skills/`. `zsh/.zshenv` sets `CLAUDE_CONFIG_DIR` to relocate Claude Code's whole config dir here (settings, credentials, transcripts, caches) instead of `~/.claude` -- only `settings.json` and `skills/` are version-controlled. `~/.claude` itself is kept as a plain symlink to `~/.config/claude` (see Install) so anything that still hardcodes the old path lands on the same live state instead of silently writing to a stale duplicate
@@ -18,8 +19,8 @@ User-level Nix profile for NixOS-WSL machines: stow-managed dotfiles plus a lock
 ```sh
 git clone -b nixos-wsl --single-branch git@github.com:douglasduteil/dotfiles.git ~/.dotfiles
 
-# dotfiles: nix.conf/config.nix, git identity, neovim config, zsh config, claude settings
-nix-shell -p stow --run 'stow -d ~/.dotfiles -t ~ nix git nvim zsh claude'
+# dotfiles: nix.conf/config.nix, git identity, ssh config, neovim config, zsh config, claude settings
+nix-shell -p stow --run 'stow -d ~/.dotfiles -t ~ nix git ssh nvim zsh claude'
 
 # packages: pinned via packages/flake.lock
 nix profile install ~/.dotfiles/packages#default
