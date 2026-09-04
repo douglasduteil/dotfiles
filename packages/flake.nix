@@ -21,6 +21,7 @@
           fd
           fzf
           gcc
+          gh
           git
           git-open
           jq
