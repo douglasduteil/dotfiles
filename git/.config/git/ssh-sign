@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+# gpg.ssh.program wrapper: loads the commit-signing FIDO2 key into a
+# dedicated, long-lived ssh-agent (separate from yubikey-agent, which
+# holds unrelated PIV identities) before delegating to ssh-keygen, so
+# the PIN is entered once per login instead of once per commit --
+# only a touch is needed for each individual signature after that.
+#
+# Only kicks in for `-Y sign`; every other ssh-keygen invocation
+# (verify, etc.) passes straight through.
+set -euo pipefail
+
+if [[ "${1:-}" != "-Y" || "${2:-}" != "sign" ]]; then
+  exec ssh-keygen "$@"
+fi
+
+pubkey=""
+for ((i = 1; i <= $#; i++)); do
+  if [[ "${!i}" == "-f" ]]; then
+    j=$((i + 1))
+    pubkey="${!j}"
+    break
+  fi
+done
+privkey="${pubkey%.pub}"
+
+sock="${XDG_RUNTIME_DIR:-/tmp}/git-signing-agent.sock"
+
+if ! SSH_AUTH_SOCK="$sock" ssh-add -l >/dev/null 2>&1; then
+  [[ -S "$sock" ]] || ssh-agent -a "$sock" >/dev/null
+  if [[ -n "$privkey" && -f "$privkey" ]]; then
+    SSH_AUTH_SOCK="$sock" ssh-add "$privkey"
+  fi
+fi
+
+exec env SSH_AUTH_SOCK="$sock" ssh-keygen "$@"

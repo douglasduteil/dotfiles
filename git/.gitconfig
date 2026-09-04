@@ -237,6 +237,7 @@
   format = ssh
 [gpg "ssh"]
   allowedSignersFile = ~/.config/git/allowed_signers
+  program = ~/.config/git/ssh-sign
 [interactive]
   diffFilter = delta --color-only
 [delta]
