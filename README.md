@@ -59,7 +59,18 @@ ln -s ~/.config/claude ~/.claude
 
 ## SSH commit signing
 
-Commits are signed with a hardware-backed FIDO2 key (`sk-ssh-ed25519`). There are two physical YubiKeys, `alpha` and `beta` -- **not** one per machine; either one works from any machine, each acting as the other's backup. Both keys' private-key handle files (the FIDO2 credential wrapper OpenSSH stores on disk -- not the underlying secret, which never leaves the hardware) are copied to *every* machine, named `~/.ssh/git_signing_key_<model>-<alpha|beta>-<serial>`, e.g. `git_signing_key_Y5C-beta-36628851` for a YubiKey 5C NFC (`ykman info` prints model/serial). These files are never tracked by `~/.dotfiles`.
+Commits are signed with a hardware-backed FIDO2 key (`sk-ssh-ed25519`). There are two physical YubiKeys, `alpha` and `beta` -- **not** one per machine; either one works from any machine, each acting as the other's backup. Locally each is a private-key handle file (the FIDO2 credential wrapper OpenSSH stores on disk -- not the underlying secret, which never leaves the hardware), named `~/.ssh/git_signing_key_<model>-<alpha|beta>-<serial>`, e.g. `git_signing_key_Y5C-beta-36628851` for a YubiKey 5C NFC (`ykman info` prints model/serial). These files are never tracked by `~/.dotfiles`.
+
+Both credentials are resident (discoverable) on the hardware, so a machine missing the handle file for a given key doesn't need it copied over by hand -- plug that physical key in and pull it straight from the device instead:
+
+```sh
+ssh-keygen -K   # prompts for the key's PIN + a touch; downloads every
+                 # resident credential on the plugged-in key into $PWD
+mv id_ed25519_sk_rk ~/.ssh/git_signing_key_<model>-<alpha|beta>-<serial>
+mv id_ed25519_sk_rk.pub ~/.ssh/git_signing_key_<model>-<alpha|beta>-<serial>.pub
+```
+
+Run it once per physical key (swap in the other YubiKey and re-run to recover that one too). `git`/`ssh` are already stowed and need nothing else once the file's in place.
 
 `ssh/.ssh/config` lists both as `IdentityFile`s unconditionally, so `ssh` (and therefore `git push`/`fetch`) transparently uses whichever key is physically plugged in. Commit *signing* needs one definite default though (`user.signingkey` can't try-and-fall-back like `ssh` does), so that part alone stays a small per-machine, untracked include -- picking which of the two keys this machine reaches for first:
 
@@ -73,14 +84,13 @@ printf '[user]\n\tsigningkey = ~/.ssh/git_signing_key_<model>-<alpha|beta>-<seri
 
 (To sign a single commit with the *other* key without changing the default: `git -c user.signingkey=~/.ssh/git_signing_key_<other> commit ...`.)
 
-**A machine that already has both keys' handle files** just needs that one file dropped in -- `git`/`ssh` are already stowed and need nothing else.
-
 **A genuinely new key** (replacing a lost/retired YubiKey) needs generating once and registering in two places -- the only steps that can't be done by `stow`, since they're either hardware-bound or live on GitHub's own servers:
 
 ```sh
-# generate -- prompts for a security-key touch (and possibly a PIN,
+# generate -- -O resident is what makes the ssh-keygen -K recovery above
+# work later; prompts for a security-key touch (and possibly a PIN,
 # depending on the key's own FIDO2 policy)
-ssh-keygen -t ed25519-sk -f ~/.ssh/git_signing_key_<model>-<alpha|beta>-<serial> \
+ssh-keygen -t ed25519-sk -O resident -f ~/.ssh/git_signing_key_<model>-<alpha|beta>-<serial> \
   -C "git-signing-<model>-<alpha|beta>-<serial>"
 
 # register the public half for local signature verification
