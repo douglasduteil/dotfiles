@@ -2,8 +2,12 @@
   "theme": "dark",
   "agentPushNotifEnabled": true,
   "tui": "fullscreen",
+  "permissions": {
+    "defaultMode": "auto"
+  },
   "attribution": {
     "commit": "",
-    "pr": ""
+    "pr": "",
+    "sessionUrl": false
   }
 }
