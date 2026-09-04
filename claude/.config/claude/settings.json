@@ -2,6 +2,9 @@
   "theme": "dark",
   "agentPushNotifEnabled": true,
   "tui": "fullscreen",
+  "env": {
+    "SSH_ASKPASS_REQUIRE": "force"
+  },
   "permissions": {
     "defaultMode": "auto"
   },
