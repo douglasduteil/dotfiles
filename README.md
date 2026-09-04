@@ -10,7 +10,7 @@ User-level Nix profile for NixOS-WSL machines: stow-managed dotfiles plus a lock
 - `git` (stow package) — `~/.gitconfig`, `~/.gitignore_global`, and `~/.config/git/allowed_signers` (FIDO2 SSH signing verification; `user.signingkey` itself is set per-machine via the untracked `~/.config/git/gitconfig` include)
 - `nvim` (stow package) — LazyVim config vendored from [LazyVim/starter](https://github.com/LazyVim/starter) into `~/.config/nvim`
 - `zsh` (stow package) — `~/.zshenv` (XDG vars) and `~/.zshrc` (oh-my-zsh libs/plugins, autosuggestions, syntax highlighting, history search, fzf, starship — all nix-managed, no runtime plugin manager)
-- `claude` (stow package) — `~/.config/claude/settings.json` (theme, attribution trailers off, etc.). `zsh/.zshenv` sets `CLAUDE_CONFIG_DIR` to relocate Claude Code's whole config dir here (settings, credentials, transcripts, caches) instead of `~/.claude` -- only `settings.json` is version-controlled
+- `claude` (stow package) — `~/.config/claude/settings.json` (theme, attribution trailers off, etc.) and `~/.config/claude/skills/`. `zsh/.zshenv` sets `CLAUDE_CONFIG_DIR` to relocate Claude Code's whole config dir here (settings, credentials, transcripts, caches) instead of `~/.claude` -- only `settings.json` and `skills/` are version-controlled. `~/.claude` itself is kept as a plain symlink to `~/.config/claude` (see Install) so anything that still hardcodes the old path lands on the same live state instead of silently writing to a stale duplicate
 - `packages` (flake, not stowed) — a locked `flake.lock` pinning the exact nixpkgs revision for everything above plus the rest of the CLI toolset; see `packages/flake.nix` for the current list rather than duplicating it here
 
 ## Install
@@ -48,6 +48,13 @@ cp -a ~/.claude.json ~/.config/claude/.claude.json   # this one lives in $HOME, 
 ```
 
 Do this before first starting `claude` in the new shell -- otherwise it finds no `.claude.json` at the new path and silently starts a fresh one, and the real state has to be copied over it afterward.
+
+Then retire the old `~/.claude` directory in favor of a symlink, so any tool that still looks there transparently hits the same live state (stow can't express this itself -- it only mirrors package content into place, and the target here is `~/.config/claude`, not repo content):
+
+```sh
+mv ~/.claude ~/.claude.bak-$(date +%Y%m%d-%H%M%S)   # keep as a safety net, don't delete
+ln -s ~/.config/claude ~/.claude
+```
 
 ## Updating the package set
 
