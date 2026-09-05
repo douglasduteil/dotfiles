@@ -30,7 +30,7 @@
   # Auto-attaches on boot via the usbip-auto-attach systemd service
   # nixos-wsl provides.
   wsl.usbip.enable = true;
-  wsl.usbip.autoAttach = [ "<busid>" ];
+  wsl.usbip.autoAttach = [ "<busid1>" "<busid2>" "<busid3>" ];
 
   # nixos-wsl's usbip module ships modprobe but never loads vhci-hcd itself,
   # so without this the auto-attach service retries every ~2s forever
@@ -49,10 +49,13 @@
   # (ykman info, ykman fido info, etc.) is host-level tooling, not something
   # tied to a per-user profile, so it lives here rather than in
   # packages/flake.nix.
-  environment.systemPackages = [ pkgs.yubikey-manager ];
+  environment.systemPackages = [ pkgs.yubikey-manager pkgs.podman-compose ];
 
   # Rootless container runtime. dockerCompat aliases `docker` to podman for
-  # tools that shell out to the docker CLI by name.
+  # tools that shell out to the docker CLI by name. podman's `compose`
+  # subcommand (and thus the aliased `docker compose`) shells out to a
+  # podman-compose/docker-compose binary found on PATH -- pkgs.podman-compose
+  # in systemPackages above supplies it.
   virtualisation.podman = {
     enable = true;
     dockerCompat = true;
