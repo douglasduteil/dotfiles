@@ -134,11 +134,21 @@ Then also add its `IdentityFile` line to `ssh/.ssh/config` (tracked -- commit an
 
 ## Updating the package set
 
-Edit `packages/flake.nix`, then from `packages/`:
+Edit `packages/flake.nix`, then from anywhere (no `cd` into `packages/` needed):
 
 ```sh
-nix flake lock --update-input nixpkgs   # bump to latest nixpkgs-unstable
-nix profile upgrade default             # apply on this machine
+nix flake lock ~/.dotfiles/packages --update-input nixpkgs   # bump to latest nixpkgs-unstable
+nix profile upgrade packages                                 # apply on this machine
+```
+
+The name to upgrade is `packages` (derived from the `packages/` dirname at install time), not `default` (the flake *attribute* used only at install) -- check with `nix profile list` if unsure.
+
+`nix profile upgrade` has no `pacman -Syu`-style confirm prompt -- it just applies. The nix-profile way to review before keeping a change is generations + rollback instead of a pre-apply prompt:
+
+```sh
+nix profile upgrade packages  # applies immediately, creates a new profile generation
+nix profile diff-closures     # review what actually changed, generation by generation
+nix profile rollback          # undo -- back to the previous generation, if you don't like it
 ```
 
 ## Inspired by
