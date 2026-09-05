@@ -32,5 +32,6 @@
   "askUserQuestionTimeout": "never",
   "tui": "fullscreen",
   "theme": "dark",
-  "agentPushNotifEnabled": true
+  "agentPushNotifEnabled": true,
+  "autoMemoryEnabled": false
 }
