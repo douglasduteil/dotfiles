@@ -96,6 +96,22 @@ describe("reducer", () => {
     expect(query(state, { project: "/repo", clock: 0 })).toEqual([]);
   });
 
+  test("re-indexing preserves createdAt from first index, not each reindex", () => {
+    let state = reduce(initialState, {
+      type: "INDEX",
+      entry: indexed({ id: "1", sourceSessionId: "cc-1", createdAt: 100 }),
+    });
+
+    state = reduce(state, {
+      type: "INDEX",
+      entry: indexed({ id: "1", sourceSessionId: "cc-1", createdAt: 999, extractedText: "updated" }),
+    });
+
+    const entry = state.entries.find((e) => e.sourceSessionId === "cc-1");
+    expect(entry?.createdAt).toBe(100);
+    expect(entry?.extractedText).toBe("updated");
+  });
+
   test("pin: never flagged stale regardless of clock", () => {
     let state = withEntries(indexed({ id: "1", sourceSessionId: "cc-1", sessionModifiedAt: 0 }));
     state = reduce(state, { type: "PIN", sourceTool: "claude-code", sourceSessionId: "cc-1" });

@@ -40,7 +40,7 @@ export function reduce(state: State, action: Action): State {
       const previous = state.entries.find((e) => isSameSession(e, action.entry));
       const rest = state.entries.filter((e) => !isSameSession(e, action.entry));
       const entry = previous
-        ? { ...action.entry, rejected: previous.rejected, pinned: previous.pinned }
+        ? { ...action.entry, createdAt: previous.createdAt, rejected: previous.rejected, pinned: previous.pinned }
         : action.entry;
       return { entries: [...rest, entry] };
     }
@@ -79,16 +79,20 @@ function candidates(state: State, project: string, scope: Scope | undefined): En
   });
 }
 
-function withStale(entry: Entry, clock: number): QueryResultEntry {
+// Exported so a real storage layer can attach the staleness flag to rows
+// it ranked itself (e.g. via SQLite's FTS5 bm25), without duplicating
+// this rule as a second, potentially-diverging copy.
+export function withStale(entry: Entry, clock: number): QueryResultEntry {
   return {
     entry,
     stale: !entry.pinned && clock - entry.sessionModifiedAt > STALENESS_THRESHOLD_MS,
   };
 }
 
-// ponytail: naive substring-count relevance + linear recency decay,
-// not FTS5. Good enough for the pure reducer seam; a real query()
-// shell swaps this for SQLite's FTS5 rank once storage exists.
+// ponytail: naive substring-count relevance + linear recency decay, not
+// FTS5. Only used by the no-storage pure-reducer path (in-memory tests,
+// fixtures). A real query() shell ranks with SQLite's own FTS5 bm25()
+// instead — see recencyBoost, exported for exactly that combination.
 function relevance(text: string, term: string): number {
   const haystack = text.toLowerCase();
   return term
@@ -98,7 +102,7 @@ function relevance(text: string, term: string): number {
     .reduce((score, word) => score + (haystack.includes(word) ? 1 : 0), 0);
 }
 
-function recencyBoost(sessionModifiedAt: number, clock: number): number {
+export function recencyBoost(sessionModifiedAt: number, clock: number): number {
   const ageMs = Math.max(0, clock - sessionModifiedAt);
   return Math.max(0, 1 - ageMs / STALENESS_THRESHOLD_MS);
 }
