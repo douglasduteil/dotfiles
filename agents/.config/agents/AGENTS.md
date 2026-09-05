@@ -4,7 +4,7 @@ Bootstrap notes for any AI coding agent (Claude Code, opencode) working in this 
 
 ## Session memory
 
-Cross-tool session handoff and recall is designed in `x-memory/spec/` — not implemented yet, spec only. Start at `x-memory/spec/README.md` for how recall is meant to work once it exists. Until then there's no automatic cross-tool memory: if you need what happened in the other tool, ask the user.
+Cross-tool session handoff and recall is designed in `x-memory/spec/` (start at `x-memory/spec/README.md`). The pure reducer (`index`/`query`/`reject`/`pin`) is implemented and tested in `x-memory/src/`, but nothing wires it into either tool yet — no hooks, no storage, no CLI. Until that lands there's no automatic cross-tool memory: if you need what happened in the other tool, ask the user.
 
 ## Workflow
 
