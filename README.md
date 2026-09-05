@@ -11,7 +11,11 @@ User-level Nix profile for NixOS-WSL machines: stow-managed dotfiles plus a lock
 - `ssh` (stow package) — `~/.ssh/config` and `~/.ssh/update-signing-key-symlink`. A `Match exec` block runs the script before auth to detect (via `ykman list --serials`, no touch needed) which of the two FIDO2 keys is physically plugged in, and points `~/.ssh/git_signing_key_active` at its handle file; `IdentityFile` then offers only that one. Avoids `ssh` blindly trying (and touching) the unplugged key first. No key material lives here -- only paths and serials (see SSH commit signing)
 - `nvim` (stow package) — LazyVim config vendored from [LazyVim/starter](https://github.com/LazyVim/starter) into `~/.config/nvim`
 - `zsh` (stow package) — `~/.zshenv` (XDG vars) and `~/.zshrc` (oh-my-zsh libs/plugins, autosuggestions, syntax highlighting, history search, fzf, starship — all nix-managed, no runtime plugin manager)
-- `claude` (stow package) — `~/.config/claude/settings.json` (theme, attribution trailers off, etc.) and `~/.config/claude/skills/`. `zsh/.zshenv` sets `CLAUDE_CONFIG_DIR` to relocate Claude Code's whole config dir here (settings, credentials, transcripts, caches) instead of `~/.claude` -- only `settings.json` and `skills/` are version-controlled. `~/.claude` itself is kept as a plain symlink to `~/.config/claude` (see Install) so anything that still hardcodes the old path lands on the same live state instead of silently writing to a stale duplicate
+- `agents` (stow package) — config for Claude Code, opencode, and skills shared between them, grouped together since none of them are stowed independently of each other:
+  - `~/.config/agents/skills/` — canonical home for skills the user authors (e.g. `commit-message`). This is the one real copy; everything else reaches it through a symlink or a scan, never a duplicate.
+  - `~/.config/claude/settings.json` (theme, attribution trailers off, etc.) and `~/.config/claude/skills` — the latter is a **tracked symlink** (`-> ../agents/skills`), not a real directory, so it's easy to mistake for a broken checkout; it's deliberate. `zsh/.zshenv` sets `CLAUDE_CONFIG_DIR` to relocate Claude Code's whole config dir here (settings, credentials, transcripts, caches) instead of `~/.claude` -- only `settings.json` and `skills` are version-controlled. `~/.claude` itself is kept as a plain symlink to `~/.config/claude` (see Install) so anything that still hardcodes the old path lands on the same live state instead of silently writing to a stale duplicate
+  - `~/.config/opencode/opencode.jsonc` — opencode's own config (XDG default location, no relocation needed). Declares an explicit `skills.paths` pointing at `~/.config/agents/skills` plus each installed Claude Code plugin's skill directory (ponytail, caveman, mattpocock-skills, arbor, superpowers) — pointed at each plugin's parent dir, one level above its version/hash-pinned subdir, so a `claude plugin update` can't silently break the path (opencode's skill loader scans recursively). `~/.config/opencode` also holds real, untracked, per-machine files (its own plugin `node_modules/`, `package.json`, `package-lock.json`) alongside the stowed config, same reasoning as `~/.config/claude` above. **Known issue**: opencode's multi-path skill scan has been observed non-deterministic — combining just two plugin dirs returns a different, incomplete skill count on different runs. This looks like a bug in opencode itself; `opencode debug skill` is the way to check what it currently sees
+  - `~/.agents -> ~/.config/agents` (see Install) — a neutral, whole-dir symlink mirroring the `~/.claude` one above, for any future tool that adopts the `~/.agents` convention. Not needed by opencode itself (already covered by `~/.claude/skills` and the explicit `skills.paths` above); Claude Code doesn't read it at all
 - `packages` (flake, not stowed) — a locked `flake.lock` pinning the exact nixpkgs revision for everything above plus the rest of the CLI toolset; see `packages/flake.nix` for the current list rather than duplicating it here
 - `nixos/configuration.nix` (template, not stowed) — a copy-paste starting point for `/etc/nixos/configuration.nix`: zsh shell, YubiKey USB/IP passthrough, `pcscd`, and the FIDO2/`plugdev` udev fix SSH commit signing depends on. Not stowed because most of it is genuinely per-machine (USB busids, `stateVersion`, the username); see Install
 
@@ -20,22 +24,39 @@ User-level Nix profile for NixOS-WSL machines: stow-managed dotfiles plus a lock
 ```sh
 git clone -b main --single-branch git@github.com:douglasduteil/dotfiles.git ~/.dotfiles
 
-# Create these as real directories *before* stowing -- if a stow target
-# directory doesn't exist yet, stow folds the whole package subtree into
-# one directory symlink instead of symlinking individual files. For most
-# packages that's fine, but ~/.config/claude and ~/.config/git each also
-# need to hold real, untracked, per-machine files alongside the symlinked
-# ones (Claude Code's credentials/sessions/caches; git's per-machine
-# signingkey include) -- folding would make stow symlink the whole
-# directory into ~/.dotfiles, so anything written there afterward lands
-# physically inside the git working tree instead of staying untracked.
-mkdir -p ~/.config/claude ~/.config/git
-
-# dotfiles: nix.conf/config.nix, git identity, ssh config, neovim config, zsh config, claude settings
-nix-shell -p stow --run 'stow -d ~/.dotfiles -t ~ nix git ssh nvim zsh claude'
+# Stows every package and pre-creates the real (not folded) target
+# directories that also hold untracked, per-machine files -- rerunning
+# this any time (new machine, new package, pulled changes) is safe.
+~/.dotfiles/configure.sh   # needs `stow`; falls back to a one-liner nix-shell hint if missing
 
 # packages: pinned via packages/flake.lock
 nix profile install ~/.dotfiles/packages#default
+```
+
+`configure.sh` is just the idempotent version of:
+
+```sh
+# Create these as real directories *before* stowing -- if a stow target
+# directory doesn't exist yet, stow folds the whole package subtree into
+# one directory symlink instead of symlinking individual files. For most
+# packages that's fine, but ~/.config/claude, ~/.config/git and
+# ~/.config/opencode each also need to hold real, untracked, per-machine
+# files alongside the symlinked ones (Claude Code's credentials/sessions/
+# caches; git's per-machine signingkey include; opencode's own plugin
+# node_modules/package.json) -- folding would make stow symlink the whole
+# directory into ~/.dotfiles, so anything written there afterward lands
+# physically inside the git working tree instead of staying untracked.
+# ~/.config/agents holds nothing untracked (yet), so it's left to fold.
+mkdir -p ~/.config/claude ~/.config/git ~/.config/opencode
+
+# dotfiles: nix.conf/config.nix, git identity, ssh config, neovim config, zsh config, agents config (claude+opencode+shared skills)
+nix-shell -p stow --run 'stow -d ~/.dotfiles -t ~ -R nix git ssh nvim zsh agents'
+
+# ~/.claude and ~/.agents as plain symlinks to their ~/.config counterparts,
+# so anything that still hardcodes the old/neutral path lands on the same
+# live state (see below)
+ln -sfn ~/.config/claude ~/.claude
+ln -sfn ~/.config/agents ~/.agents
 ```
 
 On a machine that hasn't stowed `nix` yet (so `nix-command`/`flakes` aren't enabled), run the package install with the flags inline instead:
@@ -64,7 +85,7 @@ sudo udevadm trigger --subsystem-match=hidraw
 
 Group membership (`plugdev`) is cached at login, so open a fresh shell (or fully re-login) afterward before relying on it.
 
-**Don't run `claude` at all until after both `mkdir -p ~/.config/claude` and `stow ... claude` above have run, in a shell that has since been restarted** (so the stowed `.zshenv` has actually set `CLAUDE_CONFIG_DIR`). Starting it any earlier makes Claude Code fall back to the old default `~/.claude` location instead of the intended relocated one, on top of the stow-folding risk `mkdir -p` above already heads off.
+**Don't run `claude` at all until after both `mkdir -p ~/.config/claude` and `stow ... agents` above have run, in a shell that has since been restarted** (so the stowed `.zshenv` has actually set `CLAUDE_CONFIG_DIR`). Starting it any earlier makes Claude Code fall back to the old default `~/.claude` location instead of the intended relocated one, on top of the stow-folding risk `mkdir -p` above already heads off.
 
 `CLAUDE_CONFIG_DIR` doesn't migrate an existing install automatically -- on a machine with prior Claude Code state, move it over once, in a fresh shell that already has `CLAUDE_CONFIG_DIR` set:
 

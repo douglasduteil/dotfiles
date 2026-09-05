@@ -29,6 +29,7 @@
       }
     }
   },
+  "askUserQuestionTimeout": "never",
   "tui": "fullscreen",
   "theme": "dark",
   "agentPushNotifEnabled": true
