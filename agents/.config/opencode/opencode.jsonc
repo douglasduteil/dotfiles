@@ -9,7 +9,6 @@
     "paths": [
       "~/.config/agents/skills",
       "~/.config/claude/plugins/cache/claude-plugins-official/mattpocock-skills",
-      "~/.config/claude/plugins/cache/claude-plugins-official/superpowers",
       "~/.config/claude/plugins/cache/ponytail/ponytail",
       "~/.config/claude/plugins/cache/caveman/caveman"
     ]
