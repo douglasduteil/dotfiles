@@ -67,6 +67,9 @@ export interface QueryParams {
 export interface QueryResultEntry {
   entry: Entry;
   stale: boolean;
+  // Set only by the real SQLite-backed store's FTS5 search (storage.ts);
+  // the in-memory query() below has no FTS5 snippet() to draw from.
+  snippet?: string;
 }
 
 // Global-scoped entries are retrievable from any project (see two-tier

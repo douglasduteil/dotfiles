@@ -51,14 +51,23 @@ async function main() {
         console.log("No recap found.");
         break;
       }
-      for (const { entry, stale } of results) {
+      for (const { entry, stale, snippet } of results) {
         const staleTag = stale ? " [stale]" : "";
         console.log(
           `- ${entry.id} (${entry.sourceTool}, ${new Date(entry.sessionModifiedAt).toISOString()})${staleTag}`,
         );
-        console.log(entry.extractedText.slice(0, 500));
+        console.log(snippet ?? entry.extractedText.slice(0, 500));
       }
       break;
+    }
+    case "hook": {
+      const [tool, event] = args;
+      if (tool === "claude-code" && event === "SessionStart") {
+        await import("./hooks/claude_code_session_start");
+        return;
+      }
+      console.error(`Unsupported hook "${tool} ${event}"`);
+      process.exit(1);
     }
     case "reject":
     case "pin": {

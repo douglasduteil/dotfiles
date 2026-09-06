@@ -117,6 +117,18 @@ describe("storage", () => {
     rmSync(join(nestedPath, "..", ".."), { recursive: true, force: true });
   });
 
+  test("search returns a snippet highlighting the matched term, not the doc head", () => {
+    const padding = "irrelevant filler text ".repeat(50);
+    store.upsert({
+      type: "INDEX",
+      entry: indexed({ id: "1", sourceSessionId: "cc-1", extractedText: `${padding}found the trap here${padding}` }),
+    });
+
+    const [result] = store.query({ project: "/repo", searchTerm: "trap", clock: 0 });
+
+    expect(result?.snippet).toContain(">>>trap<<<");
+  });
+
   test("search respects scope alongside FTS5 ranking", () => {
     store.upsert({
       type: "INDEX",

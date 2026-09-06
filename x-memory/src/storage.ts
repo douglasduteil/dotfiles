@@ -168,10 +168,11 @@ export function openStore(dbPath: string): Store {
       // real, stored data (see the ponytail note on reducer.ts's naive
       // relevance(), which stays only for the in-memory/no-storage path).
       const rows = db
-        .query<Row & { rank: number }, (string | number)[]>(`
+        .query<Row & { rank: number; snippet: string }, (string | number)[]>(`
           SELECT ${ROW_COLUMNS.split(", ")
             .map((c) => `e.${c}`)
-            .join(", ")}, bm25(entries_fts) AS rank
+            .join(", ")}, bm25(entries_fts) AS rank,
+            snippet(entries_fts, 1, '>>>', '<<<', '…', 32) AS snippet
           FROM entries_fts
           JOIN entries e ON e.id = entries_fts.id
           WHERE entries_fts MATCH ? AND ${candidateFilter(params.scope, "e")}
@@ -181,10 +182,11 @@ export function openStore(dbPath: string): Store {
       return rows
         .map((row) => ({
           entry: rowToEntry(row),
+          snippet: row.snippet,
           score: -row.rank + recencyBoost(row.session_modified_at, params.clock),
         }))
         .sort((a, b) => b.score - a.score)
-        .map((r) => withStale(r.entry, params.clock));
+        .map((r) => ({ ...withStale(r.entry, params.clock), snippet: r.snippet }));
     },
     rollup(params) {
       return reducerRollup({ entries: loadCandidates(params.project, params.scope) }, params);
