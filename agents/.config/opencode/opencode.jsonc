@@ -3,6 +3,7 @@
   "env": {
     "SSH_ASKPASS_REQUIRE": "force"
   },
+  "share": "disabled",
   // Explicit so sharing doesn't quietly depend on the ~/.claude symlink
   // (that symlink's own purpose is unrelated legacy-path compat).
   // Plugin paths point at the plugin's parent dir, one level above the

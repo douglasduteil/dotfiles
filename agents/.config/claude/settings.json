@@ -1,6 +1,9 @@
 {
   "env": {
-    "SSH_ASKPASS_REQUIRE": "force"
+    "SSH_ASKPASS_REQUIRE": "force",
+    "DISABLE_TELEMETRY": "1",
+    "DISABLE_ERROR_REPORTING": "1",
+    "CLAUDE_CODE_DISABLE_NONESSENTIAL_TRAFFIC": "1"
   },
   "attribution": {
     "commit": "",
@@ -16,6 +19,8 @@
       "Edit(//home/nixos/.dotfiles/.agents/memory/**)"
     ]
   },
+  "feedbackDrafts": "off",
+  "feedbackSurveyRate": 0,
   "enabledPlugins": {
     "ponytail@ponytail": true,
     "caveman@caveman": true,
@@ -41,7 +46,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "bun $HOME/.dotfiles/x-memory/src/hooks/claude-code-session-start.ts",
+            "command": "x-memory hook claude-code SessionStart",
             "timeout": 10
           }
         ]
