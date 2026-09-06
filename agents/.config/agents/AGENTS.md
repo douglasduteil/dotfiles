@@ -15,20 +15,9 @@ On session start, look for `index.md` at the global path and at the project's pa
 
 ### Writing to the wiki
 
-The agent **never writes silently**. Triggers, in priority order:
-
-1. **Explicit "remember this"** — propose a destination (project wiki, global wiki, existing project docs, or a skill) and a draft; write only on confirm. If the destination is ambiguous, ask.
-2. **Session-end / task-finish** — surface 1–N "things worth remembering" with proposed destination and a one-line draft. Accept / reject / edit each; nothing is written without your say-so.
-3. **Stacked feedback for later triage** — recurring frictions noted during the session, batched for a single end-of-session review.
-
-**Classification rule:** documentation captures what is true and why; a skill captures a repeatable procedure with a clear trigger. Prefer extending an existing page over creating a new one. When a project-specific lesson keeps recurring across projects, propose promoting it to the global wiki.
-
-**Loading discipline (not just scope):** this bootstrap file is read on *every* session of *every* tool. Anything placed here is loaded whether or not it is relevant to the current task, so it has a real token cost. The wiki tiers solve this: they are *not* loaded by default — the agent reads them only when a task actually touches their topic. Therefore:
-
-- **Keep this file minimal.** Only put here what is universally true across every project, every tool, every session (e.g. the "treat recalled facts as leads" rule, the skill-location convention, the "no unrequested abstractions" rule).
-- **Put technology-specific preferences, tool quirks, and accumulated methodology in a topic page** in the global wiki (`~/.cache/agents/memory/<topic>.md`), and link it from the index with a one-line trigger ("only when working on X"). The same applies to project-specific knowledge in the project wiki.
-- **Don't paste wiki content into this file** to "make sure it gets seen." A topic page that's never loaded beats a bootstrap entry that's always loaded and usually irrelevant.
-- If a global rule keeps recurring as a useful *judgment* in many sessions (not just when working on one technology), it can graduate to a skill; if it only matters in one technology, it stays in that technology's wiki page.
+Never write to the wiki silently — see the `x-curate-memory` skill for
+write triggers, classification, and how to keep this bootstrap file
+lean before writing anything to `.agents/memory/` or the global wiki.
 
 ## Session memory (x-memory)
 
@@ -38,7 +27,8 @@ The session-history index lives in `x-memory/spec/` (start at `x-memory/spec/REA
 
 - Fewest files, shortest diff, reuse before invention. No unrequested abstractions.
 - Skills live in one canonical place: `~/.config/agents/skills/`. Don't duplicate one, extend or reuse it.
-- A new local skill/command/agent whose name collides with an existing one gets an `x-` prefix, never an unrelated name.
+- Any new local skill/command/agent gets an `x-` prefix — marks it as ours vs a plugin's, not just on name collision.
+- Load `mattpocock-skills:writing-for-agents` before writing or editing any skill file.
 
 ## User preferences
 
