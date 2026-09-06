@@ -1,5 +1,8 @@
 {
   "$schema": "https://opencode.ai/config.json",
+  "env": {
+    "SSH_ASKPASS_REQUIRE": "force"
+  },
   // Explicit so sharing doesn't quietly depend on the ~/.claude symlink
   // (that symlink's own purpose is unrelated legacy-path compat).
   // Plugin paths point at the plugin's parent dir, one level above the
@@ -12,5 +15,11 @@
       "~/.config/claude/plugins/cache/ponytail/ponytail",
       "~/.config/claude/plugins/cache/caveman/caveman"
     ]
+  },
+  "permission": {
+    "external_directory": {
+      "~/.cache/agents/memory/**": "allow",
+      "$HOME/.dotfiles/.agents/memory/**": "allow"
+    }
   }
 }

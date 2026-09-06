@@ -36,6 +36,7 @@
           (pkgs.writeShellScriptBin "ssh-askpass" ''exec env QT_QPA_PLATFORM=xcb ${pkgs.lxqt.lxqt-openssh-askpass}/bin/lxqt-openssh-askpass "$@"'')
           starship
           tree-sitter
+          (pkgs.writeShellScriptBin "x-memory" ''exec ${pkgs.bun}/bin/bun "$HOME/.dotfiles/x-memory/src/cli.ts" "$@"'')
           yt-dlp
           zsh
           zsh-autosuggestions

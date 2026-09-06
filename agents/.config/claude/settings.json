@@ -8,7 +8,13 @@
     "sessionUrl": false
   },
   "permissions": {
-    "defaultMode": "auto"
+    "defaultMode": "auto",
+    "allow": [
+      "Read(//home/nixos/.cache/agents/memory/**)",
+      "Read(//home/nixos/.dotfiles/.agents/memory/**)",
+      "Edit(//home/nixos/.cache/agents/memory/**)",
+      "Edit(//home/nixos/.dotfiles/.agents/memory/**)"
+    ]
   },
   "enabledPlugins": {
     "ponytail@ponytail": true,
@@ -28,6 +34,19 @@
         "repo": "JuliusBrussee/caveman"
       }
     }
+  },
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bun $HOME/.dotfiles/x-memory/src/hooks/claude-code-session-start.ts",
+            "timeout": 10
+          }
+        ]
+      }
+    ]
   },
   "askUserQuestionTimeout": "never",
   "tui": "fullscreen",
