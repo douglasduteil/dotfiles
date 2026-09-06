@@ -85,10 +85,10 @@ Because the index is derived and rebuildable (see [[#storage|storage]]), the sta
 
 Two physical SQLite files, matching the two [[#two-tier-scope|scopes]] and following this repo's own already-established naming convention (the `agents` package this dotfiles repo already uses for cross-tool skill sharing, not a name invented for x-memory):
 
-- **Project tier**: `.agents/x-memory/index.db` at the project's git root. Derived and rebuildable — not committed to git. The human-reviewable [[glossary#snapshot|snapshot]] Markdown file lives alongside it at `.agents/x-memory/snapshot.md` and **is** committed, since its entire purpose is git-diffable human review (story 27).
-- **Global tier**: `~/.config/agents/x-memory/index.db`. Same rebuildable-cache reasoning applies, but with one environment-specific wrinkle worth flagging (see [[further-notes#global-storage-lands-inside-a-stow-managed-directory|further notes]]): in this particular setup, `~/.config/agents` is itself a stow-managed symlink into a git-tracked dotfiles repo, so a naively-placed cache file there would get swept into version control unless explicitly gitignored.
+- **Project tier**: `.agents/x-memory/index.db` at the project's git root. Derived and rebuildable — not committed to git (the project root's `.agents/` is already covered by the global `~/.gitignore_global`'s `.agents` rule). The companion curated-memory wiki lives alongside it at `.agents/memory/` — see the shared user-level `AGENTS.md` "Curated memory" section.
+- **Global tier**: `~/.config/agents/x-memory/index.db` was the planned location; the live implementation uses `~/.cache/agents/memory/` for the curated wiki and `~/.cache/x-memory/` for the SQLite index, both under the XDG cache root so neither is git-tracked. The stow-managed-directory wrinkle from [[further-notes#global-storage-lands-inside-a-stow-managed-directory|further notes]] is therefore moot.
 
-Both use the same schema (see the table above); `scope` and `project` columns distinguish rows within each file, and a query that needs both (project history plus applicable global conventions) reads from both files rather than one being a subset of the other.
+Both SQLite files use the same schema (see the table above); `scope` and `project` columns distinguish rows within each file, and a query that needs both (project history plus applicable global conventions) reads from both files rather than one being a subset of the other.
 
 ## Staleness threshold
 
@@ -116,11 +116,7 @@ x-memory never parses either tool's internal session-storage format directly —
 
 ## Materializing snapshots
 
-Separately from `index` (which runs automatically) and `query` (which the agent calls on demand — see [[retrieval-use-cases]]), x-memory periodically or on request writes a [[glossary#snapshot|snapshot]] — a plain Markdown file per project, derived from the index — so the user can review their own history by opening a file.
-
-This is deliberately **not** written into Claude Code's own `~/.claude/projects/<slug>/memory/` directory. That directory and its `MEMORY.md`-index-plus-typed-files convention were confirmed (via Claude Code's own official docs) to be a real, on-by-default, Claude-Code-only feature — opencode has no awareness of it at all, confirmed by opencode's own docs never mentioning it and an open opencode feature request (`#9211`) asking for a memory system, which wouldn't exist if one were already there. Writing into that directory would produce a file only one of the two tools this project targets could ever read. The shape of that convention — one index file, per-topic files with typed YAML frontmatter, git-native — is worth keeping (an independent spec, [okf.md](https://okf.md), converged on almost the identical shape for the same reason, though it's young, single-maintainer, and adopted by no major platform, so it's the *pattern* worth following, not that specific named spec). x-memory's snapshot lives in its own location, readable by both tools' file-reading conventions, not inside either tool's private state.
-
-Trigger candidates for writing a snapshot: an explicit command, a simple elapsed-time-or-message-count heuristic during a long session, or Claude Code's real `PreCompact` hook as a convenient natural checkpoint. None of these are correctness-critical the way they would have been under the pre-ADR design — a missed or stale snapshot is a staleness problem for the human reader, not data loss, since it's always regenerable from the index.
+**Superseded — see [[archived-threads#materializing-snapshots-superseded|archived threads]].** Replaced by the curated `.agents/memory/` wiki convention in the shared user-level `AGENTS.md`. The auto-regenerated `snapshot.md` file is gone; `snapshot.ts` / `snapshot.test.ts` and the `x-memory snapshot` subcommand were deleted at the same time.
 
 ## Scope constraint (hard constraint, not a preference)
 

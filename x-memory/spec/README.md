@@ -15,6 +15,7 @@ This folder is the spec, not the implementation. No code lives here.
 - [[testing-decisions]] — what "correct" means and how it's checked
 - [[out-of-scope]] — what this deliberately does not do
 - [[further-notes]] — environment context and open threads
+- [[archived-threads]] — superseded spec paragraphs, kept verbatim so the trail of why each old answer was wrong (or no longer needed) is recoverable
 - [[alternatives-evaluated]] — the primary-source record of why agentmemory, supermemory, and hippo-memory were each rejected
 - [[lessons-from-alternatives]] — feature-by-feature, fact-checked verdicts on what those three tools got right or wrong, and what x-memory adopts, adapts, or explicitly rejects because of it
 

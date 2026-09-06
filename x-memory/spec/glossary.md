@@ -26,10 +26,6 @@ The compressed, human-readable answer produced by querying the [[#index|index]] 
 
 The combination of a new session starting (triggering x-memory to index-if-stale the other tool's most recent session for the project, and surface a one-line breadcrumb that history exists) and the agent, on its own judgment, later calling [[#recap|recap]] retrieval when the user's message actually seems to reference that history — see [[retrieval-use-cases]] for why this is two separate moments, not one automatic injection. This is a read-triggered event, not a write triggered by the *previous* session ending — see [[docs/adr/0001-pull-based-indexing-over-push-based-capture]] for why an earlier, write-triggered definition of this term was replaced.
 
-## Snapshot
-
-A periodically or on-demand materialized Markdown file per project, derived from the index, meant for a human to read directly (open the file, review the prose) rather than query through a tool. Not the source of truth — regenerable from the index at any time — but the answer to [[user-stories#27|the "facilitate future human review" story]].
-
 ## Injection
 
 The act of a new session starting and receiving the project's current recap as context, via whichever mechanism the tool exposes (`additionalContext` in Claude Code, `chat.system.transform` in opencode). Injection happens automatically; the user does not request it.
