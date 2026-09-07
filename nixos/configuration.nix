@@ -49,13 +49,13 @@
   # (ykman info, ykman fido info, etc.) is host-level tooling, not something
   # tied to a per-user profile, so it lives here rather than in
   # packages/flake.nix.
-  environment.systemPackages = [ pkgs.yubikey-manager pkgs.podman-compose ];
+  environment.systemPackages = [ pkgs.yubikey-manager ];
 
   # Rootless container runtime. dockerCompat aliases `docker` to podman for
   # tools that shell out to the docker CLI by name. podman's `compose`
   # subcommand (and thus the aliased `docker compose`) shells out to a
-  # podman-compose/docker-compose binary found on PATH -- pkgs.podman-compose
-  # in systemPackages above supplies it.
+  # podman-compose/docker-compose binary found on PATH -- supplied by
+  # packages/flake.nix (per-user profile) rather than here.
   virtualisation.podman = {
     enable = true;
     dockerCompat = true;

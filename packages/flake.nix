@@ -31,6 +31,7 @@
           nodejs
           oh-my-zsh
           opencode
+          podman-compose
           ripgrep
           sops
           (pkgs.writeShellScriptBin "ssh-askpass" ''exec env QT_QPA_PLATFORM=xcb ${pkgs.lxqt.lxqt-openssh-askpass}/bin/lxqt-openssh-askpass "$@"'')
