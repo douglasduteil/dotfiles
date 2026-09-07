@@ -8,9 +8,13 @@ user-invocable: true
 
 The agent **never writes silently**. Triggers, in priority order:
 
-1. **Explicit "remember this"** — propose a destination (project wiki,
-   global wiki, existing project docs, or a skill) and a draft; write
-   only on confirm. If the destination is ambiguous, ask.
+1. **Explicit "remember this"** — check the global/project `index.md`
+   for a matching topic page before picking a destination; a page
+   already routed from the index beats a fresh AGENTS.md line even
+   when the request sounds bootstrap-worthy. Propose a destination
+   (project wiki, global wiki, existing project docs, or a skill) and
+   a draft; write only on confirm. If the destination is ambiguous,
+   ask.
 2. **Session-end / task-finish** — surface 1–N "things worth
    remembering" with proposed destination and a one-line draft,
    skipping anything re-derivable by a single grep/read/find (a fact
