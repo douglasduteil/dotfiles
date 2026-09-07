@@ -188,6 +188,12 @@
   # add and amend the last commit (don't change the commit message)
   cacaa = commit -a --amend --no-edit
 
+  # amend + force-with-lease push
+  poussecaca = "!git caca && git push --force-with-lease"
+
+  # add, amend + force-with-lease push
+  poussecacaa = "!git cacaa && git push --force-with-lease"
+
   # clone the github repo with using the github path
   klone = "!f() {\
     git clone git@github.com:$1.git ~/zzz/github/$1;\
