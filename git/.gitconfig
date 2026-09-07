@@ -37,6 +37,7 @@
 # push/pull/diff/options {{{
 [push]
   default = upstream
+	autoSetupRemote = true
 [pull]
   default = current
   rebase = true
