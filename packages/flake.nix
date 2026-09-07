@@ -16,6 +16,7 @@
         paths = with pkgs; [
           bat
           bun
+          chromium
           claude-code
           delta
           fd
