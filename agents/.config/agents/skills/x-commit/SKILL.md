@@ -55,7 +55,8 @@ change.
 
 **Proposal**
 <1-3 sentences: the fix's actual mechanism/reasoning — why this approach,
-not just what files moved.>
+not just what files moved. Reasoning only, not a verification log —
+"ran the tests, they passed" belongs in the PR/chat, not the commit.>
 ```
 
 Skip the body only for a genuinely trivial, self-explanatory commit
@@ -69,7 +70,9 @@ enough.
 
 Diff-narration filler reads like this — never write it:
 "adding 3 tests", "update foo.ts", "small fix", "minor change",
-"improve X", "add support for Y" with nothing else.
+"improve X", "add support for Y" with nothing else. Verification-log
+filler is the same failure in the Proposal slot: "verified with bun
+test (520/520)", "ran lint, all green".
 
 ## Workflow
 
