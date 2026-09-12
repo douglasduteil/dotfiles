@@ -2,6 +2,11 @@
 # Local-only history search, no account/sync.
 auto_sync = false
 
+# Never record commands touching *.env.local-style secret files.
+history_filter = [
+  '\.env[^ ]*\.local',
+]
+
 [logs]
 dir = "~/.local/state/atuin/logs"
 

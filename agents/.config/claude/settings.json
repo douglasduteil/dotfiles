@@ -15,6 +15,11 @@
       "Edit(//home/nixos/.cache/agents/memory/**)",
       "Edit(//home/nixos/.dotfiles/.agents/memory/**)"
     ],
+    "deny": [
+      "Read(**/.env*.local)",
+      "Edit(**/.env*.local)",
+      "Bash(sops:*)"
+    ],
     "defaultMode": "auto"
   },
   "hooks": {

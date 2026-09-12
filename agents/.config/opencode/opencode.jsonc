@@ -18,6 +18,9 @@
     ]
   },
   "permission": {
+    "read": { "**/.env*.local": "deny" },
+    "edit": { "**/.env*.local": "deny" },
+    "bash": { "sops*": "deny" },
     "external_directory": {
       "~/.cache/agents/memory/**": "allow",
       "$HOME/.dotfiles/.agents/memory/**": "allow"
