@@ -69,8 +69,7 @@ ZSH_AUTOSUGGEST_HIGHLIGHT_STYLE='fg=10'
 # :: https://github.com/zsh-users/zsh-history-substring-search
 source "$HOME/.nix-profile/share/zsh-history-substring-search/zsh-history-substring-search.zsh"
 export HISTORY_SUBSTRING_SEARCH_HIGHLIGHT_FOUND='bg=yellow,fg=white,bold'
-bindkey '^[[A' history-substring-search-up
-bindkey '^[[B' history-substring-search-down
+# up/down arrow bound by atuin instead, see below
 
 # ===========================================================================
 # fzf
@@ -97,6 +96,13 @@ source <(fzf --zsh)
 source "$HOME/.nix-profile/share/zsh-fzf-history-search/zsh-fzf-history-search.zsh"
 
 # ===========================================================================
+# zoxide
+# ===========================================================================
+
+# :: https://github.com/ajeetdsouza/zoxide
+eval "$(zoxide init zsh)"
+
+# ===========================================================================
 # SSH
 # ===========================================================================
 
@@ -115,6 +121,16 @@ export SSH_ASKPASS_REQUIRE=never
 # already installed via packages/flake.nix -- no zinit gh-r fetch needed, and
 # no async placeholder prompt needed since loading here is synchronous
 eval "$(starship init zsh)"
+
+# ===========================================================================
+# Atuin
+# ===========================================================================
+
+# :: https://github.com/atuinsh/atuin
+# must load after starship -- starship's zsh init resets precmd_functions/
+# preexec_functions rather than appending, silently dropping atuin's hook
+# if atuin loads first (commands stop recording live, no error).
+eval "$(atuin init zsh)"
 
 # ===========================================================================
 #

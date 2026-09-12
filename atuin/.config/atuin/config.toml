@@ -1,0 +1,9 @@
+# :: https://docs.atuin.sh/configuration/config/
+# Local-only history search, no account/sync.
+auto_sync = false
+
+[logs]
+dir = "~/.local/state/atuin/logs"
+
+[daemon]
+enabled = true

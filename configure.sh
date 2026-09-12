@@ -5,7 +5,7 @@
 set -euo pipefail
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PACKAGES=(nix git ssh nvim zsh agents)
+PACKAGES=(nix git ssh nvim zsh agents atuin)
 
 if ! command -v stow >/dev/null 2>&1; then
   echo "stow not found; run: nix-shell -p stow --run '$0'" >&2
