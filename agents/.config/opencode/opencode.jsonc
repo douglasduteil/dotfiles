@@ -18,8 +18,8 @@
     ]
   },
   "permission": {
-    "read": { "**/.env*.local": "deny" },
-    "edit": { "**/.env*.local": "deny" },
+    "read": { "**/.env*.local": "deny", "$HOME/.config/sops/age/**": "deny" },
+    "edit": { "**/.env*.local": "deny", "$HOME/.config/sops/age/**": "deny" },
     "bash": { "sops*": "deny", "find / *": "deny" },
     "external_directory": {
       "~/.cache/agents/memory/**": "allow",

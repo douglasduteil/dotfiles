@@ -18,6 +18,8 @@
     "deny": [
       "Read(**/.env*.local)",
       "Edit(**/.env*.local)",
+      "Read(~/.config/sops/age/**)",
+      "Edit(~/.config/sops/age/**)",
       "Bash(sops:*)",
       "Bash(find / *)"
     ],
