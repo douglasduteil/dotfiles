@@ -19,6 +19,13 @@ Never write to the wiki silently — see the `x-curate-memory` skill for
 write triggers, classification, and how to keep this bootstrap file
 lean before writing anything to `.agents/memory/` or the global wiki.
 
+### Domain modeling namespacing
+
+`domain-modeling` skill's `CONTEXT.md` / `docs/adr/` root under `.agents/`
+(`.agents/CONTEXT.md`, `.agents/docs/adr/`), never at repo root — keeps
+agent-owned files in one tree instead of a second, root-level "agents"
+lookalike.
+
 ## Session memory (x-memory)
 
 The session-history index lives in `x-memory/spec/` (start at `x-memory/spec/README.md`) and is exposed via the `x-memory` binary (`x-memory index|query|reject|pin --project <dir>`). Claude Code and opencode discover prior sessions through their own native conventions, plus the `x-memory-recall` skill (on-demand deep recall). The startup breadcrumb is the only automatic injection point; full recaps are on demand.
