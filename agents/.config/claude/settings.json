@@ -18,7 +18,8 @@
     "deny": [
       "Read(**/.env*.local)",
       "Edit(**/.env*.local)",
-      "Bash(sops:*)"
+      "Bash(sops:*)",
+      "Bash(find / *)"
     ],
     "defaultMode": "auto"
   },
