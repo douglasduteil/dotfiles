@@ -74,6 +74,11 @@ Diff-narration filler reads like this — never write it:
 filler is the same failure in the Proposal slot: "verified with bun
 test (520/520)", "ran lint, all green".
 
+A claim sourced from the internet (a changelog, an advisory, a vendor
+doc) gets a citation line under the section that states it: `Source:
+<url> (consulted YYYY-MM-DD)`. Docs drift and links rot — the date
+marks the claim's shelf life for whoever reads the commit later.
+
 ## Workflow
 
 1. `git status` + `git diff` (staged + unstaged).
