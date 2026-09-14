@@ -10,5 +10,8 @@ history_filter = [
 [logs]
 dir = "~/.local/state/atuin/logs"
 
+# Daemon had no systemd unit to keep it alive across WSL restarts; a stale
+# pidfile after a crash/reboot silently blocked recording with no error.
+# Local-only, single-machine use -- daemon batching not worth the failure mode.
 [daemon]
-enabled = true
+enabled = false
