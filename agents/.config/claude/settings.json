@@ -11,9 +11,9 @@
   "permissions": {
     "allow": [
       "Read(//home/nixos/.cache/agents/memory/**)",
-      "Read(//home/nixos/.dotfiles/.agents/memory/**)",
+      "Read(//home/nixos/.dotfiles/.agents/x-memory/**)",
       "Edit(//home/nixos/.cache/agents/memory/**)",
-      "Edit(//home/nixos/.dotfiles/.agents/memory/**)"
+      "Edit(//home/nixos/.dotfiles/.agents/x-memory/**)"
     ],
     "deny": [
       "Read(**/.env*.local)",

@@ -37,8 +37,8 @@ describe("claude_code_session_start hook", () => {
     try {
       mkdirSync(join(fakeHome, ".cache/agents/memory"), { recursive: true });
       writeFileSync(join(fakeHome, ".cache/agents/memory/index.md"), "global router page");
-      mkdirSync(join(project, ".agents/memory"), { recursive: true });
-      writeFileSync(join(project, ".agents/memory/index.md"), "project router page");
+      mkdirSync(join(project, ".agents/x-memory"), { recursive: true });
+      writeFileSync(join(project, ".agents/x-memory/index.md"), "project router page");
 
       const { stdout, exitCode } = await runHook(project, fakeHome);
       expect(exitCode).toBe(0);

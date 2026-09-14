@@ -14,7 +14,7 @@ A lighter, in-repo replacement for the "Arbor" plugin: same hypothesis-tree disc
 3. Where that loop calls for running the discriminating test, run it as a **fork** (`Agent` tool, `subagent_type: "fork"`) per hypothesis — cheap because it shares the coordinator's prompt cache and inherits context, and it keeps the fork's exploration noise out of this session; only the verdict comes back.
 4. If a hypothesis's test requires file mutation, the fork works in `/tmp/x-research/<project-path-id>/<mktemp-id>/`, never the real working tree. Derive `<project-path-id>` once from the project's git root (stable short hash/slug) so the scratch path is stable across sessions for the same project.
 5. Every branch gets its own `.agents/x-research/<branch-slug>.md` from the start — the fork's reasoning, evidence, and discriminating test live there, never in the index. Merge each verdict into `index.md` as one tree line (format below): score, status, one-line insight, wiki-linked to the branch file.
-6. If a resolved branch's insight is durable cross-session knowledge, propose adding it to `.agents/memory/index.md` via `x-curate-memory`'s existing confirm-before-write rule — that, not x-memory ingestion, is how this gets "indexed."
+6. If a resolved branch's insight is durable cross-session knowledge, propose adding it to `.agents/x-memory/index.md` via `x-memory-curate`'s existing confirm-before-write rule — that, not x-memory ingestion, is how this gets "indexed."
 
 Completion: the branch reaches confirmed/refuted/stalled and `index.md` reflects it — not "investigated enough."
 

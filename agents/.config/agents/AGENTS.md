@@ -7,17 +7,17 @@ Bootstrap notes for any AI coding agent (Claude Code, opencode) working in this 
 Working knowledge lives in two untracked Markdown trees, not in a chat transcript:
 
 - **Global tier:** `~/.cache/agents/memory/` — cross-project conventions, preferences, methodology.
-- **Project tier:** `<project>/.agents/memory/` — project-specific architecture, decisions, pitfalls.
+- **Project tier:** `<project>/.agents/x-memory/` — project-specific architecture, decisions, pitfalls. Same folder as the `x-memory` session-history index (below) — curated pages and `index.db` live side by side.
 
-On session start, look for `index.md` at the global path and at the project's path. Treat each `index.md` as a **router**, not a summary: read it, follow links relevant to the task, skip the rest. Both trees are gitignored by default — they are personal working memory, never committed unless explicitly opted in.
+On session start, look for `index.md` at the global path and at the project's path. Treat each `index.md` as a **router**, not a summary: read it, follow links relevant to the task, skip the rest. Re-check per topic before acting on a new subtopic (branch naming, commit style, etc.) — session start isn't the only checkpoint. The global tree is gitignored by default — personal working memory, never committed unless explicitly opted in; the project tree lives inside `.agents/x-memory/`, also gitignored.
 
-`x-memory` (this repo's `x-memory/` directory) sits underneath as a session-history index: it recovers what happened in past sessions via the CLI (`x-memory index|query --project <dir>`). The wiki preserves judgment that re-reading transcripts cannot reliably reproduce; x-memory surfaces leads to verify. Use both: x-memory to find prior context, the wiki to record what was learned.
+`x-memory` (this repo's `x-memory/` directory) also drives the project folder's session-history index: it recovers what happened in past sessions via the CLI (`x-memory index|query --project <dir>`). The wiki preserves judgment that re-reading transcripts cannot reliably reproduce; x-memory surfaces leads to verify. Use both: x-memory to find prior context, the wiki to record what was learned.
 
 ### Writing to the wiki
 
-Never write to the wiki silently — see the `x-curate-memory` skill for
+Never write to the wiki silently — see the `x-memory-curate` skill for
 write triggers, classification, and how to keep this bootstrap file
-lean before writing anything to `.agents/memory/` or the global wiki.
+lean before writing anything to `.agents/x-memory/` or the global wiki.
 
 ### Domain modeling namespacing
 

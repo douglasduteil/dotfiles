@@ -1,6 +1,6 @@
 ---
-name: x-curate-memory
-description: Decide whether and where to write something to the curated memory wiki (project or global tier under .agents/memory/). Use before writing to the wiki — an explicit "remember this", a session-end/task-finish wrap-up, or batching recurring friction for later triage.
+name: x-memory-curate
+description: Decide whether and where to write something to the curated memory wiki (project tier under .agents/x-memory/, global tier under ~/.cache/agents/memory/). Use before writing to the wiki — an explicit "remember this", a session-end/task-finish wrap-up, or batching recurring friction for later triage.
 user-invocable: true
 ---
 
@@ -23,13 +23,34 @@ The agent **never writes silently**. Triggers, in priority order:
    undocumented gotcha. Accept / reject / edit each; nothing is written
    without your say-so.
 3. **Stacked feedback for later triage** — recurring frictions noted
-   during the session, batched for a single end-of-session review.
+   during the session, filed for a single end-of-session review (see
+   Feedback log below).
 
 **Classification rule:** documentation captures what is true and why;
 a skill captures a repeatable procedure with a clear trigger. Prefer
 extending an existing page over creating a new one. When a
 project-specific lesson keeps recurring across projects, propose
 promoting it to the global wiki.
+
+## Feedback log
+
+One file per friction: `.agents/x-memory/feedback-<name>.md`, not a
+shared running log — each entry is its own triage unit, deleted once
+treated rather than accumulating as sediment. Every file starts with
+session id and date, so a stale entry is identifiable at a glance:
+
+```
+## <one-line friction summary>
+
+- Session: `<session-id>`
+- Date: <date>
+
+<what happened, why it's friction>
+```
+
+Treating an entry means folding its insight into the real
+destination (a wiki page or `AGENTS.md`) and deleting the file — never
+leave a resolved entry behind "for the record."
 
 ## Keeping the bootstrap file lean
 

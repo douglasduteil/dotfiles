@@ -3,7 +3,7 @@
 // https://code.claude.com/docs/en/hooks, indexes the *other* tool's
 // (opencode's) recent activity on this project, and injects a one-line
 // breadcrumb via additionalContext — plus the curated-memory router pages
-// (~/.cache/agents/memory/index.md and <project>/.agents/memory/index.md,
+// (~/.cache/agents/memory/index.md and <project>/.agents/x-memory/index.md,
 // see AGENTS.md) so the read happens mechanically instead of relying on
 // the agent to remember to do it. Never blocks or fails session
 // start — this runs synchronously before every session, so any error or
@@ -22,7 +22,7 @@ async function readIndexIfExists(path: string): Promise<string | null> {
 async function buildMemoryContext(project: string): Promise<string | null> {
   const [global, local] = await Promise.all([
     readIndexIfExists(`${homedir()}/.cache/agents/memory/index.md`),
-    readIndexIfExists(`${project}/.agents/memory/index.md`),
+    readIndexIfExists(`${project}/.agents/x-memory/index.md`),
   ]);
   const sections = [
     global && `## Global memory index\n\n${global.trim()}`,
