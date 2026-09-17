@@ -68,6 +68,13 @@ its place only by saying *why*. If neither states in a real sentence,
 the commit is too small for a body — drop it, subject line alone is
 enough.
 
+State the problem and fix in terms of the codebase itself — the
+module, the behavior, the bug. Never reference `.agents/` paths,
+proposal/task files, skill or agent names, or any other internal
+agent-tooling artifact; those are working notes for producing the
+change, not part of the change. A reader with no agent tooling at all
+must find the message fully sensible.
+
 Diff-narration filler reads like this — never write it:
 "adding 3 tests", "update foo.ts", "small fix", "minor change",
 "improve X", "add support for Y" with nothing else. Verification-log
