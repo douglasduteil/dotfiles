@@ -40,6 +40,7 @@
           gh
           git
           git-open
+          gnumake
           jq
           kubernetes-helm
           mkcert
