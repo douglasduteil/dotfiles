@@ -1,0 +1,62 @@
+[
+    {
+        "command": "newTab",
+        "keys": "ctrl+shift+t"
+    },
+    {
+        "command": "closeTab",
+        "keys": "ctrl+shift+q"
+    },
+    {
+        "command": "closePane",
+        "keys": "ctrl+shift+w"
+    },
+    {
+        "command": {
+            "action": "splitPane",
+            "split": "auto",
+            "splitMode": "duplicate"
+        },
+        "keys": "ctrl+shift+enter"
+    },
+    {
+        "command": "nextTab",
+        "keys": "ctrl+tab"
+    },
+    {
+        "command": "prevTab",
+        "keys": "ctrl+shift+tab"
+    },
+    {
+        "command": {
+            "action": "moveFocus",
+            "direction": "left"
+        },
+        "keys": "alt+left"
+    },
+    {
+        "command": {
+            "action": "moveFocus",
+            "direction": "down"
+        },
+        "keys": "alt+down"
+    },
+    {
+        "command": {
+            "action": "moveFocus",
+            "direction": "up"
+        },
+        "keys": "alt+up"
+    },
+    {
+        "command": {
+            "action": "moveFocus",
+            "direction": "right"
+        },
+        "keys": "alt+right"
+    },
+    {
+        "command": "togglePaneZoom",
+        "keys": "ctrl+shift+z"
+    }
+]
