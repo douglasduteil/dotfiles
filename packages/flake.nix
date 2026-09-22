@@ -55,6 +55,7 @@
           starship
           tree-sitter
           (pkgs.writeShellScriptBin "x-memory" ''exec ${pkgs.bun}/bin/bun "$HOME/.dotfiles/x-memory/src/cli.ts" "$@"'')
+          yazi
           yt-dlp
           zsh
           zsh-autosuggestions
