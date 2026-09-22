@@ -159,9 +159,11 @@ Then also add its `IdentityFile` line to `ssh/.ssh/config` (tracked -- commit an
 Edit `packages/flake.nix`, then from anywhere (no `cd` into `packages/` needed):
 
 ```sh
-nix flake lock ~/.dotfiles/packages --update-input nixpkgs   # bump to latest nixpkgs-unstable
-nix profile upgrade packages                                 # apply on this machine
+nix flake update --flake /home/nixos/.dotfiles/packages   # bump the lock to latest nixpkgs-unstable
+nix profile upgrade packages                             # apply on this machine
 ```
+
+(`nix flake lock ~/.dotfiles/packages --update-input nixpkgs` is the equivalent form for updating just the nixpkgs input; `nix flake update --flake <path>` updates every input in that flake. `--flake` names the flake — from any cwd — while the positional arguments to `nix flake update` are the *inputs* to update, not the flake path.)
 
 The name to upgrade is `packages` (derived from the `packages/` dirname at install time), not `default` (the flake *attribute* used only at install) -- check with `nix profile list` if unsure.
 
