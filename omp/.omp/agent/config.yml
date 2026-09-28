@@ -1,0 +1,37 @@
+# Global omp (oh-my-pi) agent config — stowed to ~/.omp/agent/config.yml.
+# Shipped default is tools.approvalMode: yolo (everything auto-runs); this
+# pins `write` so exec-tier tools prompt. Audit effective policy:
+#   omp config get tools.approvalMode && omp config get tools.approval
+tools:
+  approvalMode: write
+  approval:
+    computer: deny
+    eval: prompt # eval can spawn shells; bash.patterns below don't cover it
+
+# Secrets parity with opencode.jsonc's permission block: sops never runs
+# through the agent. (Does not cover eval — gated above.)
+bash:
+  patterns:
+    - match: "*sops*"
+      approval: deny
+      reason: "secrets tool: use sops manually, never through the agent"
+
+# Methodology wiring. x-* skills live at ~/.config/agents/skills (stowed
+# from agents/.config/agents/skills; ~/.agents symlinks there) and are
+# discovered by the default-on `agents` skill/context provider — no key
+# needed. The Claude plugin packs (mattpocock-skills, ponytail, caveman)
+# are user-registry opt-in:
+enabledProviders:
+  - claude-plugins
+
+# Session memory is owned by the x-memory CLI + wiki (see ~/.claude/CLAUDE.md
+# and the x-memory-session-start hook); omp's own memory stays off (default).
+theme:
+  dark: titanium
+  light: light
+modelRoles:
+  default: openrouter/z-ai/glm-5.3-flash
+symbolPreset: unicode
+composer:
+  shape: band
+setupVersion: 2
