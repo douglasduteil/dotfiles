@@ -1,5 +1,5 @@
 export type Scope = "project" | "global";
-export type SourceTool = "claude-code" | "opencode";
+export type SourceTool = "claude-code" | "opencode" | "omp";
 
 export interface Entry {
   id: string;

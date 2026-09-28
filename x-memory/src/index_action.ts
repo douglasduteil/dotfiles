@@ -7,6 +7,10 @@ import {
   extractOpencodeSessionText,
   listOpencodeSessions,
 } from "./opencode_source";
+import {
+  extractOmpSessionText,
+  listOmpSessions,
+} from "./omp_source";
 import { globalIndexDbPath, indexDbPath } from "./project";
 import type { Scope, SourceTool } from "./reducer";
 import { openStore } from "./storage";
@@ -150,6 +154,21 @@ export function indexOpencode(
       sourceTool: "opencode",
       listSessions: listOpencodeSessions,
       extractText: extractOpencodeSessionText,
+    },
+    options,
+  );
+}
+
+export function indexOmp(
+  project: string,
+  options: IndexOptions = {},
+): Promise<IndexResult> {
+  return indexSource(
+    project,
+    {
+      sourceTool: "omp",
+      listSessions: listOmpSessions,
+      extractText: extractOmpSessionText,
     },
     options,
   );

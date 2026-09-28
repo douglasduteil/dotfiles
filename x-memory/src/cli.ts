@@ -1,5 +1,5 @@
 #!/usr/bin/env bun
-import { indexClaudeCode, indexOpencode } from "./index_action";
+import { indexClaudeCode, indexOmp, indexOpencode } from "./index_action";
 import { pinEntry, rejectEntry } from "./mutate_action";
 import { resolveProjectRoot } from "./project";
 import { queryProject } from "./query_action";
@@ -28,10 +28,12 @@ async function main() {
           ? indexClaudeCode
           : tool === "opencode"
             ? indexOpencode
-            : undefined;
+            : tool === "omp"
+              ? indexOmp
+              : undefined;
       if (!indexFn) {
         console.error(
-          `Unsupported --tool "${tool}" (expected "claude-code" or "opencode")`,
+          `Unsupported --tool "${tool}" (expected "claude-code", "opencode" or "omp")`,
         );
         process.exit(1);
       }
@@ -94,7 +96,7 @@ async function main() {
     }
     default:
       console.error(
-        "Usage: x-memory <index|query|reject|pin> --project <dir> [--tool claude-code|opencode] [--rebuild] [--search <term>] [--scope project|global]",
+        "Usage: x-memory <index|query|reject|pin> --project <dir> [--tool claude-code|opencode|omp] [--rebuild] [--search <term>] [--scope project|global]",
       );
       process.exit(1);
   }
