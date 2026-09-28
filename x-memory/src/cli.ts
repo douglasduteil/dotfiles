@@ -68,6 +68,14 @@ async function main() {
         await import("./hooks/claude_code_session_start");
         return;
       }
+      if (tool === "omp" && event === "SessionStart") {
+        // Standalone smoke/manual path: omp loads the hook module itself;
+        // via the CLI we just print the breadcrumb it would inject.
+        const { buildSessionBreadcrumb } = await import("./hooks/omp_session_start");
+        const content = await buildSessionBreadcrumb(project);
+        if (content) console.log(content);
+        return;
+      }
       console.error(`Unsupported hook "${tool} ${event}"`);
       process.exit(1);
     }
