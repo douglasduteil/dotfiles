@@ -10,7 +10,7 @@ async function runHook(cwd: string, fakeHome: string): Promise<{ stdout: string;
     stdin: new Response(JSON.stringify({ cwd })),
     stdout: "pipe",
     stderr: "pipe",
-    // Isolate from the real user's ~/.cache/agents/memory/index.md, which
+    // Isolate from the real user's ~/.cache/agents/x-memory/index.md, which
     // this hook now injects when present — a hermetic fake HOME has none.
     env: { ...process.env, HOME: fakeHome },
   });
@@ -35,8 +35,8 @@ describe("claude_code_session_start hook", () => {
     const fakeHome = mkdtempSync(join(tmpdir(), "x-memory-hook-home-"));
     const project = mkdtempSync(join(tmpdir(), "x-memory-hook-project-"));
     try {
-      mkdirSync(join(fakeHome, ".cache/agents/memory"), { recursive: true });
-      writeFileSync(join(fakeHome, ".cache/agents/memory/index.md"), "global router page");
+      mkdirSync(join(fakeHome, ".cache/agents/x-memory"), { recursive: true });
+      writeFileSync(join(fakeHome, ".cache/agents/x-memory/index.md"), "global router page");
       mkdirSync(join(project, ".agents/x-memory"), { recursive: true });
       writeFileSync(join(project, ".agents/x-memory/index.md"), "project router page");
 

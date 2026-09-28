@@ -1,10 +1,12 @@
 ---
 name: x-memory-curate
-description: Decide whether and where to write something to the curated memory wiki (project tier under .agents/x-memory/, global tier under ~/.cache/agents/memory/). Use before writing to the wiki — an explicit "remember this", a session-end/task-finish wrap-up, or batching recurring friction for later triage.
+description: Decide whether and where to write something to the curated memory wiki (project tier under .agents/x-memory/, global tier under ~/.cache/agents/x-memory/). Use before writing to the wiki — an explicit "remember this", a session-end/task-finish wrap-up, or batching recurring friction for later triage.
 user-invocable: true
 ---
 
 # Writing to the wiki
+
+Both tiers use the `x-memory` name: project tier at `.agents/x-memory/` (sharing its folder with the `x-memory` session-history index — `index.db` sits beside the curated pages there), global tier at `~/.cache/agents/x-memory/` (its own directory — `x-memory`'s SQLite index lives separately, at `~/.cache/x-memory/`, one level up, so the curated wiki here is never at risk of being overwritten by the indexer). Revised 2026-09-22: `~/.cache/agents/memory/` was the name through 2026-09-22; renamed for cross-tier naming consistency.
 
 The agent **never writes silently**. Triggers, in priority order:
 
@@ -65,7 +67,7 @@ read only when a task actually touches their topic.
   abstractions").
 - **Put technology-specific preferences, tool quirks, and accumulated
   methodology in a topic page** in the global wiki
-  (`~/.cache/agents/memory/<topic>.md`), linked from the index with a
+  (`~/.cache/agents/x-memory/<topic>.md`), linked from the index with a
   one-line trigger ("only when working on X"). Same for project-specific
   knowledge in the project wiki.
 - **Don't paste wiki content into `AGENTS.md`** to "make sure it gets

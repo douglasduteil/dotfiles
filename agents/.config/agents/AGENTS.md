@@ -6,7 +6,7 @@ Bootstrap notes for any AI coding agent (Claude Code, opencode) working in this 
 
 Working knowledge lives in two untracked Markdown trees, not in a chat transcript:
 
-- **Global tier:** `~/.cache/agents/memory/` — cross-project conventions, preferences, methodology.
+- **Global tier:** `~/.cache/agents/x-memory/` — cross-project conventions, preferences, methodology.
 - **Project tier:** `<project>/.agents/x-memory/` — project-specific architecture, decisions, pitfalls. Same folder as the `x-memory` session-history index (below) — curated pages and `index.db` live side by side.
 
 Before acting on a topic the wiki covers — naming a branch, writing a commit, picking a library, or any other subtopic a page below documents — open `index.md` at the global path and the project's path first. Treat each `index.md` as a **router**, not a summary: read it, follow the link matching the topic, skip the rest. This applies at every topic switch, not only at session start. The global tree is gitignored by default — personal working memory, never committed unless explicitly opted in; the project tree lives inside `.agents/x-memory/`, also gitignored.

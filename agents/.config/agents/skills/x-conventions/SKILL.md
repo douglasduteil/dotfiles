@@ -7,7 +7,7 @@ user-invocable: false
 # x-conventions
 
 1. Identify which topic above the current action matches.
-2. Read `~/.cache/agents/memory/index.md` (global) and, if the project
+2. Read `~/.cache/agents/x-memory/index.md` (global) and, if the project
    has one, `<project>/.agents/x-memory/index.md` — unless already
    read this session for this exact topic.
 3. Follow the link matching the topic, apply what it says.

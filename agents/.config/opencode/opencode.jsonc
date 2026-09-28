@@ -22,8 +22,8 @@
     "edit": { "**/.env*.local": "deny", "$HOME/.config/sops/age/**": "deny" },
     "bash": { "sops*": "deny", "find / *": "deny" },
     "external_directory": {
-      "~/.cache/agents/memory/**": "allow",
-      "$HOME/.dotfiles/.agents/memory/**": "allow"
+      "~/.cache/agents/x-memory/**": "allow",
+      "$HOME/.dotfiles/.agents/x-memory/**": "allow"
     }
   }
 }

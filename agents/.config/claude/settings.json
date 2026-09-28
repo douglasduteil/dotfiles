@@ -10,9 +10,9 @@
   },
   "permissions": {
     "allow": [
-      "Read(//home/nixos/.cache/agents/memory/**)",
+      "Read(//home/nixos/.cache/agents/x-memory/**)",
       "Read(//home/nixos/.dotfiles/.agents/x-memory/**)",
-      "Edit(//home/nixos/.cache/agents/memory/**)",
+      "Edit(//home/nixos/.cache/agents/x-memory/**)",
       "Edit(//home/nixos/.dotfiles/.agents/x-memory/**)"
     ],
     "deny": [
