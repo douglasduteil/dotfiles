@@ -2,8 +2,9 @@
   description = "nixos-wsl shared package profile";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+  inputs.omp.url = "github:can1357/oh-my-pi";
 
-  outputs = { self, nixpkgs }:
+  outputs = { self, nixpkgs, omp }:
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs {
@@ -47,6 +48,7 @@
           neovim
           nodejs
           oh-my-zsh
+          omp.packages.${system}.omp
           opencode
           podman-compose
           ripgrep

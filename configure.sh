@@ -5,21 +5,21 @@
 set -euo pipefail
 
 DOTFILES_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PACKAGES=(nix git ssh nvim zsh agents atuin)
+PACKAGES=(nix git ssh nvim zsh agents atuin omp)
 
 if ! command -v stow >/dev/null 2>&1; then
   echo "stow not found; run: nix-shell -p stow --run '$0'" >&2
   exit 1
 fi
 
-# ~/.config/claude, ~/.config/git and ~/.config/opencode also hold real,
-# untracked, per-machine files (Claude Code credentials/sessions/caches;
-# git's signingkey include; opencode's own plugin node_modules/package.json)
-# alongside the stowed ones. Pre-creating them as real directories keeps
-# stow from folding the whole subtree into a single symlink -- see
-# README's Install section. ~/.config/agents holds nothing untracked
-# (yet), so it's left for stow to fold fully.
-mkdir -p ~/.config/claude ~/.config/git ~/.config/opencode
+# ~/.config/claude, ~/.config/git, ~/.config/opencode and ~/.omp/agent also
+# hold real, untracked, per-machine files (Claude Code credentials/sessions/caches;
+# git's signingkey include; opencode's own plugin node_modules/package.json;
+# omp's auth/sessions/caches) alongside the stowed ones. Pre-creating them as
+# real directories keeps stow from folding the whole subtree into a single
+# symlink -- see README's Install section. ~/.config/agents holds nothing
+# untracked (yet), so it's left for stow to fold fully.
+mkdir -p ~/.config/claude ~/.config/git ~/.config/opencode ~/.omp/agent
 
 stow -d "$DOTFILES_DIR" -t "$HOME" -R "${PACKAGES[@]}"
 
