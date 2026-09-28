@@ -20,7 +20,7 @@
   "permission": {
     "read": { "**/.env*.local": "deny", "$HOME/.config/sops/age/**": "deny" },
     "edit": { "**/.env*.local": "deny", "$HOME/.config/sops/age/**": "deny" },
-    "bash": { "sops*": "deny", "find / *": "deny" },
+    "bash": { "sops*": "deny", "find / *": "deny", "*": "ask" },
     "external_directory": {
       "~/.cache/agents/x-memory/**": "allow",
       "$HOME/.dotfiles/.agents/x-memory/**": "allow"
