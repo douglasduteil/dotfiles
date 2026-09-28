@@ -35,6 +35,21 @@ done
 # Oh My Zsh plugins
 # ===========================================================================
 
+# oh-my-zsh.sh normally sets ZSH_CACHE_DIR and creates its completions
+# subdir; this zshrc assembles OMZ from its libs and plugins directly, so
+# it never runs. The docker plugin copies its completion file into
+# $ZSH_CACHE_DIR/completions on every startup -- with the variable unset
+# the cp target collapses to /completions and errors on each shell start.
+ZSH_CACHE_DIR="${XDG_CACHE_HOME:-$HOME/.cache}/oh-my-zsh"
+mkdir -p "$ZSH_CACHE_DIR/completions"
+# The plugin cp's its completion into this dir on every startup. The
+# source lives in the read-only nix store, so a plain cp leaves the
+# cache file mode 444 and the next startup's cp fails with permission
+# denied. Pre-create it writable once; cp then only rewrites content.
+_docker_cache="$ZSH_CACHE_DIR/completions/_docker"
+[[ -e "$_docker_cache" ]] || install -m 644 /dev/null "$_docker_cache"
+[[ -w "$_docker_cache" ]] || chmod u+w "$_docker_cache"
+
 for plugin in colored-man-pages command-not-found docker docker-compose dirhistory man history fancy-ctrl-z web-search; do
   source "$OMZ_PLUGINS/$plugin/$plugin.plugin.zsh"
 done
