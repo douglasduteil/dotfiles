@@ -26,6 +26,18 @@
     "defaultMode": "auto"
   },
   "hooks": {
+    "PermissionRequest": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "bun ~/.config/opencode/plugins/x-jev.ts",
+            "timeout": 15
+          }
+        ]
+      }
+    ],
     "SessionStart": [
       {
         "hooks": [
@@ -65,12 +77,13 @@
   "feedbackSurveyRate": 0,
   "feedbackDrafts": "off",
   "askUserQuestionTimeout": "never",
+  "remote": {
+    "defaultEnvironmentId": "env_016P1diZS11ymnkFd352sPei"
+  },
   "tui": "fullscreen",
   "autoMemoryEnabled": false,
   "theme": "dark",
   "autoCompactEnabled": false,
   "agentPushNotifEnabled": true,
-  "remote": {
-    "defaultEnvironmentId": "env_016P1diZS11ymnkFd352sPei"
-  }
+  "model": "opus"
 }
