@@ -26,6 +26,44 @@
           cp -r . $out/
         '';
       };
+      # TS7's native Go-based language server. Ships as a platform-specific
+      # npm package (no nixpkgs derivation yet) with the binary and its
+      # lib/*.d.ts siblings flattened in one dir -- it resolves those by
+      # path relative to its own executable, so they must stay alongside it
+      # (hence $out/libexec rather than splitting into bin+share). Spawned
+      # by typescript-mcp below; needs to be on PATH for that to work.
+      tsgo = pkgs.stdenv.mkDerivation {
+        pname = "tsgo";
+        version = "7.0.0-dev.20260707.2";
+        src = pkgs.fetchurl {
+          url = "https://registry.npmjs.org/@typescript/native-preview-linux-x64/-/native-preview-linux-x64-7.0.0-dev.20260707.2.tgz";
+          hash = "sha512-du0dzi6y97Po5vDNdPJTyyijHCpaS22JLRnKZEJXBDaO9gCIymOv/5QQokFRuOlQm0bWl3i9PF4OVdGP6uAOQA==";
+        };
+        dontBuild = true;
+        installPhase = ''
+          mkdir -p $out/libexec $out/bin
+          cp -r lib/. $out/libexec/
+          chmod +x $out/libexec/tsgo
+          ln -s $out/libexec/tsgo $out/bin/tsgo
+        '';
+      };
+      # MCP server bridging Claude Code to TS7's native `tsgo` LSP (go to
+      # def, find references, hover, diagnostics) -- see
+      # https://github.com/paulvanbrenk/typescript-mcp. Wired into Claude
+      # Code's user-scope MCP config by configure.sh. Needs `tsgo` (above)
+      # on PATH at runtime -- it spawns it as a subprocess.
+      typescript-mcp = pkgs.buildGoModule {
+        pname = "typescript-mcp";
+        version = "0.2.0";
+        src = pkgs.fetchFromGitHub {
+          owner = "paulvanbrenk";
+          repo = "typescript-mcp";
+          rev = "v0.2.0";
+          sha256 = "18cwcxdfbkcngmh41xir814b07mxbzph7kpn6wypl418xq5nknkh";
+        };
+        vendorHash = "sha256-sTPgNW4eWJs7HKgUfN4Mz+MYwgVcNga7ifvzuGuNLeo=";
+        subPackages = [ "cmd/typescript-mcp" ];
+      };
     in {
       packages.${system}.default = pkgs.buildEnv {
         name = "nixos-wsl-profile";
@@ -57,6 +95,8 @@
           starship
           steam-run
           tree-sitter
+          tsgo
+          typescript-mcp
           (pkgs.writeShellScriptBin "x-memory" ''exec ${pkgs.bun}/bin/bun "$HOME/.dotfiles/x-memory/src/cli.ts" "$@"'')
           yazi
           yt-dlp

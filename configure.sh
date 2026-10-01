@@ -34,3 +34,14 @@ for name in claude agents; do
     echo "~/.$name exists and isn't a symlink -- leaving it alone" >&2
   fi
 done
+
+# typescript-mcp (packages/flake.nix) registered user-scope so every project
+# gets TS7/tsgo-backed go-to-def/find-references/hover/diagnostics. Claude
+# Code has no settings.json key for this -- registration lives in the
+# stateful ~/.claude.json, so it's done here idempotently rather than
+# checked into the repo.
+if command -v claude >/dev/null 2>&1 && command -v typescript-mcp >/dev/null 2>&1; then
+  if ! claude mcp get typescript-mcp >/dev/null 2>&1; then
+    claude mcp add --scope user typescript-mcp -- "$(command -v typescript-mcp)"
+  fi
+fi
