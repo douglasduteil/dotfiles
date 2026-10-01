@@ -69,6 +69,7 @@
         name = "nixos-wsl-profile";
         paths = with pkgs; [
           bat
+          bash-language-server
           bun
           chromium
           claude-code
@@ -84,6 +85,7 @@
           kubernetes-helm
           mkcert
           neovim
+          nixd
           nodejs
           oh-my-zsh
           omp.packages.${system}.omp
@@ -100,6 +102,7 @@
           tsgo
           typescript-mcp
           (pkgs.writeShellScriptBin "x-memory" ''exec ${pkgs.bun}/bin/bun "$HOME/.dotfiles/x-memory/src/cli.ts" "$@"'')
+          yaml-language-server
           yazi
           yt-dlp
           zsh

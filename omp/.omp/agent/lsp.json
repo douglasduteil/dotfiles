@@ -1,0 +1,22 @@
+{
+  "idleTimeoutMs": 300000,
+  "servers": {
+    "ts-native": {
+      "command": "tsgo",
+      "args": ["--lsp", "--stdio"],
+      "fileTypes": [".ts", ".tsx", ".mts", ".cts", ".js", ".jsx", ".mjs", ".cjs"],
+      "rootMarkers": [".git", "package.json", "tsconfig.json"]
+    },
+    "nixd": {
+      "rootMarkers": [".git", "flake.nix"]
+    },
+    "yamlls": {
+      "rootMarkers": [".git"],
+      "warmupTimeoutMs": 4000
+    },
+    "bashls": {
+      "rootMarkers": [".git"],
+      "warmupTimeoutMs": 4000
+    }
+  }
+}
