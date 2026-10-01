@@ -90,6 +90,7 @@
           opencode
           podman-compose
           ripgrep
+          scalingo
           sops
           (pkgs.writeShellScriptBin "ssh-askpass" ''exec env QT_QPA_PLATFORM=xcb ${pkgs.lxqt.lxqt-openssh-askpass}/bin/lxqt-openssh-askpass "$@"'')
           starship
