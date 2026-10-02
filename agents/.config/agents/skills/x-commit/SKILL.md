@@ -1,6 +1,6 @@
 ---
 name: x-commit
-description: Write a git commit with a gitmoji subject and a short Problem/Proposal body, split into atomic commits when the diff mixes concerns. Fixed personal convention (not derived per-repo, unlike commit-message). Use for "/x-commit", "commit this atomically", or when the user wants gitmoji + Problem/Proposal style regardless of the repo's own history.
+description: Write a git commit with a gitmoji subject and a caveman Problem/Proposal body, split into atomic commits when the diff mixes concerns. Fixed personal convention, every repo. Use for "/x-commit", "commit this atomically", or gitmoji + Problem/Proposal style regardless of repo history.
 user-invocable: true
 allowed-tools:
   - Bash(git status:*)
@@ -12,105 +12,77 @@ allowed-tools:
 
 # x-commit
 
-Fixed style, every repo, no derivation step. If a repo's own
-CONTRIBUTING.md demands something else, say so and ask — don't silently
-switch to `commit-message`'s derive-from-history approach.
+Fixed style, every repo. Repo CONTRIBUTING.md demands otherwise → say so, ask.
 
 ## 1. Split into atomic commits
 
-One logical change per commit. Run `git status` + `git diff`, group
-hunks by concern. More than one concern → propose the split (list of
-commits, each with its file/hunk set) before writing any message. Use
-`git add <files>` or `git add -p` per commit, never a blanket `git add -A`.
+One concern per commit. `git status` + `git diff` (staged + unstaged), group
+hunks by concern. More than one → propose split (commits + file/hunk sets)
+before any message. Stage per commit with `git add <files>` or `git add -p`.
 
-## 2. Subject: gitmoji + short imperative title
+## 2. Subject
 
-`<emoji> <imperative, lowercase, no trailing period>`
-
-Pick the emoji by what the commit actually does — pick one, don't stack:
+`<emoji> <imperative, lowercase, no trailing period>` — one emoji, picked by
+what commit does:
 
 | emoji | for |
 |---|---|
-| ✨ | new feature |
+| ✨ | feature |
 | 🐛 | bug fix |
-| ♻️ | refactor, no behavior change |
+| ♻️ | refactor |
 | ⚡️ | performance |
 | 🔥 | remove code/files |
 | 📝 | docs |
 | ✅ | tests |
 | 🔧 | config/tooling |
-| 💄 | UI/style-only |
-| 🚨 | lint/warning fixes |
+| 💄 | UI/style |
+| 🚨 | lint/warnings |
 | ⬆️ / ⬇️ | dependency bump/downgrade |
 
-Title states the change, not the ceremony around it — "fix" not "fix
-bug in", no filename dump, no version numbers unless that's the whole
-change.
+Title names the change itself: "fix X", no filenames, no versions unless
+version is the change.
 
-## 3. Body: Problem / Proposal, short
+## 3. Body: caveman Problem / Proposal
+
+Body is **caveman**: drop articles, filler, hedging. Fragments. Each section
+**one line, 20 words max**. Problem = what broke + consequence. Proposal =
+fix mechanism + why this approach. Diff already shows *what*; body carries
+only *why*. Exact identifiers stay exact.
 
 ```
 **Problem**
-<1-3 sentences: what was broken/missing, and its actual consequence.>
+Ctrl-d/Ctrl-a maps permanent in normal mode. Broke half-page scroll and increment everywhere.
 
 **Proposal**
-<1-3 sentences: the fix's actual mechanism/reasoning — why this approach,
-not just what files moved. Reasoning only, not a verification log —
-"ran the tests, they passed" belongs in the PR/chat, not the commit.>
+Bind to Visual Find/Visual All instead. Visual-mode only, normal mode untouched.
 ```
 
-Skip the body only for a genuinely trivial, self-explanatory commit
-(typo, one-line config value).
+Lists of items (packages, deny rules) → name the category, not each item.
+Why not fitting one caveman line → body too big, or commit not atomic.
+Trivial commit (typo, one config value) → subject only.
 
-Every line names the actual problem and the actual reasoning, specific
-to this change. `git diff` already shows *what* changed; the body earns
-its place only by saying *why*. If neither states in a real sentence,
-the commit is too small for a body — drop it, subject line alone is
-enough.
+Body speaks only about codebase. Leave out `.agents/` paths, skill/agent
+names, session narrative, verification logs (tests passed etc.) — those go
+in chat/PR.
 
-State the problem and fix in terms of the codebase itself — the
-module, the behavior, the bug. Never reference `.agents/` paths,
-proposal/task files, skill or agent names, or any other internal
-agent-tooling artifact; those are working notes for producing the
-change, not part of the change. Same for the session narrative: what
-happened while producing the change — steps taken, hypotheses tried,
-evolution of the work across turns — is not the change either. A
-reader with no agent tooling at all must find the message fully
-sensible: the body speaks only about the codebase, in Problem/Proposal
-terms.
-
-Diff-narration filler reads like this — never write it:
-"adding 3 tests", "update foo.ts", "small fix", "minor change",
-"improve X", "add support for Y" with nothing else. Verification-log
-filler is the same failure in the Proposal slot: "verified with bun
-test (520/520)", "ran lint, all green".
-
-A claim sourced from the internet (a changelog, an advisory, a vendor
-doc) gets a citation line under the section that states it: `Source:
-<url> (consulted YYYY-MM-DD)`. Docs drift and links rot — the date
-marks the claim's shelf life for whoever reads the commit later.
+Internet-sourced claim → add `Source: <url> (consulted YYYY-MM-DD)` under
+its section.
 
 ## Workflow
 
-1. `git status` + `git diff` (staged + unstaged).
-2. Propose the atomic split if more than one concern is present.
-3. For each commit: stage its files, draft subject + Problem/Proposal
-   body per above.
-4. Build with native multiple `-m` flags (subject, then one `-m` per
-   body section):
+1. Split per §1.
+2. Per commit: stage, draft subject + body.
+3. Print exact command before running — some repos sign with hardware key,
+   user needs it ready:
 
    ```
    git commit \
-     -m "<emoji> <imperative title>" \
+     -m "<emoji> <title>" \
      -m "**Problem**
-   <text>" \
+   <line>" \
      -m "**Proposal**
-   <text>"
+   <line>"
    ```
 
-5. Print the exact command before running it — some repos here sign
-   commits with a hardware key, the user needs it ready. Don't run
-   silently.
-6. Still follow this session's git-safety rules: only commit when
-   asked, never `--no-verify`, never amend unless asked, no attribution
-   lines.
+4. Session git-safety rules hold: commit only when asked, no `--no-verify`,
+   no amend unless asked, no attribution lines.
