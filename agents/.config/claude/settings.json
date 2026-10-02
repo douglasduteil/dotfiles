@@ -25,6 +25,7 @@
     ],
     "defaultMode": "auto"
   },
+  "model": "haiku",
   "hooks": {
     "PermissionRequest": [
       {
@@ -84,6 +85,5 @@
   "autoMemoryEnabled": false,
   "theme": "dark",
   "autoCompactEnabled": false,
-  "agentPushNotifEnabled": true,
-  "model": "opus"
+  "agentPushNotifEnabled": true
 }
