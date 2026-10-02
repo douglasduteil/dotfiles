@@ -1,25 +1,14 @@
-# Global omp (oh-my-pi) agent config — stowed to ~/.omp/agent/config.yml.
-# Shipped default is tools.approvalMode: yolo (everything auto-runs); kept
-# at `yolo` (2026-10-01, user approved). Audit effective policy:
-#   omp config get tools.approvalMode && omp config get tools.approval
 tools:
   approvalMode: yolo
   approval:
     computer: deny
-    eval: prompt # eval can spawn shells; bash.patterns below don't cover it
-
-# Exec guards: deny-list of catastrophic/irreversible commands. Whole-command
-# glob (fnmatch, '*' wildcard), first match wins. Covers bash only — eval is
-# gated separately via tools.approval.eval: prompt. Text matching: stops
-# accidents, not determined bypasses (e.g. bash -c "$(curl …)").
+    eval: prompt
 bash:
+  allowCompoundCommands: true
   patterns:
-    # secrets: never through the agent
     - match: "*sops*"
       approval: deny
       reason: "secrets tool: use sops manually, never through the agent"
-    # SSH private material: agent never reads/copies keys or ~/.ssh contents
-    # (id_* patterns also catch .pub reads — false positive accepted)
     - match: "*id_rsa*"
       approval: deny
       reason: "private SSH key material: never read or copy through the agent"
@@ -32,11 +21,6 @@ bash:
     - match: "*id_dsa*"
       approval: deny
       reason: "private SSH key material: never read or copy through the agent"
-    # Signing fallback (2026-10-01, user grant): github.pub is the accepted
-    # fallback signing key when the hardware key is unreachable. Allow rules
-    # sit AFTER the private-key denies so compound commands touching id_* are
-    # still denied; residual gap: compound commands reading *unnamed* private
-    # keys in ~/.ssh would match this allow and pass.
     - match: "*ssh-keygen -lf *github.pub"
       approval: allow
     - match: "*user.signingkey=*github.pub* commit -S*"
@@ -47,121 +31,124 @@ bash:
     - match: "*/.ssh"
       approval: deny
       reason: "~/.ssh contents: keys and agent data — agent stays out"
-    # GitHub CLI: read-only allow-list first (first match wins), all other gh
-    # denied — covers auth/token reads, repo/secret/key mutations, releases.
-    - match: "gh pr status*"
+    - match: gh pr status*
       approval: allow
-    - match: "gh pr view*"
+    - match: "gh secret*"
+      approval: deny
+      reason: "gh secret view reads secret values: run manually"
+    - match: gh * view*
       approval: allow
-    - match: "gh pr list*"
+    - match: gh pr list*
       approval: allow
-    - match: "gh pr checks*"
+    - match: gh pr checks*
       approval: allow
-    - match: "gh pr diff*"
+    - match: gh pr diff*
       approval: allow
-    - match: "gh pr create*"
+    - match: gh pr create*
       approval: allow
-    - match: "gh pr edit*"
+    - match: gh pr edit*
       approval: allow
-    - match: "gh issue list*"
+    - match: gh issue list*
       approval: allow
-    - match: "gh issue view*"
+    - match: gh repo list*
       approval: allow
-    - match: "gh repo view*"
+    - match: gh run list*
       approval: allow
-    - match: "gh repo list*"
+    - match: gh workflow list*
       approval: allow
-    - match: "gh run list*"
+    - match: gh release list*
       approval: allow
-    - match: "gh run view*"
+    - match: gh label list*
       approval: allow
-    - match: "gh workflow list*"
+    - match: gh auth status*
       approval: allow
-    - match: "gh workflow view*"
-      approval: allow
-    - match: "gh release list*"
-      approval: allow
-    - match: "gh release view*"
-      approval: allow
-    - match: "gh label list*"
-      approval: allow
-    - match: "gh auth status*"
-      approval: allow
-    - match: "gh *"
+    - match: gh *
       approval: deny
       reason: "gh beyond read-only: run manually (token, mutations, deletes)"
     - match: "*/gh *"
       approval: deny
       reason: "gh beyond read-only: run manually (token, mutations, deletes)"
-    # gh config dir: hosts.yml holds oauth token — agent never reads/copies
     - match: "*config/gh/*"
       approval: deny
       reason: "gh config: hosts.yml stores oauth token — agent stays out"
     - match: "*config/gh"
       approval: deny
       reason: "gh config: hosts.yml stores oauth token — agent stays out"
-    # recursive delete of root/home/dotdirs (covers sudo rm too)
+    - match: "*git push * origin main*"
+      approval: deny
+      reason: "pushing main: run manually"
+    - match: "*git push origin main*"
+      approval: deny
+      reason: "pushing main: run manually"
+    - match: "*git push *:main*"
+      approval: deny
+      reason: "pushing main via refspec: run manually"
+    - match: "*git push *+main*"
+      approval: deny
+      reason: "force-pushing main: run manually"
+    - match: "*git push *--all*"
+      approval: deny
+      reason: "blanket push includes main: run manually"
+    - match: "*git push *--mirror*"
+      approval: deny
+      reason: "mirror push includes main: run manually"
     - match: "*rm -rf /*"
       approval: deny
-      reason: "recursive delete under /"
+      reason: recursive delete under /
     - match: "*rm -fr /*"
       approval: deny
-      reason: "recursive delete under /"
+      reason: recursive delete under /
     - match: "*rm -rf ~*"
       approval: deny
-      reason: "recursive delete under home"
+      reason: recursive delete under home
     - match: "*rm -fr ~*"
       approval: deny
-      reason: "recursive delete under home"
+      reason: recursive delete under home
     - match: "*rm -rf $HOME*"
       approval: deny
-      reason: "recursive delete of home"
+      reason: recursive delete of home
     - match: "*rm -rf ."
       approval: deny
-      reason: "recursive delete of cwd"
+      reason: recursive delete of cwd
     - match: "*rm -rf .."
       approval: deny
-      reason: "recursive delete of parent dir"
+      reason: recursive delete of parent dir
     - match: "*rm -rf .git*"
       approval: deny
-      reason: "recursive delete of git history"
-    # fork bomb
+      reason: recursive delete of git history
     - match: "*(){ :|:& };:*"
       approval: deny
-      reason: "fork bomb"
-    # disk destruction
+      reason: fork bomb
     - match: "*mkfs*"
       approval: deny
-      reason: "filesystem creation/wipe"
+      reason: filesystem creation/wipe
     - match: "*dd *of=/dev/*"
       approval: deny
-      reason: "raw write to block device"
+      reason: raw write to block device
     - match: "*wipefs*"
       approval: deny
-      reason: "filesystem signature wipe"
+      reason: filesystem signature wipe
     - match: "*fdisk*"
       approval: deny
-      reason: "partition editing"
+      reason: partition editing
     - match: "*sgdisk*"
       approval: deny
-      reason: "partition editing"
+      reason: partition editing
     - match: "*parted*"
       approval: deny
-      reason: "partition editing"
-    # shutdown family
+      reason: partition editing
     - match: "*shutdown*"
       approval: deny
-      reason: "system shutdown"
+      reason: system shutdown
     - match: "*reboot*"
       approval: deny
-      reason: "system reboot"
+      reason: system reboot
     - match: "*poweroff*"
       approval: deny
-      reason: "system poweroff"
+      reason: system poweroff
     - match: "*halt*"
       approval: deny
-      reason: "system halt"
-    # remote-code install via pipe or command substitution
+      reason: system halt
     - match: "*| sh"
       approval: deny
       reason: "pipe to shell: unreviewed remote code exec"
@@ -176,15 +163,13 @@ bash:
       reason: "pipe to shell: unreviewed remote code exec"
     - match: "*| sudo sh"
       approval: deny
-      reason: "pipe to shell as root"
+      reason: pipe to shell as root
     - match: "*| sudo bash"
       approval: deny
-      reason: "pipe to shell as root"
-    # NixOS: deleting old generations removes rollback safety net
+      reason: pipe to shell as root
     - match: "*nix-collect-garbage -d*"
       approval: deny
       reason: "deletes old NixOS generations: loses rollback"
-    # irreversible public side effects
     - match: "*npm publish*"
       approval: deny
       reason: "publishes package publicly: run manually"
@@ -194,22 +179,13 @@ bash:
     - match: "*gh repo delete*"
       approval: deny
       reason: "deletes GitHub repo: run manually"
-
-# Methodology wiring. x-* skills live at ~/.config/agents/skills (stowed
-# from agents/.config/agents/skills; ~/.agents symlinks there) and are
-# discovered by the default-on `agents` skill/context provider — no key
-# needed. The Claude plugin packs (mattpocock-skills, ponytail, caveman)
-# are user-registry opt-in:
 enabledProviders:
   - claude-plugins
-
-# Session memory is owned by the x-memory CLI + wiki (see ~/.claude/CLAUDE.md
-# and the x-memory-session-start hook); omp's own memory stays off (default).
 theme:
   dark: titanium
   light: light
 modelRoles:
-  default: openrouter/z-ai/glm-5.3-flash
+  default: openrouter/xiaomi/mimo-v2.6-pro:high
 symbolPreset: unicode
 composer:
   shape: band
