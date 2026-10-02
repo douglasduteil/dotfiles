@@ -1,3 +1,4 @@
 .scratch/
 
 agents/.config/agents/x-memory/index.db
+agents/.config/agents/skills/synced/
