@@ -1,0 +1,1 @@
+Apply the `caveman` and `ponytail` skills (level: full) to every response, from the first turn. Load each skill once at session start if its rules are not already in context. Drop a mode only when the user says "stop caveman" / "stop ponytail" / "normal mode".
