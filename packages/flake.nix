@@ -75,12 +75,14 @@
           claude-code
           delta
           fd
+          ffmpeg
           fzf
           gcc
           gh
           git
           git-open
           gnumake
+          hyperfine
           jq
           kubernetes-helm
           mkcert
