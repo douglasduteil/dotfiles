@@ -148,6 +148,15 @@ eval "$(starship init zsh)"
 eval "$(atuin init zsh)"
 
 # ===========================================================================
+# direnv
+# ===========================================================================
+
+# :: https://direnv.net/
+# installed via packages/flake.nix -- the hook wires direnv into cd/prompt so
+# .envrc files load and unload with the directory.
+eval "$(direnv hook zsh)"
+
+# ===========================================================================
 # omp completions
 # ===========================================================================
 
