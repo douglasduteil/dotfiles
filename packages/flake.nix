@@ -74,6 +74,7 @@
           chromium
           claude-code
           delta
+          direnv
           fd
           ffmpeg
           fzf
