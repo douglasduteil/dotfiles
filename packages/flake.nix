@@ -68,6 +68,7 @@
       packages.${system}.default = pkgs.buildEnv {
         name = "nixos-wsl-profile";
         paths = with pkgs; [
+          atuin
           bat
           bash-language-server
           bun
@@ -108,6 +109,7 @@
           yaml-language-server
           yazi
           yt-dlp
+          zoxide
           zsh
           zsh-autosuggestions
           zsh-completions
