@@ -31,6 +31,73 @@ bash:
     - match: "*/.ssh"
       approval: deny
       reason: "~/.ssh contents: keys and agent data — agent stays out"
+    - match: "*ssh-keygen -y*"
+      approval: deny
+      reason: "derives/probes a private key: run manually"
+    - match: "*ssh-keygen -p*"
+      approval: deny
+      reason: "changes a private key passphrase: run manually"
+    - match: ssh-add -l
+      approval: allow
+    - match: ssh-add -L
+      approval: allow
+    - match: "*ssh-add*"
+      approval: deny
+      reason: "loading keys into an agent: the user runs ssh-add in their own terminal"
+    - match: "*ssh-agent*"
+      approval: deny
+      reason: "starting an ssh-agent: the user owns key unlocking"
+    - match: "*--show-token*"
+      approval: deny
+      reason: "prints the gh oauth token: never through the agent"
+    - match: "*hosts.yml*"
+      approval: deny
+      reason: "gh token store: agent stays out"
+    - match: "*oauth_token*"
+      approval: deny
+      reason: "token extraction: agent stays out"
+    - match: "*gho_*"
+      approval: deny
+      reason: "GitHub token literal: agent stays out"
+    - match: "*ghp_*"
+      approval: deny
+      reason: "GitHub token literal: agent stays out"
+    - match: "*github_pat_*"
+      approval: deny
+      reason: "GitHub token literal: agent stays out"
+    - match: "*git credential*"
+      approval: deny
+      reason: "git credential fill prints stored passwords: run manually"
+    - match: "*.git-credentials*"
+      approval: deny
+      reason: "stored git passwords: agent stays out"
+    - match: "*.netrc*"
+      approval: deny
+      reason: "stored passwords: agent stays out"
+    - match: "*/.aws/*"
+      approval: deny
+      reason: "cloud credentials: agent stays out"
+    - match: "*/.gnupg*"
+      approval: deny
+      reason: "private GPG keys: agent stays out"
+    - match: "*agent/config.yml*"
+      approval: deny
+      reason: "agent guard config: the user edits it, never the agent"
+    - match: "*omp config set*"
+      approval: deny
+      reason: "agent guard config: the user edits it, never the agent"
+    - match: "*claude/settings.json*"
+      approval: deny
+      reason: "agent guard config: the user edits it, never the agent"
+    - match: "*opencode.json*"
+      approval: deny
+      reason: "agent guard config: the user edits it, never the agent"
+    - match: "*x-guard*"
+      approval: deny
+      reason: "agent guard hook: the user edits it, never the agent"
+    - match: "*rules/constitution.md*"
+      approval: deny
+      reason: "the Constitution: the user amends it, never the agent"
     - match: gh pr status*
       approval: allow
     - match: gh secret*
@@ -84,8 +151,7 @@ bash:
       approval: deny
       reason: "gh extension installs code: run manually"
     - match: gh gist *
-      approval: deny
-      reason: "gh gist publishes content: run manually"
+      approval: allow
     - match: gh variable *
       approval: deny
       reason: "repo variables: run manually"
@@ -293,7 +359,7 @@ theme:
   dark: titanium
   light: light
 modelRoles:
-  default: openrouter/xiaomi/mimo-v2.6-pro:high
+  default: anthropic/claude-opus-5-5:high
 symbolPreset: unicode
 composer:
   shape: band

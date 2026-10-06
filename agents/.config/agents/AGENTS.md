@@ -1,6 +1,12 @@
 # Agents
 
-Bootstrap notes for any AI coding agent (Claude Code, opencode) working in this repo, or any repo this user touches. Keep this short — it's a signpost, not a manual. Edit it directly; it's a plain tracked file, not generated.
+Bootstrap notes for any AI coding agent (Claude Code, opencode, omp) working in this repo, or any repo this user touches. Keep this short — it's a signpost, not a manual. Edit it directly; it's a plain tracked file, not generated.
+
+## Constitution
+
+Binding on every session and subagent; outranks everything below. Single source: `~/.config/agents/rules/constitution.md` (omp loads it as an always-apply rule; Claude Code imports it here; opencode lists it in `instructions`).
+
+@~/.config/agents/rules/constitution.md
 
 ## Curated memory (agent-first, human-second)
 
