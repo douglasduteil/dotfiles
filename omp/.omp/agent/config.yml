@@ -33,7 +33,7 @@ bash:
       reason: "~/.ssh contents: keys and agent data — agent stays out"
     - match: gh pr status*
       approval: allow
-    - match: "gh secret*"
+    - match: gh secret*
       approval: deny
       reason: "gh secret view reads secret values: run manually"
     - match: gh * view*
@@ -62,12 +62,120 @@ bash:
       approval: allow
     - match: gh auth status*
       approval: allow
-    - match: gh *
+    - match: gh api *
       approval: deny
-      reason: "gh beyond read-only: run manually (token, mutations, deletes)"
+      reason: "gh api can do anything with the token: run manually"
+    - match: gh auth token*
+      approval: deny
+      reason: "reads the oauth token: run manually"
+    - match: gh auth login*
+      approval: deny
+      reason: "changes gh auth state: run manually"
+    - match: gh auth refresh*
+      approval: deny
+      reason: "changes gh auth state: run manually"
+    - match: gh ssh *
+      approval: deny
+      reason: "opens a shell on a GitHub host: run manually"
+    - match: gh alias *
+      approval: deny
+      reason: "gh alias: run manually"
+    - match: gh extension *
+      approval: deny
+      reason: "gh extension installs code: run manually"
+    - match: gh gist *
+      approval: deny
+      reason: "gh gist publishes content: run manually"
+    - match: gh variable *
+      approval: deny
+      reason: "repo variables: run manually"
+    - match: gh codespace *
+      approval: deny
+      reason: "spawns machines: run manually"
+    - match: gh cache *
+      approval: deny
+      reason: "gh cache: run manually"
+    - match: gh release create*
+      approval: deny
+      reason: "publishes a release: run manually"
+    - match: gh release delete*
+      approval: deny
+      reason: "deletes a release: run manually"
+    - match: gh workflow run*
+      approval: deny
+      reason: "triggers a workflow: run manually"
+    - match: gh pr merge*
+      approval: deny
+      reason: "merging a PR: run manually"
+    - match: gh pr close*
+      approval: deny
+      reason: "changes PR state: run manually"
+    - match: gh pr reopen*
+      approval: deny
+      reason: "changes PR state: run manually"
+    - match: gh pr comment*
+      approval: deny
+      reason: "posts to GitHub: run manually"
+    - match: gh pr ready*
+      approval: deny
+      reason: "changes PR state: run manually"
+    - match: gh issue create*
+      approval: deny
+      reason: "posts to GitHub: run manually"
+    - match: gh issue comment*
+      approval: deny
+      reason: "posts to GitHub: run manually"
+    - match: gh issue close*
+      approval: deny
+      reason: "changes issue state: run manually"
+    - match: gh repo create*
+      approval: deny
+      reason: "creates a repository: run manually"
+    - match: gh repo fork*
+      approval: deny
+      reason: "forks a repository: run manually"
+    - match: gh repo rename*
+      approval: deny
+      reason: "renames a repository: run manually"
+    - match: gh repo archive*
+      approval: deny
+      reason: "archives a repository: run manually"
+    - match: gh release upload*
+      approval: deny
+      reason: "publishes assets: run manually"
+    - match: gh release edit*
+      approval: deny
+      reason: "changes a release: run manually"
+    - match: gh release download*
+      approval: deny
+      reason: "gh release download: run manually"
+    - match: gh label create*
+      approval: deny
+      reason: "changes repo labels: run manually"
+    - match: gh label delete*
+      approval: deny
+      reason: "changes repo labels: run manually"
+    - match: gh workflow enable*
+      approval: deny
+      reason: "changes workflow state: run manually"
+    - match: gh workflow disable*
+      approval: deny
+      reason: "changes workflow state: run manually"
+    - match: gh ruleset *
+      approval: deny
+      reason: "changes repo rules: run manually"
+    - match: gh attestation *
+      approval: deny
+      reason: "gh attestation: run manually"
+    - match: gh copilot *
+      approval: deny
+      reason: "gh copilot: run manually"
+    - match: gh browse*
+      approval: deny
+      reason: "opens a browser: run manually"
     - match: "*/gh *"
       approval: deny
-      reason: "gh beyond read-only: run manually (token, mutations, deletes)"
+      reason: "gh outside PATH: run manually"
     - match: "*config/gh/*"
       approval: deny
       reason: "gh config: hosts.yml stores oauth token — agent stays out"
