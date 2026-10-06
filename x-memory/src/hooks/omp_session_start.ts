@@ -1,7 +1,7 @@
 // omp hook module: registers a `before_agent_start` handler that indexes
 // the *other* tool's (opencode's) and omp's recent activity on this
 // project, and injects a breadcrumb message — plus the curated-memory
-// router pages (~/.cache/agents/x-memory/index.md and
+// router pages (~/.config/agents/x-memory/index.md and
 // <project>/.agents/x-memory/index.md, see AGENTS.md). Mirrors
 // claude_code_session_start.ts. Never blocks or fails the agent — any
 // error or slowness here must degrade to silence, not a hook-error
@@ -18,7 +18,7 @@ async function readIndexIfExists(path: string): Promise<string | null> {
 
 async function buildMemoryContext(project: string): Promise<string | null> {
   const [global, local] = await Promise.all([
-    readIndexIfExists(`${homedir()}/.cache/agents/x-memory/index.md`),
+    readIndexIfExists(`${homedir()}/.config/agents/x-memory/index.md`),
     readIndexIfExists(`${project}/.agents/x-memory/index.md`),
   ]);
   const sections = [

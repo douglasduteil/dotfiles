@@ -4,12 +4,12 @@ Bootstrap notes for any AI coding agent (Claude Code, opencode) working in this 
 
 ## Curated memory (agent-first, human-second)
 
-Working knowledge lives in two untracked Markdown trees, not in a chat transcript:
+Working knowledge lives in two Markdown trees, not in a chat transcript:
 
-- **Global tier:** `~/.cache/agents/x-memory/` — cross-project conventions, preferences, methodology.
+- **Global tier:** `~/.config/agents/x-memory/` (same as `~/.agents/x-memory/`) — cross-project conventions, preferences, methodology. Tracked in this public dotfiles repo; machine-specific or sensitive pages stay local in `~/.local/share/agents/x-memory/`, linked from the global `index.md` and marked *local*.
 - **Project tier:** `<project>/.agents/x-memory/` — project-specific architecture, decisions, pitfalls. Same folder as the `x-memory` session-history index (below) — curated pages and `index.db` live side by side.
 
-Before acting on a topic the wiki covers — naming a branch, writing a commit, picking a library, or any other subtopic a page below documents — open `index.md` at the global path and the project's path first. Treat each `index.md` as a **router**, not a summary: read it, follow the link matching the topic, skip the rest. This applies at every topic switch, not only at session start. The global tree is gitignored by default — personal working memory, never committed unless explicitly opted in; the project tree lives inside `.agents/x-memory/`, also gitignored.
+Before acting on a topic the wiki covers — naming a branch, writing a commit, picking a library, or any other subtopic a page below documents — open `index.md` at the global path and the project's path first. Treat each `index.md` as a **router**, not a summary: read it, follow the link matching the topic, skip the rest. This applies at every topic switch, not only at session start. Global pages are published with the dotfiles repo: keep secrets, key fingerprints, hostnames and private project detail in *local* pages. The project tree lives inside `.agents/x-memory/`, gitignored.
 
 `x-memory` (this repo's `x-memory/` directory) also drives the project folder's session-history index: it recovers what happened in past sessions via the CLI (`x-memory index|query --project <dir>`). The wiki preserves judgment that re-reading transcripts cannot reliably reproduce; x-memory surfaces leads to verify. Use both: x-memory to find prior context, the wiki to record what was learned.
 

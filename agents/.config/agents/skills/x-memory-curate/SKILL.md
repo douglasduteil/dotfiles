@@ -1,12 +1,12 @@
 ---
 name: x-memory-curate
-description: Decide whether and where to write something to the curated memory wiki (project tier under .agents/x-memory/, global tier under ~/.cache/agents/x-memory/). Use before writing to the wiki — an explicit "remember this", a session-end/task-finish wrap-up, or batching recurring friction for later triage.
+description: Decide whether and where to write something to the curated memory wiki (project tier under .agents/x-memory/, global tier under ~/.config/agents/x-memory/). Use before writing to the wiki — an explicit "remember this", a session-end/task-finish wrap-up, or batching recurring friction for later triage.
 user-invocable: true
 ---
 
 # Writing to the wiki
 
-Both tiers use the `x-memory` name: project tier at `.agents/x-memory/` (sharing its folder with the `x-memory` session-history index — `index.db` sits beside the curated pages there), global tier at `~/.cache/agents/x-memory/` (its own directory — `x-memory`'s SQLite index lives separately, at `~/.cache/x-memory/`, one level up, so the curated wiki here is never at risk of being overwritten by the indexer). Revised 2026-09-22: `~/.cache/agents/memory/` was the name through 2026-09-22; renamed for cross-tier naming consistency.
+Both tiers use the `x-memory` name: project tier at `.agents/x-memory/` (sharing its folder with the `x-memory` session-history index — `index.db` sits beside the curated pages there), global tier at `~/.config/agents/x-memory/` (tracked in the public dotfiles repo; `x-memory`'s SQLite index lives separately, at `~/.cache/x-memory/`, so the curated wiki is never at risk of being overwritten by the indexer). Global pages holding secrets, fingerprints, hostnames or private project detail are *local*: they live in `~/.local/share/agents/x-memory/`, outside the repo, linked from the global `index.md` and marked *local*. Revised 2026-10-06: the global tier moved from `~/.cache/agents/x-memory/` to the tracked `~/.config/agents/x-memory/`, private pages to `~/.local/share/agents/x-memory/`.
 
 The agent **never writes silently**. Triggers, in priority order:
 
@@ -67,7 +67,7 @@ read only when a task actually touches their topic.
   abstractions").
 - **Put technology-specific preferences, tool quirks, and accumulated
   methodology in a topic page** in the global wiki
-  (`~/.cache/agents/x-memory/<topic>.md`), linked from the index with a
+  (`~/.config/agents/x-memory/<topic>.md`, or *local* when private), linked from the index with a
   one-line trigger ("only when working on X"). Same for project-specific
   knowledge in the project wiki.
 - **Don't paste wiki content into `AGENTS.md`** to "make sure it gets

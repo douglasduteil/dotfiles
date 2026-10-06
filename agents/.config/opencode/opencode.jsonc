@@ -3,6 +3,7 @@
   "env": {
     "SSH_ASKPASS_REQUIRE": "force"
   },
+  "instructions": ["~/.config/agents/rules/constitution.md"],
   "share": "disabled",
   // Explicit so sharing doesn't quietly depend on the ~/.claude symlink
   // (that symlink's own purpose is unrelated legacy-path compat).
@@ -18,11 +19,48 @@
     ]
   },
   "permission": {
-    "read": { "**/.env*.local": "deny", "$HOME/.config/sops/age/**": "deny" },
-    "edit": { "**/.env*.local": "deny", "$HOME/.config/sops/age/**": "deny" },
-    "bash": { "sops*": "deny", "find / *": "deny", "*": "ask" },
+    "read": {
+      "**/.env*.local": "deny",
+      "$HOME/.aws/**": "deny",
+      "$HOME/.config/gh/**": "deny",
+      "$HOME/.config/sops/age/**": "deny",
+      "$HOME/.git-credentials": "deny",
+      "$HOME/.gnupg/**": "deny",
+      "$HOME/.netrc": "deny",
+      "$HOME/.ssh/**": "deny"
+    },
+    "edit": {
+      "**/.env*.local": "deny",
+      "$HOME/.config/claude/settings.json": "deny",
+      "$HOME/.config/opencode/opencode.jsonc": "deny",
+      "$HOME/.config/sops/age/**": "deny",
+      "$HOME/.config/agents/rules/constitution.md": "deny",
+      "$HOME/.dotfiles/agents/.config/agents/rules/constitution.md": "deny",
+      "$HOME/.dotfiles/agents/.config/claude/settings.json": "deny",
+      "$HOME/.dotfiles/agents/.config/opencode/opencode.jsonc": "deny",
+      "$HOME/.config/omp/agent/config.yml": "deny",
+      "$HOME/.config/omp/agent/hooks/pre/x-guard.ts": "deny",
+      "$HOME/.dotfiles/omp/.config/omp/agent/config.yml": "deny",
+      "$HOME/.dotfiles/omp/.config/omp/agent/hooks/pre/x-guard.ts": "deny",
+      "$HOME/.omp/agent/config.yml": "deny",
+      "$HOME/.ssh/**": "deny"
+    },
+    "bash": {
+      "*": "ask",
+      "*--show-token*": "deny",
+      "*.ssh*": "deny",
+      "*hosts.yml*": "deny",
+      "find / *": "deny",
+      "gh auth token*": "deny",
+      "git credential*": "deny",
+      "sops*": "deny",
+      "ssh-add*": "deny",
+      "ssh-agent*": "deny"
+    },
     "external_directory": {
-      "~/.cache/agents/x-memory/**": "allow",
+      "~/.local/share/agents/x-memory/**": "allow",
+      "~/.config/agents/x-memory/**": "allow",
+      "$HOME/.dotfiles/agents/.config/agents/x-memory/**": "allow",
       "$HOME/.dotfiles/.agents/x-memory/**": "allow"
     }
   }

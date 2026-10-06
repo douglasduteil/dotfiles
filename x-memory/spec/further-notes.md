@@ -18,7 +18,7 @@ The `PreCompact`/compaction-timing question from earlier revisions of this spec 
 
 ## Global storage lands inside a stow-managed directory
 
-**Moot — see [[implementation-decisions#storage-locations|storage locations]].** The curated wiki lives at `~/.cache/agents/memory/`, the SQLite index at `~/.cache/x-memory/`, both under the XDG cache root. Neither path goes through the stow-managed `~/.config/agents` symlink, so the "cache file swept into version control" risk that originally motivated this note no longer applies. Kept here as a record of the wrinkle the new layout deliberately avoids.
+**Revised 2026-10-06 — no longer moot, now deliberate.** The curated global wiki moved into the stow-managed `~/.config/agents/x-memory/` precisely so its shareable pages are version-controlled (see [[implementation-decisions#storage-locations|storage locations]]); the SQLite index stays at `~/.cache/x-memory/` and the leftover `index.db` beside the wiki is gitignored, so no derived file reaches the repo. Private pages live outside it, in `~/.local/share/agents/x-memory/`.
 
 ## Others have already noticed this exact gap
 
