@@ -21,6 +21,12 @@ fi
 # untracked (yet), so it's left for stow to fold fully.
 mkdir -p ~/.config/claude ~/.config/git ~/.config/opencode ~/.omp/agent
 
+# ssh config's ControlPath points git/ssh's connection-multiplexing socket
+# here; ssh won't create the directory itself, so a fresh machine (or one
+# that pruned ~/.ssh) fails every push/fetch with "unix_listener: cannot
+# bind to path ... No such file or directory" until it exists.
+mkdir -p ~/.ssh/sockets
+
 stow -d "$DOTFILES_DIR" -t "$HOME" -R "${PACKAGES[@]}"
 
 # Anything that still hardcodes ~/.claude or ~/.agents lands on the same
