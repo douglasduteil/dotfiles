@@ -18,6 +18,9 @@ require("lazy").setup({
   spec = {
     -- add LazyVim and import its plugins
     { "LazyVim/LazyVim", import = "lazyvim.plugins" },
+    -- prettier on save for its supported filetypes (js/ts, css, html, json,
+    -- yaml, markdown, ...); falls back to LSP formatting elsewhere
+    { import = "lazyvim.plugins.extras.formatting.prettier" },
     -- import/override with your plugins
     { import = "plugins" },
   },
