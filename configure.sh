@@ -12,14 +12,14 @@ if ! command -v stow >/dev/null 2>&1; then
   exit 1
 fi
 
-# ~/.config/claude, ~/.config/git, ~/.config/opencode and ~/.omp/agent also
-# hold real, untracked, per-machine files (Claude Code credentials/sessions/caches;
+# ~/.config/claude, ~/.config/git, ~/.config/opencode and ~/.config/omp/agent
+# also hold real, untracked, per-machine files (Claude Code credentials/sessions/caches;
 # git's signingkey include; opencode's own plugin node_modules/package.json;
 # omp's auth/sessions/caches) alongside the stowed ones. Pre-creating them as
 # real directories keeps stow from folding the whole subtree into a single
 # symlink -- see README's Install section. ~/.config/agents holds nothing
 # untracked (yet), so it's left for stow to fold fully.
-mkdir -p ~/.config/claude ~/.config/git ~/.config/opencode ~/.omp/agent
+mkdir -p ~/.config/claude ~/.config/git ~/.config/opencode ~/.config/omp/agent
 
 # ssh config's ControlPath points git/ssh's connection-multiplexing socket
 # here; ssh won't create the directory itself, so a fresh machine (or one
@@ -29,9 +29,9 @@ mkdir -p ~/.ssh/sockets
 
 stow -d "$DOTFILES_DIR" -t "$HOME" -R "${PACKAGES[@]}"
 
-# Anything that still hardcodes ~/.claude or ~/.agents lands on the same
-# live state instead of a stale duplicate.
-for name in claude agents; do
+# Anything that still hardcodes ~/.claude, ~/.agents or ~/.omp (omp itself
+# defaults there) lands on the same live state instead of a stale duplicate.
+for name in claude agents omp; do
   link=~/."$name"
   target=~/.config/"$name"
   if [ ! -e "$link" ] || [ -L "$link" ]; then

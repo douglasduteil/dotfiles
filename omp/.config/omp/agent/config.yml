@@ -359,7 +359,7 @@ theme:
   dark: titanium
   light: light
 modelRoles:
-  default: anthropic/claude-opus-5-5:high
+  default: openrouter/google/gemini-3.8-flash
 symbolPreset: unicode
 composer:
   shape: band
