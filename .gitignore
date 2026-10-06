@@ -2,3 +2,9 @@
 
 agents/.config/agents/x-memory/index.db
 agents/.config/agents/skills/synced/
+
+# project-scoped omp settings for this repo (see .omp/config.yml) --
+# modelRoleStorage: project redirects model-role switches here instead of
+# into the tracked omp/.omp/agent/config.yml, so day-to-day model changes
+# don't dirty the shared guard config.
+/.omp/
