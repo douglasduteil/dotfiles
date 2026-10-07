@@ -6,6 +6,9 @@
 export DOTFILES_DIR="$HOME/.dotfiles"
 
 export XDG_BIN_DIR="$HOME/bin"
+# bin (stow package) puts personal scripts here (e.g. x-update) -- put it
+# on PATH first so one never shadows a same-named nix-profile binary.
+export PATH="$XDG_BIN_DIR:$PATH"
 export XDG_CACHE_HOME="$HOME/.cache"
 export XDG_CONFIG_DIR="$HOME/.config"
 export XDG_LOCAL_DIR="$HOME/.local"

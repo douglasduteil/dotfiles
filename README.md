@@ -17,6 +17,7 @@ User-level Nix profile for NixOS-WSL machines: stow-managed dotfiles plus a lock
   - `~/.config/opencode/opencode.jsonc` — opencode's own config (XDG default location, no relocation needed). Declares an explicit `skills.paths` pointing at `~/.config/agents/skills` plus each installed Claude Code plugin's skill directory (ponytail, caveman, mattpocock-skills) — pointed at each plugin's parent dir, one level above its version/hash-pinned subdir, so a `claude plugin update` can't silently break the path (opencode's skill loader scans recursively). `~/.config/opencode` also holds real, untracked, per-machine files (its own plugin `node_modules/`, `package.json`, `package-lock.json`) alongside the stowed config, same reasoning as `~/.config/claude` above. `opencode debug skill` is the way to check what it currently sees -- keep its stdout and stderr separate when scripting against it (e.g. redirect to two files, don't `2>&1 | grep`): it logs warnings (like a duplicate skill name found at two paths) to stderr while streaming JSON to stdout, and merging the two into one pipe can interleave and corrupt the JSON mid-parse
   - `~/.agents -> ~/.config/agents` (see Install) — a neutral, whole-dir symlink mirroring the `~/.claude` one above, for any future tool that adopts the `~/.agents` convention. Not needed by opencode itself (already covered by `~/.claude/skills` and the explicit `skills.paths` above); Claude Code doesn't read it at all
   - `~/.config/agents/AGENTS.md` — the canonical, tracked bootstrap file for both tools, same sharing pattern as skills above: `~/.config/opencode/AGENTS.md` and `~/.config/claude/CLAUDE.md` are both tracked symlinks to it (`-> ../agents/AGENTS.md`), not copies, so there's one real file to edit. Force-added (`git add -f`) since the global `AGENTS.md`/`CLAUDE.md` gitignore rules would otherwise exclude it — those rules stay in place for every other repo's generated copies
+- `bin` (stow package) — `~/bin/x-update`, gathering every per-machine update step (nix package set bump + apply, Claude Code marketplace + plugin updates) into one command; `zsh/.zshenv` puts `$XDG_BIN_DIR` (`~/bin`) on `PATH` so it resolves by name. See "Updating" below
 - `packages` (flake, not stowed) — a locked `flake.lock` pinning the exact nixpkgs revision for everything above plus the rest of the CLI toolset; see `packages/flake.nix` for the current list rather than duplicating it here
 - `nixos/configuration.nix` (template, not stowed) — a copy-paste starting point for `/etc/nixos/configuration.nix`: zsh shell, YubiKey USB/IP passthrough, `pcscd`, and the FIDO2/`plugdev` udev fix SSH commit signing depends on. Not stowed because most of it is genuinely per-machine (USB busids, `stateVersion`, the username); see Install
 
@@ -154,13 +155,21 @@ echo "$(git config user.email) $(cat ~/.ssh/git_signing_key_<...>.pub)" \
 
 Then also add its `IdentityFile` line to `ssh/.ssh/config` (tracked -- commit and push), copy the new handle file to every other machine, and register the same public key on GitHub itself under *Settings → SSH and GPG keys*: once as an **Authentication Key** (needed for `git push`/`fetch` over SSH) and once as a **Signing Key** (needed for the green "Verified" badge -- `allowed_signers` only covers local `git log --show-signature` verification, GitHub keeps its own separate copy).
 
-## Updating the package set
+## Updating
+
+`x-update` (the `bin` package, on `PATH` via `$XDG_BIN_DIR`) runs every per-machine update step in one go: bumps and applies the `packages` flake (below), then runs `claude plugin marketplace update` and `claude plugin update` for every installed plugin. Safe to rerun -- each step is itself idempotent.
+
+```sh
+x-update
+```
+
+### Updating the package set only
 
 Edit `packages/flake.nix`, then from anywhere (no `cd` into `packages/` needed):
 
 ```sh
-nix flake update --flake /home/nixos/.dotfiles/packages   # bump the lock to latest nixpkgs-unstable
-nix profile upgrade packages                             # apply on this machine
+nix flake update --flake ~/.dotfiles/packages   # bump the lock to latest nixpkgs-unstable
+nix profile upgrade packages                    # apply on this machine
 ```
 
 (`nix flake lock ~/.dotfiles/packages --update-input nixpkgs` is the equivalent form for updating just the nixpkgs input; `nix flake update --flake <path>` updates every input in that flake. `--flake` names the flake — from any cwd — while the positional arguments to `nix flake update` are the *inputs* to update, not the flake path.)

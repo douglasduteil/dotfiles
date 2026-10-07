@@ -1,0 +1,29 @@
+#!/usr/bin/env bash
+# Every update step this machine's dotfiles setup needs, gathered in one
+# place instead of memorized piecemeal (see README's "Updating" section
+# for the nix half on its own, and CLAUDE.md/x-memory for why plugin
+# sources matter). Safe to rerun -- each step is itself idempotent:
+# `nix profile upgrade` and `claude plugin update`/`marketplace update` are
+# all no-ops when already current.
+set -euo pipefail
+
+# Not BASH_SOURCE-relative: this script runs from its stowed location
+# (~/bin/x-update), not from inside the repo checkout, so it can't find
+# packages/flake.nix next to itself. zsh/.zshenv already exports this for
+# every interactive shell; fall back to the stow convention for a plain
+# `bash x-update` with no login shell in between.
+DOTFILES_DIR="${DOTFILES_DIR:-$HOME/.dotfiles}"
+
+echo "==> nix: bumping packages/flake.lock to latest nixpkgs-unstable and applying"
+nix flake update --flake "$DOTFILES_DIR/packages"
+nix profile upgrade packages
+
+echo "==> claude: refreshing every configured marketplace"
+claude plugin marketplace update
+
+echo "==> claude: updating every installed plugin"
+claude plugin list --json | jq -r '.[].id' | while IFS= read -r plugin; do
+  claude plugin update "$plugin"
+done
+
+echo "==> done -- restart any running claude/opencode sessions to pick up plugin updates"
