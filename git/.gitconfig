@@ -254,8 +254,6 @@
   conflictstyle = diff3
 [includeIf "gitdir:/home/nixos/.config/claude/plugins/marketplaces/"]
 	path = /home/nixos/.config/git/marketplaces.gitconfig
-[url "https://github.com/JuliusBrussee/caveman.git"]
-	insteadOf = git@github.com:JuliusBrussee/caveman.git
 [url "https://github.com/mattpocock/skills.git"]
 	insteadOf = git@github.com:mattpocock/skills.git
 [url "https://github.com/DietrichGebert/ponytail.git"]
