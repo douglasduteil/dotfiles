@@ -249,7 +249,7 @@
 [delta]
   navigate = true
   light = false
-  side-by-side = true
+	side-by-side = false
 [merge]
   conflictstyle = diff3
 [includeIf "gitdir:/home/nixos/.config/claude/plugins/marketplaces/"]
