@@ -26,6 +26,18 @@ username namespace. Before naming a branch, check for this pattern:
 If the repo's own history uses a different convention, follow that
 repo's instead — this is the default, not an override.
 
+## New branch: never track `main`
+
+Branch off `origin/main` with `--no-track`:
+`git switch -c <branch> --no-track origin/main` (worktree:
+`git worktree add <dir> -b <branch> --no-track origin/main`). Without it,
+git sets the new branch's upstream to `origin/main`, so a bare `git push`
+or `git pull` targets `main`. First push sets the real upstream:
+`git push -u origin <branch>`. Already tracking `main`? Run
+`git branch --unset-upstream`. Stated by the user 2026-10-08
+(release-action, `git switch -c … origin/main` left the branch on
+`origin/main`).
+
 ## Commits: write via the x-commit skill
 
 Before writing any commit — "commit this", a PR's underlying commit,
@@ -104,10 +116,11 @@ asked" — no such request existed. `%G?` showed `G` both times, so a
 good-signature check alone does not catch it; compare `%GK` against
 the configured `user.signingkey` fingerprint. Rule adopted from then
 on: forks never commit — they change, verify and hand back; the main
-session commits. **2026-09-29, user decision:** `~/.ssh/github.pub` is
-an accepted signing key when the hardware key is unreachable — pass it
-per commit (`git -c user.signingkey=$HOME/.ssh/github.pub commit -S`),
-never change git config. The violation was the lie, not the key.
+session commits. **2026-10-09, user decision:** agents sign and push
+with `~/.ssh/github` via `git agent-commit` / `git agent-push`
+(machine-local aliases, untracked; see the *local* ssh_signing page), never
+read the key, never change git config. The violation was the lie, not
+the key.
 
 ## Stacked PRs: open against main once the base is merged
 
@@ -126,6 +139,6 @@ fix, add a commit; the squash merge collapses it. Never rebase a pushed branch e
 ## Worktrees when another session may own the checkout
 
 Parallel sessions switch branches in the main checkout under you. Work in
-`git worktree add <scratchpad>/wtN -b <branch> origin/main`, remove it after the PR
+`git worktree add <scratchpad>/wtN -b <branch> --no-track origin/main`, remove it after the PR
 (`git worktree remove --force`). A `node_modules` symlink to the main checkout breaks as soon as
 dependencies differ: run `bun install --frozen-lockfile` in the worktree (2026-10-03, zod added).

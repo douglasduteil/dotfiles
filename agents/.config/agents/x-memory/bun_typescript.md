@@ -7,6 +7,7 @@ Apply to any new or existing Bun + TypeScript project unless the project already
 - **Prettier:** default config, declared in `package.json` (not `.prettierrc`). Include `prettier-plugin-organize-imports` so imports stay grouped and deduped.
 - **Tests:** `*.test.ts` next to the source file it covers, run via `bun test`.
 - **Module resolution:** prefer `package.json#imports` and `package.json#exports` over `../../` traversal. Add an `imports` map when a deep path would otherwise need `../../../`.
+  - `imports` gotchas: every `*` in a target gets the same matched text, so `./libs/*/src/*.ts` can't work. Use a barrel key `#libs/*` → `./libs/*/src/index.ts` plus one `#libs/<lib>/*` key per lib (longest prefix wins). Targets get no extension or index lookup: map to `*.ts`, write `/index` for folder imports. With `outDir` set, tsc also needs `rootDir`, else TS2210. Found 2026-10-09, federation `back/`.
 - **Shell scripts:** respect [functional shell rules](https://www.functionalprogramminginbash.com/) when the script's job fits (pure functions, no side effects, data via stdin/stdout, composition over mutation). Pragmatic, not dogmatic.
 
 ## Bun runtime API gotchas (found via hands-on testing)
