@@ -11,6 +11,14 @@
         inherit system;
         config.allowUnfree = true;
       };
+      # nixpkgs-unstable lags upstream; drop once it ships >= this version.
+      bun = pkgs.bun.overrideAttrs (_: rec {
+        version = "1.4.3";
+        src = pkgs.fetchurl {
+          url = "https://github.com/oven-sh/bun/releases/download/bun-v${version}/bun-linux-x64.zip";
+          hash = "sha256-PnMFKNiXdfA/h/BcBnh8TfQJnQo38/JS57gpyyOBbhg=";
+        };
+      });
       nodejs = pkgs.stdenv.mkDerivation {
         pname = "nodejs";
         version = "24.21.0";
@@ -105,7 +113,7 @@
           tree-sitter
           tsgo
           typescript-mcp
-          (pkgs.writeShellScriptBin "x-memory" ''exec ${pkgs.bun}/bin/bun "$HOME/.dotfiles/x-memory/src/cli.ts" "$@"'')
+          (pkgs.writeShellScriptBin "x-memory" ''exec ${bun}/bin/bun "$HOME/.dotfiles/x-memory/src/cli.ts" "$@"'')
           yaml-language-server
           yazi
           yt-dlp
