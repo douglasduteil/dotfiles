@@ -171,11 +171,11 @@
         "rust-overlay": "rust-overlay"
       },
       "locked": {
-        "lastModified": 1791634781,
-        "narHash": "sha256-bgyIrvbZKFsJeuvKtqx9+G9itSdoTK4H9fALkKbx7e4=",
+        "lastModified": 1791766383,
+        "narHash": "sha256-2ql/3YrFfEycm7JrC7fshlauNYfuFo/W7gBEEMMc0XA=",
         "owner": "can1357",
         "repo": "oh-my-pi",
-        "rev": "01e0b5c26e267dff08c305f51d1ab56ec5a2f05d",
+        "rev": "b83200eb866821f02625332025b453f06ce4e12a",
         "type": "github"
       },
       "original": {
