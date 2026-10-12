@@ -27,17 +27,17 @@
       # by typescript-mcp below; needs to be on PATH for that to work.
       tsgo = pkgs.stdenv.mkDerivation {
         pname = "tsgo";
-        version = "7.0.0-dev.20260707.2";
+        version = "7.0.2";
         src = pkgs.fetchurl {
-          url = "https://registry.npmjs.org/@typescript/native-preview-linux-x64/-/native-preview-linux-x64-7.0.0-dev.20260707.2.tgz";
-          hash = "sha512-du0dzi6y97Po5vDNdPJTyyijHCpaS22JLRnKZEJXBDaO9gCIymOv/5QQokFRuOlQm0bWl3i9PF4OVdGP6uAOQA==";
+          url = "https://registry.npmjs.org/@typescript/typescript-linux-x64/-/typescript-linux-x64-7.0.2.tgz";
+          hash = "sha512-EYdf2cNg7rgCWJnxCdJ+F3V39O8ihb37eHAu1LK8oAFizgTQbPOK7zHHXbPt8rX24COqODXeI3sIf0fCXG7H/A==";
         };
         dontBuild = true;
         installPhase = ''
           mkdir -p $out/libexec $out/bin
           cp -r lib/. $out/libexec/
-          chmod +x $out/libexec/tsgo
-          ln -s $out/libexec/tsgo $out/bin/tsgo
+          chmod +x $out/libexec/tsc
+          ln -s $out/libexec/tsc $out/bin/tsgo
         '';
       };
       # MCP server bridging Claude Code to TS7's native `tsgo` LSP (go to
