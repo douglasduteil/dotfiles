@@ -53,3 +53,8 @@ Write one-off scripts (file splits, link checks) in `bun`: no `python3` on this 
   stricter folder must repeat the base patterns.
 - `zod/mini` still added ~30 KB to a 76 KB bundle; weigh valibot when bundle size matters.
 - `Bun.WebView.evaluate` takes an expression: wrap statements in `(() => { … })()`.
+- oxlint installed outside the project (throwaway `/tmp` install) needs
+  `OXLINT_TSGOLINT_PATH=<dir>/node_modules/.bin/tsgolint`, else type-aware runs fail with
+  "Failed to find tsgolint executable" (2026-10-14).
+- typescript-mcp `ts_diagnostics` can keep a stale buffer after on-disk edits: it reported 30
+  phantom "Duplicate identifier" errors on a 441-line file. Trust `tsc --noEmit` (2026-10-14).
