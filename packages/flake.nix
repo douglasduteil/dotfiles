@@ -1,10 +1,14 @@
 {
   description = "nixos-wsl shared package profile";
 
+  # Claude Code plugins absent from claude-plugins-official, pinned here
+  # instead of followed live; each repo is its own marketplace.
+  inputs.caveman = { url = "github:JuliusBrussee/caveman"; flake = false; };
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
   inputs.omp.url = "github:can1357/oh-my-pi";
+  inputs.ponytail = { url = "github:DietrichGebert/ponytail"; flake = false; };
 
-  outputs = { self, nixpkgs, omp }:
+  outputs = { self, caveman, nixpkgs, omp, ponytail }:
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs {
@@ -67,6 +71,11 @@
           bun
           chromium
           claude-code
+          # Stable ~/.nix-profile path for `claude plugin marketplace add`.
+          (pkgs.linkFarm "claude-plugins" [
+            { name = "share/claude-plugins/caveman"; path = caveman; }
+            { name = "share/claude-plugins/ponytail"; path = ponytail; }
+          ])
           delta
           direnv
           fd
