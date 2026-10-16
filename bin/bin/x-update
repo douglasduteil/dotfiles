@@ -22,7 +22,7 @@ echo "==> claude: refreshing every configured marketplace"
 claude plugin marketplace update
 
 echo "==> claude: updating every installed plugin"
-claude plugin list --json | jq -r '.[].id' | while IFS= read -r plugin; do
+claude plugin list --json | jq -r '.[] | select(.scope != "synced") | .id' | while IFS= read -r plugin; do
   claude plugin update "$plugin"
 done
 
