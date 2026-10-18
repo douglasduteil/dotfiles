@@ -15,14 +15,26 @@ project explicitly opts out.
   positional list (`mairie(id, siren, site, mail, name = "Coise")`).
   Call sites name every value; keys follow the alpha-order
   rule above. Stated by the user 2026-10-02 on test fixture
-  helpers in api-partenaires.
+  helpers in api-partenaires. Test helpers: any helper taking two
+  or more arguments gets one object argument
+  (`candidate_row({ domain, id })`); stated 2026-10-15 after
+  `candidate_row(domain, id)` slipped through.
 - **Git branches:** prefix new branches `douglasduteil/<name>` (see `cmm`
   alias in `git/.gitconfig`, dotfiles repo).
-- **PR/branch shape:** atomic PRs — one branch, one commit, one simple
-  vertical change. No bundling unrelated concerns. If follow-up work adds
-  commits to an already-pushed branch, squash back to one commit
-  (`git reset --soft <merge-base>`, recommit, `push --force-with-lease`)
-  before leaving it — don't let a PR accumulate a fix-up history.
+- **PR/branch shape:** atomic PRs — one branch, one commit, one minimal
+  vertical slice: the smallest end-to-end behaviour a caller can observe,
+  shipped with its own tests, docs and the refactor it needs, together.
+  Never segment one feature across PRs by layer: no feature PR without
+  its tests, no test-only or example-only PR for a feature landed
+  elsewhere, no prep refactor PR whose only reason is an upcoming
+  feature. A test or refactor PR stands alone only when it is the change
+  itself (fixing a gap in existing behaviour). No bundling unrelated
+  concerns either. Stated by the user 2026-10-16 (api-partenaires
+  resource-server plan, split ♻️/✨/✅ merged back into one slice). If
+  follow-up work adds commits to an already-pushed branch, squash back to
+  one commit (`git reset --soft <merge-base>`, recommit,
+  `push --force-with-lease`) before leaving it — don't let a PR
+  accumulate a fix-up history.
 - **Comments:** write self-explanatory code — good naming and structure
   over explanation. Default diff carries zero comments. Every comment is
   a hidden maintenance cost (a second source of truth that rots silently
