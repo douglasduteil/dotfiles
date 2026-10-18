@@ -1,0 +1,4 @@
+# Default 500ms is too short for the first `node --version` (etc.) after a
+# WSL boot, while the binary is still cold in the page cache: the prompt
+# then prints "Executing command ... timed out". Warm runs take ~10ms.
+command_timeout = 2000
