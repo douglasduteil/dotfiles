@@ -5,49 +5,19 @@
   # instead of followed live; each repo is its own marketplace.
   inputs.caveman = { url = "github:JuliusBrussee/caveman"; flake = false; };
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-  inputs.omp.url = "github:can1357/oh-my-pi";
   inputs.ponytail = { url = "github:DietrichGebert/ponytail"; flake = false; };
 
-  outputs = { self, caveman, nixpkgs, omp, ponytail }:
+  outputs = { self, caveman, nixpkgs, ponytail }:
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs {
         inherit system;
         config.allowUnfree = true;
       };
-      # nixpkgs-unstable lags upstream; drop once it ships >= this version.
-      bun = pkgs.bun.overrideAttrs (_: rec {
-        version = "1.4.3";
-        src = pkgs.fetchurl {
-          url = "https://github.com/oven-sh/bun/releases/download/bun-v${version}/bun-linux-x64.zip";
-          hash = "sha256-PnMFKNiXdfA/h/BcBnh8TfQJnQo38/JS57gpyyOBbhg=";
-        };
-      });
-      # TS7's native Go-based language server. Ships as a platform-specific
-      # npm package (no nixpkgs derivation yet) with the binary and its
-      # lib/*.d.ts siblings flattened in one dir -- it resolves those by
-      # path relative to its own executable, so they must stay alongside it
-      # (hence $out/libexec rather than splitting into bin+share). Spawned
-      # by typescript-mcp below; needs to be on PATH for that to work.
-      tsgo = pkgs.stdenv.mkDerivation {
-        pname = "tsgo";
-        version = "7.0.2";
-        src = pkgs.fetchurl {
-          url = "https://registry.npmjs.org/@typescript/typescript-linux-x64/-/typescript-linux-x64-7.0.2.tgz";
-          hash = "sha512-EYdf2cNg7rgCWJnxCdJ+F3V39O8ihb37eHAu1LK8oAFizgTQbPOK7zHHXbPt8rX24COqODXeI3sIf0fCXG7H/A==";
-        };
-        dontBuild = true;
-        installPhase = ''
-          mkdir -p $out/libexec $out/bin
-          cp -r lib/. $out/libexec/
-          chmod +x $out/libexec/tsc
-          ln -s $out/libexec/tsc $out/bin/tsgo
-        '';
-      };
       # MCP server bridging Claude Code to TS7's native `tsgo` LSP (go to
       # def, find references, hover, diagnostics) -- see
       # https://github.com/paulvanbrenk/typescript-mcp. Wired into Claude
-      # Code's user-scope MCP config by configure.sh. Needs `tsgo` (above)
+      # Code's user-scope MCP config by configure.sh. Needs `tsgo` (wrapper below)
       # on PATH at runtime -- it spawns it as a subprocess.
       typescript-mcp = pkgs.buildGoModule {
         pname = "typescript-mcp";
@@ -94,7 +64,7 @@
           nixd
           nodejs
           oh-my-zsh
-          omp.packages.${system}.omp
+          omp
           opencode
           podman-compose
           ripgrep
@@ -105,7 +75,8 @@
           steam-run
           stow
           tree-sitter
-          tsgo
+          # nixpkgs ships TS7 native as `tsc` only; typescript-mcp spawns `tsgo`.
+          (pkgs.writeShellScriptBin "tsgo" ''exec ${pkgs.typescript}/bin/tsc "$@"'')
           typescript-mcp
           (pkgs.writeShellScriptBin "x-memory" ''exec ${bun}/bin/bun "$HOME/.dotfiles/x-memory/src/cli.ts" "$@"'')
           yaml-language-server
