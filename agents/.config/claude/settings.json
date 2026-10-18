@@ -85,21 +85,23 @@
     "padding": 0
   },
   "enabledPlugins": {
-    "ponytail@ponytail": true,
+    "cc-plugin-telemetry@builtin": false,
+    "mattpocock-skills@synced": false,
+    "mattpocock-skills@claude-plugins-official": true,
     "caveman@caveman": true,
-    "mattpocock-skills@claude-plugins-official": true
+    "ponytail@ponytail": true
   },
   "extraKnownMarketplaces": {
-    "ponytail": {
-      "source": {
-        "source": "github",
-        "repo": "DietrichGebert/ponytail"
-      }
-    },
     "caveman": {
       "source": {
-        "source": "github",
-        "repo": "JuliusBrussee/caveman"
+        "source": "directory",
+        "path": "~/.nix-profile/share/claude-plugins/caveman"
+      }
+    },
+    "ponytail": {
+      "source": {
+        "source": "directory",
+        "path": "~/.nix-profile/share/claude-plugins/ponytail"
       }
     }
   },
