@@ -49,6 +49,10 @@ project explicitly opts out.
   (`npm run format`, `bun run format`), never the underlying binary
   directly (`npx prettier`) — the script wraps flags/config/plugins a
   raw binary invocation skips.
+- **Shell scripts:** follow [functional shell rules](https://www.functionalprogramminginbash.com/)
+  when the script's job fits (pure functions, no side effects, data via
+  stdin/stdout, composition over mutation). Pragmatic, not dogmatic.
+- **Throwaway scripts** (file splits, link checks): write them in `bun`.
 - **GitHub Actions:** always pin `uses:` to a commit SHA, never a floating
   tag (`@v1`, `@v2`) — a tag can be repointed upstream and silently break
   a working pipeline (seen: `changesets/action@v1` drifted to require a

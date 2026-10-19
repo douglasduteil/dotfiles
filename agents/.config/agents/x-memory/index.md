@@ -13,7 +13,7 @@ secrets, fingerprints, hostnames or private project detail goes there.
 
 ## Pages
 
-- [Bun + TypeScript project preferences](bun_typescript.md) — only when working on a Bun/TypeScript project.
+- [JS/TS tooling gotchas](js_tooling_gotchas.md) — before using a Bun runtime API (`serve`, `WebView`, `markdown`, dev server), Sentry, typescript-mcp diagnostics, or a tool that imports `typescript` on TS 7. TypeScript preferences live in the `x-ts-constitution` skill, not here.
 - [Code style preferences](code_style.md) — before writing any comment, and for general conventions (alpha ordering, branch/PR shape, CI pinning, config validation, Intl for user-facing formatting) that apply across projects unless opted out.
 - [x-memory CLI usage](x-memory-tool.md) — only when a query returns empty and staleness is suspect.
 - [Testing preferences](testing.md) — jest CPU/worker cap, before running any jest-backed test command.

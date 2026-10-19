@@ -1,13 +1,27 @@
 ---
 name: x-ts-constitution
-description: TypeScript constitution (proof by type) — strict tsconfig bases, oxlint type-aware rules, pure core with thin shells, zod parsers and brands, errors as values, counted escape hatches, property tests. Use when writing, reviewing, or setting up TypeScript code: tsconfig, oxlint config, domain types, parsers, handlers, tests.
+description: TypeScript constitution (proof by type) — core rules for any TypeScript code (parse at the boundary with zod, unions over flags, errors as values, exhaustive switches, counted escape hatches), the user's baseline setup, and opt-in modules (strict tsconfig, oxlint type-aware, pure core, hatch ledger, property tests). Use when writing, reviewing, or setting up TypeScript code.
 ---
 
 # TypeScript Constitution (Proof by Type)
 
-v1, 2026-10-14. Forked from the Claude doc draft; this file is now the canonical version.
+v2, 2026-10-19: split into core, baseline and opt-in modules. v1 (2026-10-14) applied everything at once; no repo had adopted it.
 
-Naming, ordering, comments and test placement follow the global wiki (`bun_typescript.md`, `code_style.md`): `snake_case` files and values, PascalCase types, alpha-ordered keys after the discriminant.
+## Scope
+
+- **The repo wins.** Its own config and established patterns override this document. The core fills only the gaps a repo leaves open.
+- **The baseline and the modules govern** new and personal repos fully, and any repo where they are already adopted.
+- **A module is active when the repo's config shows it.** Apply the rules of active modules only. Introduce an inactive module only when the user asks or when scaffolding a new repo.
+
+| Module | Active when the repo has | Adds |
+| --- | --- | --- |
+| [strict_tsconfig.md](strict_tsconfig.md) | `@tsconfig/strictest` (or its flags) in the tsconfig chain | the `strictest` flags `@tsconfig/bun` leaves off, one per PR |
+| [oxlint_type_aware.md](oxlint_type_aware.md) | `typeAware` in the oxlint config | tsgolint, typed rules, staged rollout with bulk suppressions |
+| [pure_core.md](pure_core.md) | `src/core/tsconfig.json` | a compiler-enforced pure folder, import and global bans |
+| [hatch_ledger.md](hatch_ledger.md) | a CI step counting escape hatches | the escape-hatch count and the `tsc --showConfig` snapshot |
+| [property_tests.md](property_tests.md) | `fast-check` in dependencies | property-based tests for core decisions |
+
+Comments follow `code_style.md` in the global wiki.
 
 ## Preamble: TypeScript is not Lean, so we shrink and audit its holes
 
@@ -22,110 +36,40 @@ A type is a claim about data ("this was parsed", "this state is complete", "ever
 | Totality | Exhaustive switch reaching `never` | Strong, with lint |
 | `sorry` and axioms | `as`, `any`, `!`, `@ts-expect-error`, third-party `.d.ts` | Ledgered (Article VI) |
 | Small trusted kernel | Compiler plus a few boundary parsers | Strong if parsers are few |
-| Effect tracking | None built in; folder tsconfig and lint | Weak unless enforced (Article II) |
+| Effect tracking | None built in; folder tsconfig and lint | Weak unless enforced (pure core module) |
 | Dependent types | Generics, template literal types | Weak; avoid type-level gymnastics |
 
-Purity is not checkable by the type system: a function typed `(a: A) => B` can call `fetch`. Purity is enforced by folder boundaries and compiler configuration. Rigor comes from small trusted kernels, not clever types.
+Purity is not checkable by the type system: a function typed `(a: A) => B` can call `fetch`. Rigor comes from small trusted kernels, not clever types.
 
 ### Proofs have a location
 
-Every guarantee is enforced somewhere. A compiler check leaves a type behind; a CI or review check leaves nothing at runtime. This table is the record of where each one lives.
-
 | Guarantee | Enforced by |
 | --- | --- |
-| Strict checker flags (Article I) | Compiler |
-| Core cannot call I/O globals (Article II) | Compiler (core tsconfig) and oxlint |
-| Core never imports the shell (Article II) | oxlint `no-restricted-imports` in CI |
-| `Intl` in the core gets explicit locale and time zone (Article II) | Review |
-| Exhaustive handling of unions (Article IV) | Compiler and oxlint |
+| Strict checker flags | Compiler (strict tsconfig module) |
+| Core cannot call I/O globals; never imports the shell | Compiler and oxlint (pure core module) |
+| `Intl` in the core gets explicit locale and time zone | Review |
+| Exhaustive handling of unions (Article IV) | Compiler; oxlint `switch-exhaustiveness-check` when active |
 | Inputs become domain types (Articles III, V) | Runtime parser at the boundary |
 | Configuration is valid (Article V) | Startup parser |
 | Scoped reads require a principal (Article V) | Compiler (provenance brand); Postgres RLS underneath |
-| Every `as` is visible (Article VI) | oxlint `consistent-type-assertions` |
-| Escape-hatch count never grows silently (Article VI) | CI count |
-| Behavioral properties (Article VII) | CI tests |
+| Every `as` is visible; the hatch count never grows silently (Article VI) | Review; oxlint and CI (oxlint, hatch ledger modules) |
+| Behavioral properties (Article VII) | CI tests (property tests module) |
 
-## Article I — Axioms: the checker runs at maximum strictness
+## Baseline: what the user practises
 
-Every package extends shared bases from [@tsconfig/bases](https://github.com/tsconfig/bases). A flag is relaxed only with a written reason in the repo.
+- **TypeScript 7**: the `typescript` package ships the native `tsc` since 7.0 (2026-07-08). 7.0 has no compiler API until 7.1, so tools importing `typescript` (prettier-plugin-organize-imports, typescript-eslint, ts-morph) break, some silently: check `js_tooling_gotchas.md` before relying on one. TS 7 adopts the 6.0 defaults: `strict` on, `types: []`, `rootDir: ./`, `module: esnext`, `noUncheckedSideEffectImports` on.
+- **tsconfig**: extend `@tsconfig/bun` on Bun, `@tsconfig/node-lts` plus `@tsconfig/node-ts` on Node, `@tsconfig/vite-react` on Vite. More strictness comes from the strict tsconfig module.
+- **Naming**: `snake_case` wherever a name is chosen: files and directories (`query_action.ts`, `src/hooks/`), values and functions (`extract_d`, `dsfr_version`). Types, interfaces and classes stay PascalCase. Object keys alpha-ordered after the discriminant.
+- **Prettier**: default config, declared in `package.json` (not `.prettierrc`), with `prettier-plugin-organize-imports` (silent no-op on TS 7.0: see `js_tooling_gotchas.md`).
+- **Tests**: `*.test.ts` next to the source it covers; `bun test` on Bun, vitest on Node and Vite. Assert the whole result: `expect(verdict).toEqual(ok(…))` or `toMatchObject({ ok: false, error: { … } })`, never `verdict.ok && verdict.value`: the `&&` hides the discriminant and compares `false` when the branch is wrong. Fix leftovers in files you touch.
+- **Module resolution**: `package.json#imports` and `#exports` over `../../` traversal; add an `imports` key once a path needs `../../../`. Gotchas:
+  - Every `*` in a target receives the same matched text, so `./libs/*/src/*.ts` cannot work. Use a barrel key `#libs/*` → `./libs/*/src/index.ts` plus one `#libs/<lib>/*` key per lib (longest prefix wins).
+  - Targets get no extension or index lookup: map to `*.ts`, write `/index` for folder imports.
+  - With `outDir` set, `tsc` also needs `rootDir`, else TS2210 (found on TS 5.x, 2026-10-09; re-check under TS 7, whose `rootDir` default is `./`).
 
-```json
-{
-  "extends": [
-    "@tsconfig/node-lts/tsconfig.json",
-    "@tsconfig/node-ts/tsconfig.json",
-    "@tsconfig/strictest/tsconfig.json"
-  ]
-}
-```
+## Article I — Axioms: the checker and the linter
 
-Later entries override earlier ones, so `strictest` goes last: no runtime base can loosen a strictness flag (`@tsconfig/bun` sets `noUnusedLocals: false`; `strictest` turns it back on).
-
-| Package | Extends, in this order |
-| --- | --- |
-| Shell on Bun | `bun`, `strictest`; set `erasableSyntaxOnly` |
-| Shell on Node (server, worker, CLI) | `node-lts` (or a pinned `node24`), `node-ts`, `strictest` |
-| Frontend (React with Vite) | `vite-react`, `strictest`; set `verbatimModuleSyntax`, `erasableSyntaxOnly` if missing |
-| Core | `strictest` only, plus the overrides in Article II |
-
-What the bases cover:
-
-- `strictest`: `strict`, `noUncheckedIndexedAccess`, `exactOptionalPropertyTypes`, `noImplicitOverride`, `noImplicitReturns`, `noFallthroughCasesInSwitch`, `noPropertyAccessFromIndexSignature`, `allowUnreachableCode: false`, `allowUnusedLabels: false`, `noUnusedLocals`, `noUnusedParameters`, `isolatedModules`, `esModuleInterop`, `skipLibCheck`.
-- `node-ts`: `verbatimModuleSyntax`, `erasableSyntaxOnly`, `rewriteRelativeImportExtensions`.
-- `node-lts`: Node 24, ES2024, `module: nodenext`, `types: ["node"]`.
-
-`skipLibCheck: true` leaves third-party `.d.ts` unchecked, consistent with treating them as axioms (Article VI).
-
-Pin exact versions of the @tsconfig packages: they follow runtime versions, not semver. CI commits a `tsc --showConfig` snapshot per package and fails when it changes, so a base upgrade cannot loosen a flag silently.
-
-Why the non-obvious ones matter:
-
-- `noUncheckedIndexedAccess`: `arr[0]` and `record[key]` become `T | undefined`. Closes the most common silent hole.
-- `exactOptionalPropertyTypes`: "absent" and "present but undefined" become different states, as they are at runtime.
-- `erasableSyntaxOnly`: bans enums, namespaces and parameter properties. Code is plain JavaScript plus erasable types, which runs under Node and Bun type stripping.
-
-### Lint: oxlint with type-aware rules
-
-Lint is the second half of the axioms. oxlint runs with `oxlint-tsgolint` installed and `typeAware` on; tsgolint is stable (2026-07-22) and covers every typed rule below. oxlint has no `strictTypeChecked` preset, so rules are listed by name:
-
-```json
-{
-  "options": { "typeAware": true },
-  "rules": {
-    "typescript/ban-ts-comment": ["error", { "ts-expect-error": "allow-with-description", "ts-ignore": true }],
-    "typescript/consistent-type-assertions": ["error", { "assertionStyle": "never" }],
-    "typescript/no-explicit-any": "error",
-    "typescript/no-floating-promises": "error",
-    "typescript/no-misused-promises": "error",
-    "typescript/no-non-null-assertion": "error",
-    "typescript/no-unnecessary-condition": "error",
-    "typescript/no-unsafe-argument": "error",
-    "typescript/no-unsafe-assignment": "error",
-    "typescript/no-unsafe-call": "error",
-    "typescript/no-unsafe-member-access": "error",
-    "typescript/no-unsafe-return": "error",
-    "typescript/only-throw-error": "error",
-    "typescript/strict-boolean-expressions": "error",
-    "typescript/switch-exhaustiveness-check": "error"
-  },
-  "overrides": [
-    {
-      "files": ["src/core/**"],
-      "rules": {
-        "no-restricted-globals": ["error", "Date"],
-        "no-restricted-imports": ["error", { "patterns": ["\\#shell/**", "**/shell/**"] }],
-        "no-restricted-properties": ["error", { "object": "Math", "property": "random" }]
-      }
-    },
-    {
-      "files": ["**/*.test.ts"],
-      "rules": { "typescript/consistent-type-assertions": "off" }
-    }
-  ]
-}
-```
-
-oxlint gotchas: `no-restricted-imports` matches the specifier as written, so ban both the `#` alias (escaped, gitignore syntax) and the relative path. A later `overrides` entry replaces a rule for the files it matches, so a stricter folder repeats the base patterns.
+The checker runs at the strictness of the strict tsconfig module once adopted; until then, at `@tsconfig/bun` (or the repo's own) settings. Lint is the second half of the axioms: the oxlint type-aware module. A flag is relaxed only with a written reason in the repo.
 
 ## Article II — Architecture: decisions are pure, effects live at the edge
 
@@ -172,29 +116,7 @@ export const join_handler = (deps: Deps) => async (req: Request) => {
 5. No classes: plain data and functions.
 6. A test of the core needs no mock. Needing one is a violation signal.
 
-### Making the compiler enforce purity
-
-The core is a folder, `src/core/`, with its own `src/core/tsconfig.json`. Editors pick the nearest tsconfig, so the restriction shows while typing; no monorepo needed.
-
-```json
-{
-  "extends": ["@tsconfig/strictest/tsconfig.json"],
-  "compilerOptions": {
-    "allowImportingTsExtensions": true,
-    "erasableSyntaxOnly": true,
-    "lib": ["ES2023"],
-    "module": "nodenext",
-    "noEmit": true,
-    "target": "ES2023",
-    "types": [],
-    "verbatimModuleSyntax": true
-  }
-}
-```
-
-The core never extends a runtime base: `node-lts` sets `types: ["node"]`, which brings `process` and `setTimeout` back. `allowImportingTsExtensions` is required: without it `import "./x.ts"` fails with TS5097 under `nodenext`. Set `module` to match the shells that import the core.
-
-Without the DOM lib and `@types/node`, `fetch`, `process`, `console`, `setTimeout` and `localStorage` do not exist there; calling them is a compile error. The ES lib still exposes `Date`, `Math.random` and `Intl`: the Article I overrides ban the `Date` global and `Math.random`. `Intl` stays allowed because user-facing formatting goes through it, but its defaults read the host locale and time zone, so core code always passes `locale` and `timeZone` explicitly (review-enforced).
+The pure core module makes the compiler enforce rules 1, 2 and 4.
 
 ### When the sandwich does not fit
 
@@ -208,9 +130,7 @@ A transaction that reads with `SELECT ... FOR UPDATE`, decides, then writes is s
 
 ### One decision, many consumers
 
-Reports, statistics, dashboards and access gates call the same core decision function. A second implementation, even a "read-only" one, drifts from the first.
-
-When performance demands a second implementation, such as a SQL aggregation, the core function becomes its oracle: a property test runs both on generated data and asserts they agree (Article VII).
+Reports, statistics, dashboards and access gates call the same core decision function. A second implementation, even a "read-only" one, drifts from the first. When performance demands a second implementation, such as a SQL aggregation, the core function becomes its oracle (property tests module).
 
 ## Article III — Types as propositions: illegal states do not compile
 
@@ -230,7 +150,7 @@ const parsed = Email.safeParse(body.email);
 const send_welcome = (to: Email): Command => ({ kind: "send-email", to });
 ```
 
-zod 4 is the parser library, imported as `import * as z from "zod"`. A frontend package that counts bytes may use valibot instead (`zod/mini` measured ~30 KB on a 76 KB bundle). Choose one per package, never per file.
+zod 4 is the parser library, imported as `import * as z from "zod"`. A frontend package that counts bytes may use valibot instead (`zod/mini` measured ~30 KB on a 76 KB bundle, 2026-10-03). Choose one per package, never per file.
 
 Conventions:
 
@@ -257,7 +177,7 @@ export type Siren = z.infer<typeof Siren>;
 - **Shape brand** (`Email`, `Siren`, `UserId`): the claim is about the bytes, so a parser can prove it. Built with zod `.brand<"X">()`, no hand-written `as`.
 - **Provenance brand** (`Principal`, a verified webhook): the claim is about where the value came from, which no parser can check. Built with a module-private `unique symbol` and one ledgered `as` in the module that establishes the provenance (Article V).
 
-A zod brand is forgeable without a cast: any module can declare `z.object({...}).brand<"Principal">()` and its `.parse` output type-checks as the real one. A `unique symbol` brand cannot be built outside its module without an `as`, which the lint flags and the ledger counts. Use a zod brand only for shape claims.
+A zod brand is forgeable without a cast: any module can declare `z.object({...}).brand<"Principal">()` and its `.parse` output type-checks as the real one. A `unique symbol` brand cannot be built outside its module without an `as`, which review (and the lint, when active) flags. Use a zod brand only for shape claims.
 
 ### 3. Unions over flags
 
@@ -304,7 +224,7 @@ const decide_ownership = (records: readonly PartnerRecord[]): Ownership => {
 };
 ```
 
-The tuple is built without a cast, because `noUncheckedIndexedAccess` forces the `undefined` checks that prove the count. The sort makes the result independent of input order. The `Set` deduplicates correctly only because `Siren` is canonical (rule 5).
+The tuple is built without a cast, because `noUncheckedIndexedAccess` (set by `@tsconfig/bun`) forces the `undefined` checks that prove the count. The sort makes the result independent of input order. The `Set` deduplicates correctly only because `Siren` is canonical (rule 5).
 
 ### 5. Identifiers are canonical brands
 
@@ -358,7 +278,7 @@ Each runtime owns one mapping from domain errors to its protocol: HTTP status, C
 
 ## Article V — One core, a different thin shell per runtime
 
-The core is the same folder everywhere. Only the shell changes: where input is parsed, which effects run, and how errors are mapped.
+The core is the same everywhere. Only the shell changes: where input is parsed, which effects run, and how errors are mapped.
 
 | Runtime | Parse at the boundary | Effects the shell runs | Error mapping |
 | --- | --- | --- | --- |
@@ -401,17 +321,17 @@ interface InvoiceStore {
 }
 ```
 
-A plain object literal typed `Principal` fails with TS2741; forging one elsewhere needs an `as`, which the lint flags. Postgres RLS stays underneath as defense in depth: the type protects TypeScript code, not a raw SQL path.
+A plain object literal typed `Principal` fails with TS2741; forging one elsewhere needs an `as`. Postgres RLS stays underneath as defense in depth: the type protects TypeScript code, not a raw SQL path.
 
-## Article VI — Escape hatches: every `sorry` is ledgered and counted
+## Article VI — Escape hatches: every `sorry` is visible and justified
 
-In Lean, `#print axioms` lists every assumption a theorem rests on. TypeScript needs the same discipline by hand. An escape hatch is allowed only where it is visible, justified and counted.
+In Lean, `#print axioms` lists every assumption a theorem rests on. TypeScript needs the same discipline by hand. An escape hatch is allowed only where it is visible and justified; the hatch ledger module also counts it.
 
 | Hatch | Rule |
 | --- | --- |
 | `any` | Banned. Use `unknown` and parse. |
 | `!` non-null assertion | Banned. Narrow, or return an error. |
-| `as` assertion | Banned by `consistent-type-assertions: never` (`as const` passes). A necessary one carries `// oxlint-disable-next-line typescript/consistent-type-assertions -- <why it holds>` |
+| `as` assertion | Banned except `as const`. A necessary one carries its reason: `// oxlint-disable-next-line typescript/consistent-type-assertions -- <why it holds>` where oxlint is active |
 | `@ts-expect-error` | Only with a description; `@ts-ignore` is banned |
 | Third-party `.d.ts` | Axiom: wrap the library in an adapter that parses what it returns |
 | `JSON.parse`, `res.json()` | Return `any`; type the result as `unknown` immediately |
@@ -424,36 +344,11 @@ In Lean, `#print axioms` lists every assumption a theorem rests on. TypeScript n
 
 zod's `.brand()` is itself a type-level cast, accepted once as a library axiom for shape brands. The disable directive is the only comment a hatch gets; its `-- why` is mandatory by review.
 
-The **ledger** is the count CI takes on every pull request: `oxlint-disable` directives plus `@ts-expect-error` comments, outside `*.test.ts`. The count only goes up with an explicit review note. This is your `#print axioms`: one number that says how much of the codebase rests on trust.
+Tests may use `as` freely, but fixtures still come from parsers (or fast-check arbitraries), so a test never builds an illegal state.
 
-Tests may use `as` freely (the lint override in Article I) and are not counted, but fixtures still come from parsers or fast-check arbitraries, so a test never builds an illegal state.
+## Article VII — What types cannot prove, tests check
 
-## Article VII — What types cannot prove, properties test
-
-Types prove shape. Behavior ("never grants a membership on an expired invite") needs a theorem; in TypeScript the nearest thing is a property-based test with fast-check. A pure core makes these cheap: nothing to mock.
-
-Runner: `bun test` on Bun packages, vitest on Node and Vite packages. `*.test.ts` sits next to the source it covers.
-
-```ts
-import fc from "fast-check";
-
-test("an expired invite never produces a membership", () => {
-  fc.assert(
-    fc.property(arb_join_input({ invite_expired: true }), (input) => {
-      expect(decide_join(input).kind).toBe("reject");
-    }),
-  );
-});
-```
-
-Families of properties:
-
-- Round trip: `parse(serialize(x))` equals `x`.
-- Idempotence: applying a decision twice equals applying it once. Critical for message workers.
-- Invariants: a balance is never negative; a total equals the sum of its lines.
-- Oracle: the optimized function agrees with a slow, obviously correct one.
-- Order independence: shuffling the input never changes the decision. Catches any reliance on `records[0]`.
-- Monotonicity: adding evidence never weakens a refusal; a new owner record never turns `shared` into `owned`. Each decision states whether it is monotone.
+Types prove shape. Behavior ("never grants a membership on an expired invite") needs a test; a pure core makes it cheap, with nothing to mock. The property tests module turns such claims into fast-check properties.
 
 ### Negative type tests prove impossibility
 
@@ -466,8 +361,4 @@ const bad: Payment = { paid_at: now, status: "pending" };
 
 If someone loosens the type, the expected error disappears and `tsc` fails, under any runner. vitest packages may add `expectTypeOf` for positive type assertions.
 
-Test pyramid: many property and unit tests on the core, few integration tests on the shell against a real Postgres and RabbitMQ in containers, almost nothing in between.
-
-## Learning path
-
-Reading list and retrofit exercises for the human: [learning_path.md](learning_path.md).
+Test pyramid: many unit tests on the core, few integration tests on the shell against a real Postgres and RabbitMQ in containers, almost nothing in between.
