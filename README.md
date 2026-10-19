@@ -11,12 +11,13 @@ User-level Nix profile for NixOS-WSL machines: stow-managed dotfiles plus a lock
 - `ssh` (stow package) — `~/.ssh/config` and `~/.ssh/update-signing-key-symlink`. A `Match exec` block runs the script before auth to detect (via `ykman list --serials`, no touch needed) which of the two FIDO2 keys is physically plugged in, and points `~/.ssh/git_signing_key_active` at its handle file; `IdentityFile` then offers the local software key `~/.ssh/github` first (skipped on machines without it), then only that one. Avoids `ssh` blindly trying (and touching) the unplugged key first. No key material lives here -- only paths and serials (see SSH commit signing)
 - `nvim` (stow package) — LazyVim config vendored from [LazyVim/starter](https://github.com/LazyVim/starter) into `~/.config/nvim`
 - `zsh` (stow package) — `~/.zshenv` (XDG vars), `~/.zshrc` (oh-my-zsh libs/plugins, autosuggestions, syntax highlighting, history search, fzf, starship — all nix-managed, no runtime plugin manager) and `~/.config/starship.toml` (`command_timeout` raised for cold `node`/etc. starts on WSL)
-- `agents` (stow package) — config for Claude Code, opencode, and skills shared between them, grouped together since none of them are stowed independently of each other:
+- `agents` (stow package) — config for Claude Code, opencode, omp, and skills shared between them, grouped together since none of them are stowed independently of each other:
   - `~/.config/agents/skills/` — canonical home for skills the user authors (e.g. `commit-message`). This is the one real copy; everything else reaches it through a symlink or a scan, never a duplicate.
   - `~/.config/claude/settings.json` (theme, attribution trailers off, etc.) and `~/.config/claude/skills` — the latter is a **tracked symlink** (`-> ../agents/skills`), not a real directory, so it's easy to mistake for a broken checkout; it's deliberate. `zsh/.zshenv` sets `CLAUDE_CONFIG_DIR` to relocate Claude Code's whole config dir here (settings, credentials, transcripts, caches) instead of `~/.claude` -- only `settings.json` and `skills` are version-controlled. `~/.claude` itself is kept as a plain symlink to `~/.config/claude` (see Install) so anything that still hardcodes the old path lands on the same live state instead of silently writing to a stale duplicate
   - `~/.config/opencode/opencode.jsonc` — opencode's own config (XDG default location, no relocation needed). Declares an explicit `skills.paths` pointing at `~/.config/agents/skills` plus each installed Claude Code plugin's skill directory (ponytail, caveman, mattpocock-skills) — pointed at each plugin's parent dir, one level above its version/hash-pinned subdir, so a `claude plugin update` can't silently break the path (opencode's skill loader scans recursively). `~/.config/opencode` also holds real, untracked, per-machine files (its own plugin `node_modules/`, `package.json`, `package-lock.json`) alongside the stowed config, same reasoning as `~/.config/claude` above. `opencode debug skill` is the way to check what it currently sees -- keep its stdout and stderr separate when scripting against it (e.g. redirect to two files, don't `2>&1 | grep`): it logs warnings (like a duplicate skill name found at two paths) to stderr while streaming JSON to stdout, and merging the two into one pipe can interleave and corrupt the JSON mid-parse
   - `~/.agents -> ~/.config/agents` (see Install) — a neutral, whole-dir symlink mirroring the `~/.claude` one above, for any future tool that adopts the `~/.agents` convention. Not needed by opencode itself (already covered by `~/.claude/skills` and the explicit `skills.paths` above); Claude Code doesn't read it at all
   - `~/.config/agents/AGENTS.md` — the canonical, tracked bootstrap file for both tools, same sharing pattern as skills above: `~/.config/opencode/AGENTS.md` and `~/.config/claude/CLAUDE.md` are both tracked symlinks to it (`-> ../agents/AGENTS.md`), not copies, so there's one real file to edit. Force-added (`git add -f`) since the global `AGENTS.md`/`CLAUDE.md` gitignore rules would otherwise exclude it — those rules stay in place for every other repo's generated copies
+  - `~/.config/omp/agent/` — omp's `config.yml`, `RULES.md`, `lsp.json` and `hooks/pre/` (`x-guard`, session-start breadcrumb). The rest of `~/.config/omp` (auth, sessions, caches, databases) stays real and untracked; `~/.omp` is a plain symlink to `~/.config/omp`, since omp defaults there
 - `bin` (stow package) — `~/bin/x-update`, gathering every per-machine update step (nix package set bump + apply, Claude Code marketplace + plugin updates) into one command; `zsh/.zshenv` puts `$XDG_BIN_DIR` (`~/bin`) on `PATH` so it resolves by name. See "Updating" below
 - `packages` (flake, not stowed) — a locked `flake.lock` pinning the exact nixpkgs revision for everything above plus the rest of the CLI toolset; see `packages/flake.nix` for the current list rather than duplicating it here
 - `nixos/configuration.nix` (template, not stowed) — a copy-paste starting point for `/etc/nixos/configuration.nix`: zsh shell, YubiKey USB/IP passthrough, `pcscd`, and the FIDO2/`plugdev` udev fix SSH commit signing depends on. Not stowed because most of it is genuinely per-machine (USB busids, `stateVersion`, the username); see Install
@@ -41,17 +42,18 @@ nix profile install ~/.dotfiles/packages#default
 # Create these as real directories *before* stowing -- if a stow target
 # directory doesn't exist yet, stow folds the whole package subtree into
 # one directory symlink instead of symlinking individual files. For most
-# packages that's fine, but ~/.config/claude, ~/.config/git and
-# ~/.config/opencode each also need to hold real, untracked, per-machine
-# files alongside the symlinked ones (Claude Code's credentials/sessions/
-# caches; git's per-machine signingkey include; opencode's own plugin
-# node_modules/package.json) -- folding would make stow symlink the whole
+# packages that's fine, but ~/.config/claude, ~/.config/git,
+# ~/.config/opencode and ~/.config/omp/agent each also need to hold real,
+# untracked, per-machine files alongside the symlinked ones (Claude Code's
+# credentials/sessions/caches; git's per-machine signingkey include;
+# opencode's own plugin node_modules/package.json; omp's auth/sessions/
+# caches) -- folding would make stow symlink the whole
 # directory into ~/.dotfiles, so anything written there afterward lands
 # physically inside the git working tree instead of staying untracked.
 # ~/.config/agents holds nothing untracked (yet), so it's left to fold.
-mkdir -p ~/.config/claude ~/.config/git ~/.config/opencode
+mkdir -p ~/.config/claude ~/.config/git ~/.config/opencode ~/.config/omp/agent
 
-# dotfiles: nix.conf/config.nix, git identity, ssh config, neovim config, zsh config, agents config (claude+opencode+shared skills)
+# dotfiles: nix.conf/config.nix, git identity, ssh config, neovim config, zsh config, agents config (claude+opencode+omp+shared skills)
 nix-shell -p stow --run 'stow -d ~/.dotfiles -t ~ -R nix git ssh nvim zsh agents'
 
 # ~/.claude and ~/.agents as plain symlinks to their ~/.config counterparts,
