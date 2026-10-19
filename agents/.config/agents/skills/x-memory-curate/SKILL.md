@@ -28,11 +28,36 @@ The agent **never writes silently**. Triggers, in priority order:
    during the session, filed for a single end-of-session review (see
    Feedback log below).
 
-**Classification rule:** documentation captures what is true and why;
-a skill captures a repeatable procedure with a clear trigger. Prefer
-extending an existing page over creating a new one. When a
-project-specific lesson keeps recurring across projects, propose
-promoting it to the global wiki.
+## Classification: kind decides home
+
+Sort every memory by **mode** first, then by kind:
+
+- **Normative**: the user's choice. Changes only by decision; never
+  expires on its own.
+- **Descriptive**: how a tool or system behaves. Every line carries the
+  tool version and date; re-verify or delete it on upgrade.
+
+| Kind | Home | Loaded by |
+| --- | --- | --- |
+| Invariant: every session, every project | `AGENTS.md` / `rules/` | always |
+| Doctrine: many linked normative rules for one technology | reference skill | description, plus a path rule where the harness has one |
+| Procedure: ordered steps with a trigger | skill | description / slash command |
+| Preference: one normative rule | wiki topic page | `x-conventions` router |
+| Gotcha: verified tool behaviour | wiki tool page, version-stamped | `x-conventions` router |
+| Decision and its reason | `.agents/docs/adr/` | on demand |
+| Episode: what happened in a session | `x-memory` session index | `x-memory query` |
+| Tutorial for the human | outside agent load paths | never |
+
+- One normative owner per technology: once a doctrine skill exists, it
+  absorbs every preference on that technology.
+- A gotcha needed to apply one doctrine rule lives beside that rule;
+  every other gotcha lives in the wiki.
+- A page that names a skill points to it; it never restates it.
+- Keep modes apart on a page: normative lines are pruned by decision,
+  descriptive lines by version.
+- Prefer extending an existing page over creating a new one. When a
+  project-specific lesson keeps recurring across projects, propose
+  promoting it to the global wiki.
 
 ## Feedback log
 
@@ -65,14 +90,16 @@ read only when a task actually touches their topic.
   every project, every tool, every session (e.g. "treat recalled facts
   as leads", the skill-location convention, "no unrequested
   abstractions").
-- **Put technology-specific preferences, tool quirks, and accumulated
-  methodology in a topic page** in the global wiki
-  (`~/.config/agents/x-memory/<topic>.md`, or *local* when private), linked from the index with a
-  one-line trigger ("only when working on X"). Same for project-specific
-  knowledge in the project wiki.
+- **Put tool quirks and single preferences in a topic page** in the
+  global wiki (`~/.config/agents/x-memory/<topic>.md`, or *local* when
+  private), linked from the index with a one-line trigger ("only when
+  working on X"); a technology with a doctrine skill keeps its
+  preferences in that skill (see Classification). Same for
+  project-specific knowledge in the project wiki.
 - **Don't paste wiki content into `AGENTS.md`** to "make sure it gets
   seen." A topic page that's never loaded beats a bootstrap entry
   that's always loaded and usually irrelevant.
 - A global rule recurring as useful *judgment* across many sessions (not
   just one technology) can graduate to a skill; one that only matters
-  for one technology stays in that technology's wiki page.
+  for one technology stays with that technology's doctrine skill, or its
+  wiki page when it has none.
