@@ -1,11 +1,11 @@
 ---
 name: x-ts-constitution
-description: TypeScript constitution (proof by type) — core rules for any TypeScript code (parse at the boundary with zod, unions over flags, errors as values, exhaustive switches, counted escape hatches), the user's baseline setup, and opt-in modules (strict tsconfig, oxlint type-aware, pure core, hatch ledger, property tests). Use when writing, reviewing, or setting up TypeScript code.
+description: TypeScript constitution (proof by type) — core rules for any TypeScript code (parse at the boundary with zod, unions over flags, errors as values, exhaustive switches, precise log events, counted escape hatches), the user's baseline setup, and opt-in modules (strict tsconfig, oxlint type-aware, pure core, hatch ledger, property tests). Use when writing, reviewing, or setting up TypeScript code.
 ---
 
 # TypeScript Constitution (Proof by Type)
 
-v2, 2026-10-19: split into core, baseline and opt-in modules. v1 (2026-10-14) applied everything at once; no repo had adopted it.
+v2.1, 2026-10-21: discriminants and log events name a precise state (Article III §3, Article V). v2, 2026-10-19: split into core, baseline and opt-in modules. v1 (2026-10-14) applied everything at once; no repo had adopted it.
 
 ## Scope
 
@@ -193,6 +193,8 @@ type Payment =
 
 Count representable states versus legal states. Any gap is a bug waiting for a caller.
 
+Each discriminant value names the state it stands for, and each field names what it holds: `{ kind: "http_error"; http_status: number }`, where `{ kind: "http_status"; status: number }` names a field as a state and leaves `status` ambiguous. A `type` or `status` field beside `kind` gets its qualifier: `record_type`, `http_status`.
+
 No sentinel values inside a branded field. "Unknown" is its own variant, `{ kind: "unknown" }`, never a made-up string such as `ref:<id>` that passes for a real identifier. If a sentinel reached a branded field, either the parser accepted it or someone wrote `as`. Fix it there.
 
 ### 4. A decision keeps its reason
@@ -294,6 +296,15 @@ Rules for all four:
 - On the frontend, a reducer is the functional core: `(state, event) => state` is pure and testable. UI state is a union such as `idle | loading | loaded | failed`, never a set of booleans.
 - In a worker, the core decides ack, retry or dead-letter as data. Handlers are idempotent, because redelivery is normal.
 - Classes appear in a shell only when a library requires one (`extends Error`, a framework base class).
+
+### Log events name one precise state
+
+A log event is a contract with whoever queries it: dashboards, alerts, the next incident. The rules follow the OpenTelemetry [events](https://opentelemetry.io/docs/specs/semconv/general/events/) and [naming](https://opentelemetry.io/docs/specs/semconv/general/naming/) conventions.
+
+- The name states what happened, as `<namespace>.<entity>.<state>` in lowercase snake_case: `rate_limit.denied`, `dns.lookup.failed`, `dns.domain.unreachable`. An operation name such as `dns.check` says what ran and hides the outcome.
+- One name, one field set. Outcomes with different fields get different names; per-occurrence values (domain, uid) go in fields, never in the name.
+- Field names stay precise across events. `kind` is the in-code discriminant and stays in code: a failure event carries `error_type`, a low-cardinality class from a documented list (`timeout`, `http_error`), and a success event carries none.
+- The shell builds each event by an explicit mapping, one `switch` branch per variant: the same total function as error mapping (Article IV). Spreading a domain object (`{ ...failure }`) leaks its internal names into the contract and silently changes the log whenever the type changes.
 
 ### Authorization is part of the port's type
 
