@@ -6,8 +6,9 @@
   inputs.caveman = { url = "github:JuliusBrussee/caveman"; flake = false; };
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
   inputs.ponytail = { url = "github:DietrichGebert/ponytail"; flake = false; };
+  inputs.worktrunk = { url = "github:max-sixty/worktrunk"; flake = false; };
 
-  outputs = { self, caveman, nixpkgs, ponytail }:
+  outputs = { self, caveman, nixpkgs, ponytail, worktrunk }:
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs {
@@ -45,6 +46,7 @@
           (pkgs.linkFarm "claude-plugins" [
             { name = "share/claude-plugins/caveman"; path = caveman; }
             { name = "share/claude-plugins/ponytail"; path = ponytail; }
+            { name = "share/claude-plugins/worktrunk"; path = worktrunk; }
           ])
           delta
           direnv
@@ -78,6 +80,9 @@
           # nixpkgs ships TS7 native as `tsc` only; typescript-mcp spawns `tsgo`.
           (pkgs.writeShellScriptBin "tsgo" ''exec ${pkgs.typescript}/bin/tsc "$@"'')
           typescript-mcp
+          # `worktrunk` alone would resolve to the flake *input* (source tree,
+          # no bin) — the lambda parameter shadows `with pkgs`.
+          pkgs.worktrunk
           (pkgs.writeShellScriptBin "x-memory" ''exec ${bun}/bin/bun "$HOME/.dotfiles/x-memory/src/cli.ts" "$@"'')
           yaml-language-server
           yazi

@@ -52,7 +52,24 @@
       "inputs": {
         "caveman": "caveman",
         "nixpkgs": "nixpkgs",
-        "ponytail": "ponytail"
+        "ponytail": "ponytail",
+        "worktrunk": "worktrunk"
+      }
+    },
+    "worktrunk": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1793088066,
+        "narHash": "sha256-Ed+v8iILK9FMZnzJtNaI7yujHiHF1seHwUNtWECxua0=",
+        "owner": "max-sixty",
+        "repo": "worktrunk",
+        "rev": "793237d3e6bbec790abf35d82a3aee6cd9d94bde",
+        "type": "github"
+      },
+      "original": {
+        "owner": "max-sixty",
+        "repo": "worktrunk",
+        "type": "github"
       }
     }
   },

@@ -15,6 +15,18 @@ guess or trust an upstream-published hash:
 Both steps need network access (fetching the tarball / go modules) but
 no external hash database or manual trust decision.
 
+## A flake input shadows `with pkgs` (2026-10-27)
+
+A lambda parameter in `outputs = { self, worktrunk, ... }:` outranks
+`with pkgs;` inside the body: after adding `inputs.worktrunk`, a bare
+`worktrunk` in a buildEnv `paths` list silently resolved to the **source
+tree** (no `bin/`) instead of `pkgs.worktrunk`. The build went green and
+the binary vanished from the profile. Rule: qualify `pkgs.<name>` for any
+name shared with a flake input. When profile contents look wrong, check
+the buildEnv store path's `bin/` directly, not `nix profile list` — the
+manifest and the profile symlink can both look fine while the env itself
+is the wrong one (nix 2.x).
+
 ## Pinning an external binary into a flake profile
 
 Pattern used in `~/.dotfiles/packages/flake.nix` (see `typescript-mcp`
