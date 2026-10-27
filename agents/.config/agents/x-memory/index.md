@@ -18,7 +18,9 @@ secrets, fingerprints, hostnames or private project detail goes there.
 - [x-memory CLI usage](x-memory-tool.md) — only when a query returns empty and staleness is suspect.
 - [Testing preferences](testing.md) — jest CPU/worker cap, before running any jest-backed test command.
 - [npm preferences / quirks](npm.md) — allowScripts advisory-only status, before relying on npm's script-approval mechanism.
-- [Git / PR workflow preferences](git_workflow.md) — before naming a branch, committing, or opening a PR.
+- [Git / PR workflow preferences](git_workflow.md) — before naming a branch, committing, or opening a PR; includes the `wt` (worktrunk) worktree routing.
+- [Guard config edits: tmp-script procedure](guard_config_edits.md) — the moment a guard blocks a config edit or any command naming a guarded path; also before proposing to verify such a file.
+- [DeepSeek aliases on OpenRouter](deepseek_aliases.md) — before picking a cheap/fast model tier for agents or subagents.
 - [SSH signing / hardware key](~/.local/share/agents/x-memory/ssh_signing.md) *local* — before any git commit/fetch/push in these repos, or when signing fails with "incorrect passphrase".
 - [Secrets: ask, never extract](secrets.md) — before reading any credential/token/config store, and the moment a task is blocked on a missing or tool-blocked credential (API token, key, password). Ask, never hunt.
 - [Agent security incidents](incidents.md) — before loosening any guard (deny pattern, permission, hook), and when a guard blocks you and the next move feels like a workaround.

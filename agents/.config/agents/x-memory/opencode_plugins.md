@@ -49,4 +49,9 @@ plugins dir.
   Validate against the published schema (https://opencode.ai/config.json) for
   the installed version, not the docs page.
 - After any plugin/config change: quit and restart opencode — config loads once
-  at startup.
+  at startup. Sharper (2026-10-27, worktrunk skill wiring): `opencode run`
+  connects to a persistent `opencode serve --service` daemon, so a config edit
+  or plugin install does not reach it either — kill the stale `serve` process
+  (check `ps` for a start time older than the change) before concluding a
+  config path or plugin is broken. Skill paths scan recursively to depth 6,
+  so marketplace-root and plugin-dir paths both work.

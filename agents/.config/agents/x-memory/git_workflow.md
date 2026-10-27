@@ -1,5 +1,16 @@
 # Git / PR workflow preferences
 
+## Worktrees: `wt` (worktrunk)
+
+Worktree operations go through `wt` (worktrunk; installed from nixpkgs in the
+dotfiles profile, 2026-10-27), not raw `git worktree`:
+`wt switch -c <branch>` to create+enter, `wt list`, `wt merge main` (squash,
+rebase, fast-forward, clean up), `wt remove`. Full agent-facing reference: the official `worktrunk` Claude Code
+plugin (installed from the flake-pinned upstream repo, MIT/Apache-2.0), whose
+skills include `worktrunk` and `wt-switch-create`. Docs: https://worktrunk.dev.
+Shell integration (`wt config shell install`, enables auto-cd) was NOT
+installed as of 2026-10-27 — don't assume `wt switch` changes the cwd.
+
 ## Branch naming: `<github-username>/<kebab-slug>`
 
 Enforced live via the `x-conventions` skill (one router skill covering
