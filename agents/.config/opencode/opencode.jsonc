@@ -5,6 +5,7 @@
   },
   "instructions": ["~/.config/agents/rules/constitution.md"],
   "share": "disabled",
+  "model": "openrouter/~deepseek/deepseek-flash-latest",
   // Explicit so sharing doesn't quietly depend on the ~/.claude symlink
   // (that symlink's own purpose is unrelated legacy-path compat).
   // Plugin paths point at the plugin's parent dir, one level above the
@@ -16,6 +17,7 @@
       "~/.config/claude/plugins/cache/claude-plugins-official/mattpocock-skills",
       "~/.nix-profile/share/claude-plugins/caveman",
       "~/.nix-profile/share/claude-plugins/ponytail",
+      "~/.nix-profile/share/claude-plugins/worktrunk/plugins/worktrunk",
     ],
   },
   "permission": {

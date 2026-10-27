@@ -89,7 +89,8 @@
     "mattpocock-skills@synced": false,
     "mattpocock-skills@claude-plugins-official": true,
     "caveman@caveman": true,
-    "ponytail@ponytail": true
+    "ponytail@ponytail": true,
+    "worktrunk@worktrunk": true
   },
   "extraKnownMarketplaces": {
     "caveman": {
@@ -102,6 +103,12 @@
       "source": {
         "source": "directory",
         "path": "~/.nix-profile/share/claude-plugins/ponytail"
+      }
+    },
+    "worktrunk": {
+      "source": {
+        "source": "directory",
+        "path": "/home/nixos/.nix-profile/share/claude-plugins/worktrunk"
       }
     }
   },

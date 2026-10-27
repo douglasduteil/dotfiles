@@ -360,6 +360,10 @@ theme:
   light: light
 modelRoles:
   default: anthropic/claude-opus-5-5:high
+task:
+  agentModelOverrides:
+    scout: openrouter/~deepseek/deepseek-flash-latest
+    cavecrew-investigator: openrouter/~deepseek/deepseek-flash-latest
 symbolPreset: unicode
 composer:
   shape: band
