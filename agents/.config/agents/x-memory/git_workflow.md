@@ -98,6 +98,11 @@ verified, in chat. Describe the change and its reasoning only — state
 behaviour parity as an intent ("no moderator-visible behaviour
 change"), not as a test log.
 
+Never mention the planning docs in a commit or PR: no proposal, slice
+ids (S1, S2…), tasks.md or handoff, not even "the proposal's S2"
+(user, 2026-10-29, #1960). Say what the code does now and, when a
+limit matters, what would lift it, in the codebase's own terms.
+
 Include references: permanent links are a big part of what makes a PR
 maintainer-friendly. Link related issues, prior/related PRs, and
 discussions on specific lines (comment permalinks) where they explain
