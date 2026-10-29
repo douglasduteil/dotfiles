@@ -5,7 +5,7 @@ description: TypeScript constitution (proof by type) — core rules for any Type
 
 # TypeScript Constitution (Proof by Type)
 
-v2.3, 2026-10-28: types derive from the code (`as const`, `ReturnType`, `typeof`) over hand-written `type` or `interface` declarations of the same shape (Article III §6). v2.2, 2026-10-26: error events carry the context to rebuild what happened; fields take OpenTelemetry registry names (Article V). v2.1, 2026-10-21: discriminants and log events name a precise state (Article III §3, Article V). v2, 2026-10-19: split into core, baseline and opt-in modules. v1 (2026-10-14) applied everything at once; no repo had adopted it.
+v2.4, 2026-10-29: body split into this file (the rules) and `references/` (rationale, worked examples, logging detail, tooling detail); no rule changed. v2.3, 2026-10-28: types derive from the code (`as const`, `ReturnType`, `typeof`) over hand-written `type` or `interface` declarations of the same shape (Article III §6). v2.2, 2026-10-26: error events carry the context to rebuild what happened; fields take OpenTelemetry registry names (Article V). v2.1, 2026-10-21: discriminants and log events name a precise state (Article III §3, Article V). v2, 2026-10-19: split into core, baseline and opt-in modules. v1 (2026-10-14) applied everything at once; no repo had adopted it.
 
 ## Scope
 
@@ -25,47 +25,18 @@ Comments follow `code_style.md` in the global wiki.
 
 ## Preamble: TypeScript is not Lean, so we shrink and audit its holes
 
-TypeScript's checker is unsound by design. Lean's kernel proves; TypeScript's checker only constrains. This constitution makes the unsound surface small, explicit and counted, so the rest of the code can be trusted the way a proof is.
-
-A type is a claim about data ("this was parsed", "this state is complete", "every case is handled"). The only proof of the claim is the single function allowed to build that type.
-
-| Lean concept | TypeScript equivalent | Strength |
-| --- | --- | --- |
-| Proposition as type | Branded or discriminated type | Medium: nominal only by convention |
-| Proof term | Smart constructor or parser returning a result | Strong if it is the only constructor |
-| Totality | Exhaustive switch reaching `never` | Strong, with lint |
-| `sorry` and axioms | `as`, `any`, `!`, `@ts-expect-error`, third-party `.d.ts` | Ledgered (Article VI) |
-| Small trusted kernel | Compiler plus a few boundary parsers | Strong if parsers are few |
-| Effect tracking | None built in; folder tsconfig and lint | Weak unless enforced (pure core module) |
-| Dependent types | Generics, template literal types | Weak; avoid type-level gymnastics |
-
-Purity is not checkable by the type system: a function typed `(a: A) => B` can call `fetch`. Rigor comes from small trusted kernels, not clever types.
-
-### Proofs have a location
-
-| Guarantee | Enforced by |
-| --- | --- |
-| Strict checker flags | Compiler (strict tsconfig module) |
-| Core cannot call I/O globals; never imports the shell | Compiler and oxlint (pure core module) |
-| `Intl` in the core gets explicit locale and time zone | Review |
-| Exhaustive handling of unions (Article IV) | Compiler; oxlint `switch-exhaustiveness-check` when active |
-| Inputs become domain types (Articles III, V) | Runtime parser at the boundary |
-| Configuration is valid (Article V) | Startup parser |
-| Scoped reads require a principal (Article V) | Compiler (provenance brand); Postgres RLS underneath |
-| Every `as` is visible; the hatch count never grows silently (Article VI) | Review; oxlint and CI (oxlint, hatch ledger modules) |
-| Behavioral properties (Article VII) | CI tests (property tests module) |
+TypeScript's checker is unsound by design. This constitution makes the unsound surface small, explicit and counted, so the rest of the code can be trusted the way a proof is. A type is a claim about data; the only proof of the claim is the single function allowed to build that type. Purity is not checkable by the type system, so rigor comes from small trusted kernels, not clever types. The Lean mapping and the table of where each guarantee is enforced: [references/rationale.md](references/rationale.md).
 
 ## Baseline: what the user practises
 
-- **TypeScript 7**: the `typescript` package ships the native `tsc` since 7.0 (2026-07-08). 7.0 has no compiler API until 7.1, so tools importing `typescript` (prettier-plugin-organize-imports, typescript-eslint, ts-morph) break, some silently: check `js_tooling_gotchas.md` before relying on one. TS 7 adopts the 6.0 defaults: `strict` on, `types: []`, `rootDir: ./`, `module: esnext`, `noUncheckedSideEffectImports` on.
+- **TypeScript 7**: native `tsc` since 7.0 (2026-07-08), no compiler API until 7.1, so tools importing `typescript` break, some silently. TS 7 adopts the 6.0 defaults (`strict` on, `types: []`, `rootDir: ./`, `module: esnext`, `noUncheckedSideEffectImports` on).
 - **tsconfig**: extend `@tsconfig/bun` on Bun, `@tsconfig/node-lts` plus `@tsconfig/node-ts` on Node, `@tsconfig/vite-react` on Vite. More strictness comes from the strict tsconfig module.
-- **Naming**: `snake_case` wherever a name is chosen: files and directories (`query_action.ts`, `src/hooks/`), values and functions (`extract_d`, `dsfr_version`). Types, interfaces and classes stay PascalCase. Object keys alpha-ordered after the discriminant.
-- **Prettier**: default config, declared in `package.json` (not `.prettierrc`), with `prettier-plugin-organize-imports` (silent no-op on TS 7.0: see `js_tooling_gotchas.md`).
-- **Tests**: `*.test.ts` next to the source it covers; `bun test` on Bun, vitest on Node and Vite. Assert the whole result: `expect(verdict).toEqual(ok(…))` or `toMatchObject({ ok: false, error: { … } })`, never `verdict.ok && verdict.value`: the `&&` hides the discriminant and compares `false` when the branch is wrong. Fix leftovers in files you touch.
-- **Module resolution**: `package.json#imports` and `#exports` over `../../` traversal; add an `imports` key once a path needs `../../../`. Gotchas:
-  - Every `*` in a target receives the same matched text, so `./libs/*/src/*.ts` cannot work. Use a barrel key `#libs/*` → `./libs/*/src/index.ts` plus one `#libs/<lib>/*` key per lib (longest prefix wins).
-  - Targets get no extension or index lookup: map to `*.ts`, write `/index` for folder imports.
-  - With `outDir` set, `tsc` also needs `rootDir`, else TS2210 (found on TS 5.x, 2026-10-09; re-check under TS 7, whose `rootDir` default is `./`).
+- **Naming**: `snake_case` wherever a name is chosen: files and directories, values and functions. Types, interfaces and classes stay PascalCase. Object keys alpha-ordered after the discriminant.
+- **Prettier**: default config, declared in `package.json` (not `.prettierrc`), with `prettier-plugin-organize-imports`.
+- **Tests**: `*.test.ts` next to the source it covers; `bun test` on Bun, vitest on Node and Vite. Assert the whole result (`expect(verdict).toEqual(ok(…))`, `toMatchObject`), never `verdict.ok && verdict.value`: the `&&` hides the discriminant. Fix leftovers in files you touch.
+- **Module resolution**: `package.json#imports` and `#exports` over `../../` traversal; add an `imports` key once a path needs `../../../`.
+
+Version-sensitive detail behind these bullets (tool breakage, `*` target expansion, `rootDir`/TS2210): [references/tooling.md](references/tooling.md).
 
 ## Article I — Axioms: the checker and the linter
 
@@ -80,31 +51,6 @@ flowchart LR
   G["1. Gather (shell, impure)<br/>parse request, read DB, clock, config"] --> D["2. Decide (core)<br/>pure, sync, total; tested without mocks"]
   D --> E["3. Execute (shell, impure)<br/>run commands, write, respond, map errors"]
   D -. "need more data" .-> G
-```
-
-### The 3-phase sandwich
-
-```ts
-// src/core/membership/decide_join.ts: pure, synchronous, total
-export type JoinInput = {
-  readonly invite: Invite | null;
-  readonly now: Instant; // time is an input, never read
-  readonly org: Org;
-  readonly user: User;
-};
-
-export type JoinDecision =
-  | { readonly kind: "join"; readonly events: readonly DomainEvent[]; readonly membership: NewMembership }
-  | { readonly kind: "reject"; readonly reason: "already-member" | "invite-expired" | "org-full" };
-
-export const decide_join = (input: JoinInput): JoinDecision => { /* ... */ };
-
-// src/shell/http/join_handler.ts: impure, thin, no domain branching
-export const join_handler = (deps: Deps) => async (req: Request) => {
-  const input = await gather_join_input({ deps, req }); // 1. read
-  const decision = decide_join(input);                  // 2. decide
-  return execute_join({ decision, deps });              // 3. write and respond
-};
 ```
 
 ### Rules of the core
@@ -132,25 +78,15 @@ A transaction that reads with `SELECT ... FOR UPDATE`, decides, then writes is s
 
 Reports, statistics, dashboards and access gates call the same core decision function. A second implementation, even a "read-only" one, drifts from the first. When performance demands a second implementation, such as a SQL aggregation, the core function becomes its oracle (property tests module).
 
+Worked sandwich code: [references/examples.md](references/examples.md).
+
 ## Article III — Types as propositions: illegal states do not compile
 
 A domain type is a claim; its constructor is the proof. Everything that enters from outside is `unknown` until a parser turns it into a domain type, and nothing downstream checks it again.
 
 ### 1. Parse, don't validate
 
-A validator answers yes or no and throws the knowledge away. A parser returns a stronger type that carries the knowledge forward.
-
-```ts
-const Email = z.email().brand<"Email">();
-type Email = z.infer<typeof Email>;
-
-// boundary: unknown -> Email, exactly once
-const parsed = Email.safeParse(body.email);
-// core: functions take Email, never string
-const send_welcome = (to: Email): Command => ({ kind: "send-email", to });
-```
-
-zod 4 is the parser library, imported as `import * as z from "zod"`. A frontend package that counts bytes may use valibot instead (`zod/mini` measured ~30 KB on a 76 KB bundle, 2026-10-03). Choose one per package, never per file.
+A validator answers yes or no and throws the knowledge away. A parser returns a stronger type that carries the knowledge forward. zod 4 is the parser library, imported as `import * as z from "zod"`. A frontend package that counts bytes may use valibot instead (`zod/mini` measured ~30 KB on a 76 KB bundle, 2026-10-03). Choose one per package, never per file.
 
 Conventions:
 
@@ -160,15 +96,6 @@ Conventions:
 - `ZodError` never crosses into the core: the boundary maps it to the domain error union.
 - `z.any()` is `any`, so it is banned. `.catch()`, and `.default()` on malformed input, are hatches (Article VI).
 - When a transform makes input and output differ, `z.input<typeof S>` types the wire format and `z.infer<typeof S>` the domain value.
-
-```ts
-export const Siren = z
-  .string()
-  .transform((s) => s.replace(/\s/g, ""))
-  .pipe(z.string().regex(/^\d{9}$/))
-  .brand<"Siren">();
-export type Siren = z.infer<typeof Siren>;
-```
 
 ### 2. Brands give nominal identity: shape or provenance
 
@@ -203,31 +130,6 @@ If a caller must query the data again to learn why a function returned `null`, t
 
 Encode counts in the type only when the decision branches on them: non-empty is `readonly [T, ...T[]]`, at least two is `readonly [T, T, ...T[]]`. These shapes do not survive `.filter` or `.map`, so each use needs a re-check. Elsewhere, a smart constructor enforces the count.
 
-```ts
-// Before: null hides two different outcomes
-const find_owner = (records: readonly PartnerRecord[]): Siren | null => {
-  const sirens = new Set(records.map((r) => r.siren));
-  if (sirens.size !== 1) return null; // undeclared or shared? the caller cannot tell
-  return [...sirens][0] ?? null;
-};
-
-// After: each outcome carries its evidence
-type Ownership =
-  | { readonly kind: "owned"; readonly siren: Siren }
-  | { readonly kind: "shared"; readonly sirens: readonly [Siren, Siren, ...Siren[]] }
-  | { readonly kind: "undeclared" };
-
-const decide_ownership = (records: readonly PartnerRecord[]): Ownership => {
-  const sirens = [...new Set(records.map((r) => r.siren))].sort();
-  const [first, second, ...rest] = sirens;
-  if (first === undefined) return { kind: "undeclared" };
-  if (second === undefined) return { kind: "owned", siren: first };
-  return { kind: "shared", sirens: [first, second, ...rest] };
-};
-```
-
-The tuple is built without a cast, because `noUncheckedIndexedAccess` (set by `@tsconfig/bun`) forces the `undefined` checks that prove the count. The sort makes the result independent of input order. The `Set` deduplicates correctly only because `Siren` is canonical (rule 5).
-
 ### 5. Identifiers are canonical brands
 
 Any value used as a map key, in an equality check or as an identity (domain, email, SIREN) has exactly one parser, and that parser normalizes it: trim, lowercase where the domain allows, drop a trailing dot from domain names. Equality on an unnormalized string is a hidden bug.
@@ -241,6 +143,8 @@ Normalization is domain logic and can be wrong. Domain names need IDNA handling,
 - `satisfies` instead of annotations for config objects, so literal types survive.
 - The code carries the type: when `as const`, `ReturnType<typeof f>` or `typeof value` yields the shape, it beats a return annotation and a hand-written `type` or `interface`. `const idle = () => ({ kind: "idle" }) as const; type Idle = ReturnType<typeof idle>;` over `type Idle = { readonly kind: "idle" }` plus `(): Idle =>`. Same reason as `z.infer<typeof S>` (Article III §1). A type the code cannot produce alone (a union across branches such as `JoinDecision`, a port such as `InvoiceStore`) stays declared.
 - Prefer one boring correct type over a clever conditional type. A type that needs a comment to be read is too clever.
+
+Parser and ownership examples: [references/examples.md](references/examples.md).
 
 ## Article IV — Errors as values; every case is handled
 
@@ -302,51 +206,32 @@ Rules for all four:
 
 A log event is a contract with whoever queries it: dashboards, alerts, the next incident. The rules follow the OpenTelemetry [events](https://opentelemetry.io/docs/specs/semconv/general/events/) and [naming](https://opentelemetry.io/docs/specs/semconv/general/naming/) conventions.
 
-- The name states what happened, as `<namespace>.<entity>.<state>` in lowercase snake_case: `rate_limit.denied`, `dns.lookup.failed`, `dns.domain.unreachable`. An operation name such as `dns.check` says what ran and hides the outcome.
+- The name states what happened, as `<namespace>.<entity>.<state>` in lowercase snake_case: `rate_limit.denied`, `dns.lookup.failed`. An operation name such as `dns.check` says what ran and hides the outcome.
 - One name, one field set. Outcomes with different fields get different names; per-occurrence values (domain, uid) go in fields, never in the name.
-- Field names stay precise across events. A field the OpenTelemetry [attribute registry](https://opentelemetry.io/docs/specs/semconv/registry/attributes/) defines keeps its registry name (`error.type`, `exception.message`, `http.route`); a field of your own is snake_case. `kind` is the in-code discriminant and stays in code: a failure event carries `error.type`, a low-cardinality class from a documented list (`timeout`, `http_error`), and a success event carries none.
-- The shell builds each event by an explicit mapping, one `switch` branch per variant: the same total function as error mapping (Article IV). Spreading a domain object (`{ ...failure }`) leaks its internal names into the contract and silently changes the log whenever the type changes.
+- Field names stay precise across events: a field the OpenTelemetry [attribute registry](https://opentelemetry.io/docs/specs/semconv/registry/attributes/) defines keeps its registry name (`error.type`, `exception.message`, `http.route`); a field of your own is snake_case. `kind` is the in-code discriminant and stays in code: a failure event carries `error.type`, a low-cardinality class from a documented list (`timeout`, `http_error`), and a success event carries none.
+- The shell builds each event by an explicit mapping, one `switch` branch per variant: the same total function as error mapping (Article IV). Spreading a domain object (`{ ...failure }`) leaks its internal names into the contract.
 
 ### An error event carries what happened
 
-In production the log is the only witness. Each error event answers when, where, who and what on its own, without a second lookup ([OWASP Logging Cheat Sheet, event attributes](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html#event-attributes)).
+In production the log is the only witness. Each error event answers when, where, who and what on its own, without a second lookup ([OWASP Logging Cheat Sheet](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html#event-attributes)).
 
-- **One event, one line.** The shell writes one JSON object per event to stdout, unbuffered: `timestamp` (ISO 8601, UTC), `severity`, `event.name`, then fields. A multi-line `console.error(err)` arrives as separate records in most collectors, and the stack loses its event.
-- **Correlation.** The shell gives each request an id at the edge (a trusted incoming `traceparent` or `x-request-id`, else a fresh UUID), puts it on every event of that request as `request.id`, and shows it on the error page, so a user's report leads to the event ([OWASP, note A](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html#event-attributes)).
-- **The whole exception.** `exception.type`, `exception.message`, `exception.stacktrace`, plus `exception.causes`: the `cause` chain unrolled to an array of `{ type, message }`. A library wrapper names itself and its root cause names the reason (openid-client `ClientError: invalid response encountered` wraps `response parameter "iss" missing`). Set `error.type` to the first type in the chain that classifies the failure ([OTel exceptions in logs](https://opentelemetry.io/docs/specs/semconv/exceptions/exceptions-logs/), [`error.type`](https://opentelemetry.io/docs/specs/semconv/registry/attributes/error/)).
-- **The operation.** `http.request.method`, `http.route` (the route template, never the raw path), `http.response.status_code`, and the domain step that failed, plus the inputs that chose the branch (which prompt, which flag). Values of secrets stay out.
-- **Severity by impact** ([OTel severity](https://opentelemetry.io/docs/specs/semconv/exceptions/exceptions-logs/#severity)): `FATAL` for a startup failure such as invalid config; `ERROR` for an exception reaching the framework's error handler; `WARN` for a handled failure of an outbound call; `DEBUG` for a client cancellation. A domain rejection is an expected outcome (Article IV): it gets its own event name at `INFO` or `WARN`, with no stack.
-- **Event names for exceptions** follow OTel: `<operation>.exception` (`http.server.request.exception`), or `exception` for a global handler.
-- **Excluded data** ([OWASP, data to exclude](https://cheatsheetseries.owasp.org/cheatsheets/Logging_Cheat_Sheet.html#data-to-exclude)): session ids (log a hash when one is needed), access, ID and refresh tokens, authorization codes, passwords, keys, sensitive personal data. Library errors carry requests and responses in `cause`: copy only `type` and `message` from each link, and redact secret-bearing query parameters (`code`, `state`, `id_token_hint`) from any URL, keeping the key (`code=REDACTED`).
-- **Logging never breaks the request.** A logger failure falls back to a plain line on stderr. JSON encoding neutralizes CR and LF from untrusted input.
+- **One event, one line.** One JSON object per event to stdout, unbuffered: `timestamp` (ISO 8601, UTC), `severity`, `event.name`, then fields. A multi-line `console.error(err)` arrives as separate records in most collectors.
+- **Correlation.** An id at the edge (trusted `traceparent` or `x-request-id`, else a fresh UUID) on every event of the request as `request.id`, and on the error page.
+- **The whole exception.** `exception.type`, `exception.message`, `exception.stacktrace`, plus `exception.causes`: the `cause` chain as `{ type, message }[]`. `error.type` is the first type in the chain that classifies the failure.
+- **The operation.** `http.request.method`, `http.route` (the template, never the raw path), `http.response.status_code`, the failing domain step, and the inputs that chose the branch. Secret values stay out.
+- **Severity by impact**: `FATAL` startup failure, `ERROR` unhandled exception, `WARN` handled outbound failure, `DEBUG` client cancellation. A domain rejection is expected: its own event name at `INFO` or `WARN`, no stack. Exception events are named `<operation>.exception`.
+- **Excluded data**: session ids (hash if needed), tokens, authorization codes, passwords, keys, sensitive personal data. From a library `cause`, copy only `type` and `message`; redact secret query parameters keeping the key (`code=REDACTED`).
+- **Logging never breaks the request.** A logger failure falls back to a plain line on stderr; JSON encoding neutralizes CR and LF.
+
+Long form, with the OTel and OWASP links per rule: [references/logging.md](references/logging.md).
 
 ### Authorization is part of the port's type
 
 Store interfaces never accept a `Record<string, unknown>` filter. A scoped read takes its scope as required fields, so an unscoped query does not compile.
 
-A required `owner: string` only proves a value was passed, not that it came from the session. The scope is a `Principal` provenance brand that only the authentication middleware module can build:
+A required `owner: string` only proves a value was passed, not that it came from the session. The scope is a `Principal` provenance brand that only the authentication middleware module can build: a plain object literal typed `Principal` fails with TS2741, and forging one elsewhere needs an `as`. Postgres RLS stays underneath as defense in depth: the type protects TypeScript code, not a raw SQL path.
 
-```ts
-// src/shell/http/auth.ts
-declare const principal_brand: unique symbol;
-
-export type Principal = {
-  readonly [principal_brand]: true;
-  readonly org_id: OrgId;
-  readonly user_id: UserId;
-};
-
-export const principal_from_session = (session: VerifiedSession): Principal =>
-  // oxlint-disable-next-line typescript/consistent-type-assertions -- provenance: built only from a verified session
-  ({ org_id: session.org_id, user_id: session.user_id }) as Principal;
-
-interface InvoiceStore {
-  find_by_id(args: { readonly id: InvoiceId; readonly principal: Principal }): Promise<Invoice | undefined>;
-  list_for_org(args: { readonly principal: Principal }): Promise<readonly Invoice[]>;
-}
-```
-
-A plain object literal typed `Principal` fails with TS2741; forging one elsewhere needs an `as`. Postgres RLS stays underneath as defense in depth: the type protects TypeScript code, not a raw SQL path.
+Code: [references/examples.md](references/examples.md).
 
 ## Article VI — Escape hatches: every `sorry` is visible and justified
 
