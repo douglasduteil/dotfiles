@@ -25,6 +25,7 @@ secrets, fingerprints, hostnames or private project detail goes there.
 - [Secrets: ask, never extract](secrets.md) — before reading any credential/token/config store, and the moment a task is blocked on a missing or tool-blocked credential (API token, key, password). Ask, never hunt.
 - [Agent security incidents](incidents.md) — before loosening any guard (deny pattern, permission, hook), and when a guard blocks you and the next move feels like a workaround.
 - [Delivery / orchestration methodology](delivery_methodology.md) — before orchestrating multi-step work, delegating to subagents, or choosing task granularity/sequencing.
+- [Session cost: Pro windows, statusline signals, context levers](session_cost.md) — before designing cost/usage notifications, trimming agent context, or when a session is getting expensive.
 - [Jev / Laya decision models](~/.local/share/agents/x-memory/jev_decision_models.md) *local* — before building anything that calls the Jev/Laya Decisions APIs, or routing agent decisions through a decision model.
 - [opencode plugin API version gotchas](opencode_plugins.md) — before writing or wiring any opencode plugin or hook.
 - [omp (oh-my-pi)](~/.local/share/agents/x-memory/omp.md) *local* — when configuring or debugging omp/oh-my-pi settings or approvals.
