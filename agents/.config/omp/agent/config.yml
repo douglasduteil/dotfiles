@@ -359,7 +359,7 @@ theme:
   dark: titanium
   light: light
 modelRoles:
-  default: anthropic/claude-opus-5-5:high
+  default: openrouter/~deepseek/deepseek-flash-latest
 task:
   agentModelOverrides:
     scout: openrouter/~deepseek/deepseek-flash-latest
@@ -370,3 +370,4 @@ composer:
 setupVersion: 2
 dev:
   autoqaConsent: granted
+defaultThinkingLevel: auto
