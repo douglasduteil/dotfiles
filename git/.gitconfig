@@ -34,6 +34,10 @@
 [credential]
   helper = cache
 #}}}
+# init {{{
+[init]
+  defaultObjectFormat = sha1
+#}}}
 # push/pull/diff/options {{{
 [push]
 	default = simple
