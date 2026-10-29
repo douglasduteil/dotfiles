@@ -2,14 +2,28 @@
 
 ## Worktrees: `wt` (worktrunk)
 
-Worktree operations go through `wt` (worktrunk; installed from nixpkgs in the
-dotfiles profile, 2026-10-27), not raw `git worktree`:
-`wt switch -c <branch>` to create+enter, `wt list`, `wt merge main` (squash,
-rebase, fast-forward, clean up), `wt remove`. Full agent-facing reference: the official `worktrunk` Claude Code
-plugin (installed from the flake-pinned upstream repo, MIT/Apache-2.0), whose
+Worktree operations go through `wt` (worktrunk 0.80.0; installed from nixpkgs
+in the dotfiles profile, 2026-10-27), not raw `git worktree`:
+`wt switch --create <branch> --base origin/main` to create, `wt list`,
+`wt remove <branch>` after the merge, `wt merge main` (squash, rebase,
+fast-forward, clean up; skip it where PRs merge on GitHub). Full
+agent-facing reference: the official `worktrunk` Claude Code plugin
+(installed from the flake-pinned upstream repo, MIT/Apache-2.0), whose
 skills include `worktrunk` and `wt-switch-create`. Docs: https://worktrunk.dev.
-Shell integration (`wt config shell install`, enables auto-cd) was NOT
-installed as of 2026-10-27 — don't assume `wt switch` changes the cwd.
+
+- **Native naming** (user, 2026-10-27): let `wt` choose the path. With no
+  config the template is `{{ repo_path }}/../{{ repo }}.{{ branch | sanitize }}`,
+  a sibling directory such as `../proconnect-identite.douglasduteil-fix-x`.
+  Never pass a custom path (`/tmp/…`, `wtN`); `wt list` marks a worktree
+  outside its implied path with `⚑`.
+- Shell integration (`wt config shell install`, auto-cd) was NOT installed
+  as of 2026-10-27: `wt switch` never changes an agent's cwd. Use `--no-cd`,
+  read the path from `wt list`, pass `cwd` / `-C <path>`.
+- Cleanup: `wt list --full` shows `⊂` (integrated) and `⊟` (directory gone).
+  `git worktree prune` drops `⊟` entries; `wt remove <branch>` removes a
+  clean `⊂` worktree and its branch; a squash-merged branch it can't detect
+  needs `-D` after checking the PR is merged. Leave dirty worktrees (`+ ! ?
+  ✘`) to the user.
 
 ## Branch naming: `<github-username>/<kebab-slug>`
 
@@ -41,7 +55,8 @@ repo's instead — this is the default, not an override.
 
 Branch off `origin/main` with `--no-track`:
 `git switch -c <branch> --no-track origin/main` (worktree:
-`git worktree add <dir> -b <branch> --no-track origin/main`). Without it,
+`wt switch --create <branch> --base origin/main`, which sets no upstream
+when the names differ). Without it,
 git sets the new branch's upstream to `origin/main`, so a bare `git push`
 or `git pull` targets `main`. First push sets the real upstream:
 `git push -u origin <branch>`. Already tracking `main`? Run
@@ -75,6 +90,13 @@ reasoning, tradeoffs, and alternatives considered, not just a file
 list. Avoid AI-generation telltales and internal-only jargon. The
 "why, not just what" rule applies to PR descriptions the same way it
 does to commit bodies.
+
+Neither the PR body nor the commit body carries verification lines:
+no "Checked locally: …", no test counts, no "tests pass" (user,
+2026-10-29). CI says whether it is green; the human says what they
+verified, in chat. Describe the change and its reasoning only — state
+behaviour parity as an intent ("no moderator-visible behaviour
+change"), not as a test log.
 
 Include references: permanent links are a big part of what makes a PR
 maintainer-friendly. Link related issues, prior/related PRs, and
@@ -149,7 +171,8 @@ fix, add a commit; the squash merge collapses it. Never rebase a pushed branch e
 
 ## Worktrees when another session may own the checkout
 
-Parallel sessions switch branches in the main checkout under you. Work in
-`git worktree add <scratchpad>/wtN -b <branch> --no-track origin/main`, remove it after the PR
-(`git worktree remove --force`). A `node_modules` symlink to the main checkout breaks as soon as
-dependencies differ: run `bun install --frozen-lockfile` in the worktree (2026-10-03, zod added).
+Parallel sessions switch branches in the main checkout under you. Work in a
+`wt` worktree at its native path (`wt switch --create <branch> --base origin/main --no-cd`),
+remove it after the PR (`wt remove <branch>`). A `node_modules` symlink to the main checkout breaks as soon as
+dependencies differ: install in the worktree (`bun install --frozen-lockfile`
+/ `npm ci`) (2026-10-03, zod added).

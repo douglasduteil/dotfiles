@@ -3,6 +3,7 @@
 General coding conventions that apply across languages and projects, unless a
 project explicitly opts out.
 
+- **Type naming:** type, interface and class names are PascalCase without underscores — `ModerationEvent`, not `Entreprise_API_Association_Response`. Stated by the user 2026-10-28.
 - **Ordering:** keep items in alpha order where possible — keys in objects,
   members in interfaces/types, exports, imports the plugin doesn't already
   touch, function parameters, named arguments, CLI flags, table columns.
@@ -35,6 +36,15 @@ project explicitly opts out.
   one commit (`git reset --soft <merge-base>`, recommit,
   `push --force-with-lease`) before leaving it — don't let a PR
   accumulate a fix-up history.
+  Split a slice into the smallest PRs that each have one clear vertical
+  goal, and every PR uses everything it adds: no column, export, field or
+  branch without a caller in the same diff (user, 2026-10-29,
+  proconnect-identite activity-logs: "go even smaller", "try using what we
+  add").
+- **Function names say what they return:** `getMemberIdsPromotedByDomain`,
+  not `decideDomainVerification` ("opaque", user, 2026-10-29). An outcome
+  `kind` names what was checked: `organization_not_found` when the
+  organization is missing.
 - **Comments:** write self-explanatory code — good naming and structure
   over explanation. Default diff carries zero comments. Every comment is
   a hidden maintenance cost (a second source of truth that rots silently

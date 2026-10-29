@@ -5,7 +5,7 @@ description: TypeScript constitution (proof by type) — core rules for any Type
 
 # TypeScript Constitution (Proof by Type)
 
-v2.2, 2026-10-26: error events carry the context to rebuild what happened; fields take OpenTelemetry registry names (Article V). v2.1, 2026-10-21: discriminants and log events name a precise state (Article III §3, Article V). v2, 2026-10-19: split into core, baseline and opt-in modules. v1 (2026-10-14) applied everything at once; no repo had adopted it.
+v2.3, 2026-10-28: types derive from the code (`as const`, `ReturnType`, `typeof`) over hand-written `type` or `interface` declarations of the same shape (Article III §6). v2.2, 2026-10-26: error events carry the context to rebuild what happened; fields take OpenTelemetry registry names (Article V). v2.1, 2026-10-21: discriminants and log events name a precise state (Article III §3, Article V). v2, 2026-10-19: split into core, baseline and opt-in modules. v1 (2026-10-14) applied everything at once; no repo had adopted it.
 
 ## Scope
 
@@ -239,6 +239,7 @@ Normalization is domain logic and can be wrong. Domain names need IDNA handling,
 - `readonly` everywhere in the core; `ReadonlyArray`, `ReadonlyMap`.
 - String literal unions or `as const` objects instead of enums.
 - `satisfies` instead of annotations for config objects, so literal types survive.
+- The code carries the type: when `as const`, `ReturnType<typeof f>` or `typeof value` yields the shape, it beats a return annotation and a hand-written `type` or `interface`. `const idle = () => ({ kind: "idle" }) as const; type Idle = ReturnType<typeof idle>;` over `type Idle = { readonly kind: "idle" }` plus `(): Idle =>`. Same reason as `z.infer<typeof S>` (Article III §1). A type the code cannot produce alone (a union across branches such as `JoinDecision`, a port such as `InvoiceStore`) stays declared.
 - Prefer one boring correct type over a clever conditional type. A type that needs a comment to be read is too clever.
 
 ## Article IV — Errors as values; every case is handled

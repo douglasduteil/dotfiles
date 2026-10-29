@@ -16,6 +16,7 @@ Descriptive only: how a tool behaved at a given version, found by hands-on testi
 - `Bun.markdown.render()`'s per-node callbacks are all-or-nothing: passing any callback drops the default HTML wrapper for every node type not also handled. Use `.html()` for default rendering and pre/post-process the Markdown or HTML string instead (version not recorded).
 - Bun 1.4.2 has no `import.meta.glob`: the bundler leaves the call in and it throws at runtime. Use a hand-written registry plus a test that lists the folders. `bun test` imports modules that import `.css` without trouble (2026-10-03, x-blades).
 - `bun add` cannot install a git subdirectory (monorepo package): `'pkg@git+https://…/repo.git#main&path:packages/pkg'` parses `main&path:…` as the ref and 404s on codeload (Bun 1.4.2, 2026-10-22). Extract the package to its own repo or publish it.
+- A `file:` tarball dependency is cached by path and version: after repacking under the same file name, `bun install` (even `--force` after deleting `node_modules/.bun/<pkg>*`) installs the old contents. Copy the tarball to a new file name and point `package.json` at it; check with a `grep` in the installed `dist/` (Bun 1.4.2, 2026-10-29).
 
 ### Dev server: imports in a cycle are `null` at load
 

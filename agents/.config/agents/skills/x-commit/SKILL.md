@@ -62,8 +62,9 @@ Why not fitting one caveman line → body too big, or commit not atomic.
 Trivial commit (typo, one config value) → subject only.
 
 Body speaks only about codebase. Leave out `.agents/` paths, skill/agent
-names, session narrative, verification logs (tests passed etc.) — those go
-in chat/PR.
+names, session narrative, and verification lines ("Checked locally: …",
+test counts, "tests pass") — those go in chat, never in the commit or
+the PR description.
 
 Internet-sourced claim → add `Source: <url> (consulted YYYY-MM-DD)` under
 its section.

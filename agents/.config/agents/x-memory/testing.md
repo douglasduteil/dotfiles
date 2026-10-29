@@ -44,3 +44,7 @@ Stated by the user 2026-10-14 (api-partenaires #130/#131):
 - Pass the dependency (`fetch`, clock) into the factory; don't mock a global.
 - Name test data after what happens to it: `mairie-de-nulle-part.fr`
   (does not resolve), `dns-en-greve.fr` (DNS on strike). Humor welcome.
+- Tag fixture identities with their role: `azrael+promoted@…`,
+  `luther+kept-dirigeant@…`, `leman.russ+kept-other-domain@…`; a missing
+  record is `notfound.world` / id `404` (user, 2026-10-29,
+  proconnect-identite #2365).
