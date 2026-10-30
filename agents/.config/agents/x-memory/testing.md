@@ -48,3 +48,22 @@ Stated by the user 2026-10-14 (api-partenaires #130/#131):
   `luther+kept-dirigeant@…`, `leman.russ+kept-other-domain@…`; a missing
   record is `notfound.world` / id `404` (user, 2026-10-29,
   proconnect-identite #2365).
+
+## Ad-hoc smoke tests stay throwaway (user, 2026-10-30)
+
+A "tmp smoke test" is a script written, run once and deleted — never an
+official test, never committed, never wired into CI. Run it against the real
+service (self-hosted Sentry, live endpoint), print the evidence with secrets
+masked, then remove the file. If the user wants a permanent guard, they ask for
+a test explicitly.
+
+## Test decisions, not data mapping
+
+A plain ORM read (find by id/email, list by foreign key, select a
+projection) needs no dedicated integration test: the ORM owns the row
+mapping and the compiler checks the columns, so the test only restates the
+SQL. Cover it through the use case that calls the read. A query gets its
+own test only when it encodes a decision — a promotion rule, an upsert
+conflict, a multi-row transaction, a lock. Stated 2026-10-29 (hyyypertool,
+proconnect-identite repository-layer review; Jev calibration 0.19 against
+per-getter tests).
