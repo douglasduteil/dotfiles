@@ -47,6 +47,7 @@ Thumbs.db
 .claude
 .agents
 .opencode
+.omp
 AGENTS.md
 CLAUDE.md
 CONTEXT.md
