@@ -24,6 +24,7 @@ Descriptive only: how a tool behaved at a given version, found by hands-on testi
 
 ## Sentry local testing
 
+- Self-hosted compatibility is enforced by SDK major: SDK 11 needs self-hosted >= 26.4.2, SDK 10 needs >= 24.4.2 (`https://docs.sentry.io/platforms/javascript/migration/v10-to-v11/`). On an older server the newer SDK may still ship errors and static transactions, but streamed spans, span attributes set via `setAttribute`, logs and continuous profiles do not land (2026-10-30).
 - The DSN validator rejects a bare `localhost` hostname (no dot); `127.0.0.1` works.
 - The DSN public-key segment rejects hyphens (real keys are hex, so this only bites test fixtures).
 - `Sentry.init()` does not throw on an invalid DSN: it logs a warning and silently no-ops, so `captureException()`/`flush()` look like they did nothing, not like the DSN was bad.
