@@ -358,8 +358,12 @@ enabledProviders:
 theme:
   dark: titanium
   light: light
+modelRoleStorage: project
 modelRoles:
-  default: openrouter/~deepseek/deepseek-flash-latest
+  default: anthropic/claude-opus-5-5
+  smol: openrouter/~deepseek/deepseek-flash-latest:auto
+  slow: anthropic/claude-opus-5-5:auto
+  plan: anthropic/claude-opus-5-5:auto
 task:
   agentModelOverrides:
     scout: openrouter/~deepseek/deepseek-flash-latest
