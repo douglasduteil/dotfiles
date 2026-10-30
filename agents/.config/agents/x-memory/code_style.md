@@ -4,6 +4,17 @@ General coding conventions that apply across languages and projects, unless a
 project explicitly opts out.
 
 - **Type naming:** type, interface and class names are PascalCase without underscores — `ModerationEvent`, not `Entreprise_API_Association_Response`. Stated by the user 2026-10-28.
+- **File & function naming:** `snake_case` for `.ts` module files and
+  functions/hooks; `PascalCase` only for type/interface/class names and
+  `.tsx` components; tests `<module>.test.ts`. Stated 2026-10-30
+  (hyyypertool: PascalCase `.ts` modules and PascalCase handler-factory
+  functions were the outlier; snake_case matches the DB vocabulary and
+  the snake_case inner functions already in use).
+- **Plain functions over query factories:** a read/write takes its
+  dependencies as arguments
+  (`get_organization_domains(pg, { organization_id })`); do not wrap it
+  in a curried `GetX(pg) => get_x(args)` or a `*Factory` second query
+  layer. Reserve `*Factory` for genuine construction. Stated 2026-10-30.
 - **Ordering:** keep items in alpha order where possible — keys in objects,
   members in interfaces/types, exports, imports the plugin doesn't already
   touch, function parameters, named arguments, CLI flags, table columns.
@@ -55,6 +66,9 @@ project explicitly opts out.
   one exception (non-obvious why, a constraint, a workaround — nothing
   the code itself can say): propose it caveman-compressed to the
   tersest one-liner, and let the human approve or refuse it.
+  Bare `//` separator lines are the exception to "zero comments": they
+  stay, the user uses them for spatial awareness (2026-10-30). Strip
+  only prose comments that no longer describe the code.
 - **Node/Bun scripts:** run through the package manager's run command
   (`npm run format`, `bun run format`), never the underlying binary
   directly (`npx prettier`) — the script wraps flags/config/plugins a
