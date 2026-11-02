@@ -1,4 +1,8 @@
-import type { SourceTool } from "./reducer";
+import { sourceTools, type SourceTool } from "./reducer";
+
+function isSourceTool(value: string): value is SourceTool {
+  return sourceTools.some((tool) => tool === value);
+}
 
 export function makeEntryId(sourceTool: SourceTool, sourceSessionId: string): string {
   return `${sourceTool}:${sourceSessionId}`;
@@ -16,7 +20,7 @@ export function parseEntryId(id: string): EntryIdRef {
   }
   const sourceTool = id.slice(0, separator);
   const sourceSessionId = id.slice(separator + 1);
-  if (sourceTool !== "claude-code" && sourceTool !== "opencode") {
+  if (!isSourceTool(sourceTool)) {
     throw new Error(`Invalid entry id "${id}": unknown source tool "${sourceTool}"`);
   }
   if (!sourceSessionId) {

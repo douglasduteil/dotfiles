@@ -1,5 +1,9 @@
 export type Scope = "project" | "global";
-export type SourceTool = "claude-code" | "opencode" | "omp";
+
+// Single owner of the tool list: the union and every runtime check derive
+// from it, so adding a tool cannot leave a validator behind.
+export const sourceTools = ["claude-code", "opencode", "omp"] as const;
+export type SourceTool = (typeof sourceTools)[number];
 
 export interface Entry {
   id: string;
