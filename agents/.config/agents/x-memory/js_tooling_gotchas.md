@@ -4,7 +4,7 @@ Descriptive only: how a tool behaved at a given version, found by hands-on testi
 
 ## TypeScript 7
 
-- `prettier-plugin-organize-imports` 4.3.0 is a silent no-op on `typescript` 7.0.2: TS 7.0 ships no compiler API (`require("typescript").createLanguageService` is `undefined`), Prettier exits 0 and leaves imports unsorted and unused ones in place. Affects every TS 7 repo listing the plugin (api-partenaires, hyyypertool, idp-status-monitoring, release-action, federation mocks). Check: pipe a file with an unused import through `prettier --stdin-filepath src/x.ts` (2026-10-19). Fix options: `"typescript": "npm:@typescript/typescript6@6.0.2"` (plugin works, `tsc` runs TS 6; untested: `oxlint-tsgolint` should keep TS 7 type-aware lint), or `prettier-plugin-sort-imports`, or drop the plugin. `@typescript/native` is a 404 on npm (2026-10-22).
+- `prettier-plugin-organize-imports` 4.3.0 is a silent no-op on `typescript` 7.0.2: TS 7.0 ships no compiler API (`require("typescript").createLanguageService` is `undefined`), Prettier exits 0 and leaves imports unsorted and unused ones in place. Affects every TS 7 repo listing the plugin (four private repos here, plus `federation` mocks). Check: pipe a file with an unused import through `prettier --stdin-filepath src/x.ts` (2026-10-19). Fix options: `"typescript": "npm:@typescript/typescript6@6.0.2"` (plugin works, `tsc` runs TS 6; untested: `oxlint-tsgolint` should keep TS 7 type-aware lint), or `prettier-plugin-sort-imports`, or drop the plugin. `@typescript/native` is a 404 on npm (2026-10-22).
 
 ## Bun runtime
 
@@ -14,13 +14,13 @@ Descriptive only: how a tool behaved at a given version, found by hands-on testi
 - `Bun.WebView.type(text)` is single-arg: it types into the focused element. Click/focus the target first (Bun 1.4.2).
 - `Bun.WebView.evaluate` takes an expression: wrap statements in `(() => { … })()` (Bun 1.4.2, 2026-10-03).
 - `Bun.markdown.render()`'s per-node callbacks are all-or-nothing: passing any callback drops the default HTML wrapper for every node type not also handled. Use `.html()` for default rendering and pre/post-process the Markdown or HTML string instead (version not recorded).
-- Bun 1.4.2 has no `import.meta.glob`: the bundler leaves the call in and it throws at runtime. Use a hand-written registry plus a test that lists the folders. `bun test` imports modules that import `.css` without trouble (2026-10-03, x-blades).
+- Bun 1.4.2 has no `import.meta.glob`: the bundler leaves the call in and it throws at runtime. Use a hand-written registry plus a test that lists the folders. `bun test` imports modules that import `.css` without trouble (2026-10-03, game repo).
 - `bun add` cannot install a git subdirectory (monorepo package): `'pkg@git+https://…/repo.git#main&path:packages/pkg'` parses `main&path:…` as the ref and 404s on codeload (Bun 1.4.2, 2026-10-22). Extract the package to its own repo or publish it.
 - A `file:` tarball dependency is cached by path and version: after repacking under the same file name, `bun install` (even `--force` after deleting `node_modules/.bun/<pkg>*`) installs the old contents. Copy the tarball to a new file name and point `package.json` at it; check with a `grep` in the installed `dist/` (Bun 1.4.2, 2026-10-29).
 
 ### Dev server: imports in a cycle are `null` at load
 
-`bun <file>.html` (dev server, HMR) wraps each module; inside an import cycle the imported binding is still `null` while the module body runs. The production bundle (`bun build`) hoists and works, so a build-only smoke test misses it. Never read an imported function at module load (`el.onclick = show_menu`); wrap it (`el.onclick = () => show_menu()`). Hit in x-blades game screens, 2026-10-02 (`TypeError: … import_menu3 is null`).
+`bun <file>.html` (dev server, HMR) wraps each module; inside an import cycle the imported binding is still `null` while the module body runs. The production bundle (`bun build`) hoists and works, so a build-only smoke test misses it. Never read an imported function at module load (`el.onclick = show_menu`); wrap it (`el.onclick = () => show_menu()`). Hit in game screens, 2026-10-02 (`TypeError: … import_menu3 is null`).
 
 ## Sentry local testing
 

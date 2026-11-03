@@ -12,7 +12,7 @@ project's own package.json script unless asked.
 
 Prove each assertion discriminates before trusting a pass: read the
 before-state, or break the expectation once and watch it fail. Found in
-one hyyypertool session (2026-09-22/23), all green for months:
+one TS-service session (2026-09-22/23), all green for months:
 
 - a wait helper that returns `false` on timeout instead of throwing,
   awaited bare — asserted nothing;
@@ -31,7 +31,7 @@ fix isn't verified until that loop stays green.
 
 ## Test fixtures say only what the case is about
 
-Stated by the user 2026-10-14 (api-partenaires #130/#131):
+Stated by the user 2026-10-14 (the API repo, PRs #130 and #131):
 
 - No single-use module globals in a test file: build the value inside the
   test that uses it. Keep a constant only when several tests share it.
@@ -64,6 +64,6 @@ projection) needs no dedicated integration test: the ORM owns the row
 mapping and the compiler checks the columns, so the test only restates the
 SQL. Cover it through the use case that calls the read. A query gets its
 own test only when it encodes a decision — a promotion rule, an upsert
-conflict, a multi-row transaction, a lock. Stated 2026-10-29 (hyyypertool,
-proconnect-identite repository-layer review; Jev calibration 0.19 against
+conflict, a multi-row transaction, a lock. Stated 2026-10-29 (the TS service
+repo and the public ProConnect codebase, repository-layer review; Jev calibration 0.19 against
 per-getter tests).

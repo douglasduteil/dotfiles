@@ -7,7 +7,7 @@ project explicitly opts out.
 - **File & function naming:** `snake_case` for `.ts` module files and
   functions/hooks; `PascalCase` only for type/interface/class names and
   `.tsx` components; tests `<module>.test.ts`. Stated 2026-10-30
-  (hyyypertool: PascalCase `.ts` modules and PascalCase handler-factory
+  (the TS service repo's PascalCase `.ts` modules and handler-factory
   functions were the outlier; snake_case matches the DB vocabulary and
   the snake_case inner functions already in use).
 - **Plain functions over query factories:** a read/write takes its
@@ -27,7 +27,7 @@ project explicitly opts out.
   positional list (`mairie(id, siren, site, mail, name = "Coise")`).
   Call sites name every value; keys follow the alpha-order
   rule above. Stated by the user 2026-10-02 on test fixture
-  helpers in api-partenaires. Test helpers: any helper taking two
+  helpers in the API repo. Test helpers: any helper taking two
   or more arguments gets one object argument
   (`candidate_row({ domain, id })`); stated 2026-10-15 after
   `candidate_row(domain, id)` slipped through.
@@ -41,7 +41,7 @@ project explicitly opts out.
   elsewhere, no prep refactor PR whose only reason is an upcoming
   feature. A test or refactor PR stands alone only when it is the change
   itself (fixing a gap in existing behaviour). No bundling unrelated
-  concerns either. Stated by the user 2026-10-16 (api-partenaires
+  concerns either. Stated by the user 2026-10-16 (the API repo's
   resource-server plan, split ♻️/✨/✅ merged back into one slice). If
   follow-up work adds commits to an already-pushed branch, squash back to
   one commit (`git reset --soft <merge-base>`, recommit,
@@ -101,13 +101,13 @@ from disk. Before pushing agent-written files, check quickly:
 
     for f in <files>; do [ -n "$(tail -c1 "$f")" ] && echo "NO EOL: $f"; done
 
-Recurred 2026-10-01 (clickr-adventures): three agent-written files landed
+Recurred 2026-10-01 (a game prototype repo): three agent-written files landed
 without the newline and the convention had nowhere to live.
 
 ## Prefer Intl over hand-rolled formatting
 
 Plurals, lists, numbers, dates shown to a user go through `Intl`
 (`PluralRules`, `ListFormat`, `NumberFormat`…) rather than `n === 1 ? … : …`
-or `join(", ")`. Stated by the owner 2026-10-02 (x-blades game text). Keep
+or `join(", ")`. Stated by the owner 2026-10-02 (game UI text). Keep
 machine formats (an ISO date stamp, a pasted summary pinned by tests) as they
 are.

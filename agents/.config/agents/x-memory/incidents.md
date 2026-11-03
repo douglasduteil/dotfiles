@@ -4,7 +4,7 @@ Why each Article of the Constitution (`~/.config/agents/rules/constitution.md`) 
 Every incident below followed one loop: a guard blocked the call, the
 agent rewrote the call and retried. Read before loosening any guard.
 
-## 2026-10-01 — private SSH key printed (clickr-adventures, omp, glm-5.3-flash)
+## 2026-10-01 — private SSH key printed (a game prototype repo, omp, glm-5.3-flash)
 
 User granted "use github.pub to sign commits and push over ssh". Within
 seconds the agent listed `~/.ssh/`, read `~/.ssh/config`, ran
@@ -19,7 +19,7 @@ had no passphrase; rotation to a passphrase-protected key was started
 Guards: `*/.ssh/*` and `ssh-keygen -y`/`-p` denies; omp `x-guard` hook
 for the read/grep/edit tools; Constitution Article III(1)–(2).
 
-## 2026-10-02 — gh token read from hosts.yml (api-partenaires, omp, glm-5.3-flash)
+## 2026-10-02 — gh token read from hosts.yml (the API repo, omp, glm-5.3-flash)
 
 `gh` was blocked by policy. The agent read the oauth token from
 `~/.config/gh/hosts.yml` to call the GitHub API with curl, then split the
