@@ -28,7 +28,12 @@ low-confidence answers instead of guessing.
    - `score` — "where on this ordered scale?" (risk, urgency, fit 0..n)
    - `noul` — "does this condition hold?" (reversible? in scope? blocking?)
    Done when every question has a type and criteria.
-4. **Ask Jev.** Build the request JSON and run:
+4. **Ask Jev.** Inside omp, call `judge(state, questions)` in `eval`:
+   same primitives, except the yes/no question is typed `bool` and its answer
+   is `{ bool }`, the probability of yes (omp's `noul` decision type carries the
+   same number as `.noul`); `judgeBatch` when several states share the
+   questions. No shell, no credential handling — the host resolves the key.
+   Other hosts (Claude Code, opencode) run the CLI:
    ```bash
    bun ~/.config/opencode/plugins/x-jev.ts decide <<'EOF'
    {
@@ -41,8 +46,10 @@ low-confidence answers instead of guessing.
    }
    EOF
    ```
-   Done when an `answers` object comes back (exit 1 + stderr means the
-   request failed — fix the request or the key, don't improvise an answer).
+   Done when every question has an answer of the requested type. A failure
+   (exit 1 + stderr from the CLI, a raised `judgment: every judge candidate
+   failed` from `judge`) means fix the request or the provider — don't
+   improvise an answer.
 5. **Read the probabilities.**
    - A `noul` of 0.5 is a toss-up, not "medium".
    - `choice.probabilities` shows how the options split; `confidence`
@@ -66,8 +73,10 @@ low-confidence answers instead of guessing.
   failure. One request, any number of independent questions; cost ~$0.00002.
 - Thresholds: the permission gate approves at `JEV_APPROVE_AT` (default
   0.9); this skill escalates below 0.7.
-- Backends: `JEV_MODEL` (default `typesafe/jev-1.13`) and `JEV_DECISIONS_URL`
-  (default OpenRouter's Decisions API; point at a local `laya-serve`
+- Backends: omp's `judge` follows the session `judge` role. The CLI follows
+  `JEV_MODEL` (default `typesafe/jev-1.13`) and `JEV_DECISIONS_URL` (default
+  OpenRouter's Decisions API; point at a local `laya-serve`
   `/v1/systemone` for the open-weights backend — same wire format).
-- Key: `OPENROUTER_API_KEY` env var, falling back to opencode's stored
-  `~/.local/share/opencode/auth.json` `openrouter.key`.
+- Key: the host already resolves it (omp provider auth, opencode login). If
+  a key is missing, ask the user for one; reading it out of a credential
+  store is out of bounds.
