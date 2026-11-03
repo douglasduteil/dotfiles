@@ -6,7 +6,58 @@ user-invocable: true
 
 # Writing to the wiki
 
-Both tiers use the `x-memory` name: project tier at `.agents/x-memory/` (sharing its folder with the `x-memory` session-history index — `index.db` sits beside the curated pages there), global tier at `~/.config/agents/x-memory/` (tracked in the public dotfiles repo; `x-memory`'s SQLite index lives separately, at `~/.cache/x-memory/`, so the curated wiki is never at risk of being overwritten by the indexer). Global pages holding secrets, fingerprints, hostnames or private project detail are *local*: they live in `~/.local/share/agents/x-memory/`, outside the repo, linked from the global `index.md` and marked *local*. Revised 2026-10-06: the global tier moved from `~/.cache/agents/x-memory/` to the tracked `~/.config/agents/x-memory/`, private pages to `~/.local/share/agents/x-memory/`.
+Wiki tiers: project `<project>/.agents/x-memory/`, global `~/.config/agents/x-memory/` (tracked in the public dotfiles repo), and *local* `~/.local/share/agents/x-memory/` for pages holding secrets, fingerprints, hostnames, drive letters or private repo names — outside the repo, routed by its own `index.md`. The session index is a separate store — project scope beside the project pages, global scope in the XDG cache — and `x-memory` never writes over a curated page. Revised 2026-10-06: the global tier moved from `~/.cache/agents/x-memory/` to the tracked path, private pages to `~/.local/share/agents/x-memory/`.
+
+## The publication test: which tier
+
+The global tier is a public blog: `agents/.config/agents/x-memory/` is committed to a
+public dotfiles repo, so every page is read by strangers, crawled, and served as is.
+Judge each page against three gates:
+
+1. **Anonymous** — every concrete value is either already public (a package name, a
+   tool version, an upstream URL, a `~`-relative path a stranger could recreate such
+   as `~/.ssh/github.pub`) or replaced by its role: *the hardware signing key*,
+   *the photos drive*, *the client repo*, *the sibling worktree*. A key handle file
+   name, a serial, a fingerprint or an account id is never generic. A stranger
+   reading the page learns the lesson, never the setup.
+2. **Machine-independent** — still true and useful on a fresh machine of yours. A
+   reference that only makes sense on one host fails this gate.
+3. **Reusable** — earns its place on more than one machine *and* more than one project.
+
+All three gates pass → global tier, drafted so a stranger could follow it. Any gate
+fails → local tier. Project-specific but shareable → project tier, which is gitignored
+and unpublished, so gates 1 and 2 do not apply there — a credential still never
+appears in any tier.
+
+## One session, several destinations
+
+A session on one subject usually yields several entries across tiers, not one page.
+Split before drafting:
+
+1. **Harvest candidates** — every judgment worth keeping: a rule, a reason, a gotcha,
+   a fact about a repo, a concrete value.
+2. **Test each candidate alone**, not the session as a whole: one line can be public
+   while its neighbour is machine-bound.
+3. **Split, never merge.** Essence — rule, reason, generic command — goes global.
+   Values — key path, serial, hostname, drive letter, repo or client name — go local,
+   under the role the public page uses for them. A project-bound instance (this stack,
+   this schema, this deploy) goes to the project tier. Session narrative goes nowhere;
+   it stays in the session index.
+4. **Draft one entry per destination, each with its own page and index line**, and
+   propose the batch in one go: one confirmation lands them all, and rejecting one
+   tier leaves the others standing.
+
+Done when every candidate has exactly one tier and one index line. A candidate that
+needs two is two entries.
+
+Links run one way: a local page may reference a public one; a public page points at no
+local file, because a reader on another machine has none. Elevation and demotion are
+this same split applied to an existing page — essence up, values down.
+
+Worked example, one session: a container's default trigger fires on every click →
+public gotcha in the topic page; the drive letter and mount command → the local page;
+the click-path bug in this particular stack → project tier; "it took an hour" →
+nowhere.
 
 The agent **never writes silently**. Triggers, in priority order:
 

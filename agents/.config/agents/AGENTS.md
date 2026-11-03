@@ -8,22 +8,26 @@ Binding on every session and subagent; outranks everything below. Single source:
 
 @~/.config/agents/rules/constitution.md
 
-## Curated memory (agent-first, human-second)
+## Memory: four places to look
 
-Working knowledge lives in two Markdown trees, not in a chat transcript:
+Working knowledge lives in three wiki tiers plus a session index, not in a chat
+transcript. Check them in this order, at every topic switch, not only at session
+start:
 
-- **Global tier:** `~/.config/agents/x-memory/` (same as `~/.agents/x-memory/`) — cross-project conventions, preferences, methodology. Tracked in this public dotfiles repo; machine-specific or sensitive pages stay local in `~/.local/share/agents/x-memory/`, linked from the global `index.md` and marked *local*.
-- **Project tier:** `<project>/.agents/x-memory/` — project-specific architecture, decisions, pitfalls. Same folder as the `x-memory` session-history index (below) — curated pages and `index.db` live side by side.
+1. **Project** — `<project>/.agents/x-memory/` (gitignored): architecture, decisions, pitfalls for this repo, beside its own session index.
+2. **Global** — `~/.config/agents/x-memory/`: cross-project conventions, preferences, methodology, published with this dotfiles repo — write every page as a public blog post anyone may read.
+3. **Local** — `~/.local/share/agents/x-memory/`, this machine only, never tracked: anything carrying a secret, key fingerprint, hostname, drive letter or private repo name, routed by its own `index.md`.
+4. **Session history** — what actually happened, via the `x-memory` binary (`index|query|reject|pin --project <dir>`). It indexes Claude Code, opencode and omp sessions; the `x-memory-recall` skill goes deeper on demand. At session start the host injects both router pages plus a one-line breadcrumb; page bodies are read on demand.
 
-Before acting on a topic the wiki covers — naming a branch, writing a commit, picking a library, or any other subtopic a page below documents — open `index.md` at the global path and the project's path first. Treat each `index.md` as a **router**, not a summary: read it, follow the link matching the topic, skip the rest. This applies at every topic switch, not only at session start. Global pages are published with the dotfiles repo: keep secrets, key fingerprints, hostnames and private project detail in *local* pages. The project tree lives inside `.agents/x-memory/`, gitignored.
+Where a tier has an `index.md`, it is a **router**, not a summary: read it, follow
+the single link matching the topic, skip the rest. The global one is public, so it
+lists only publicly openable pages. The wiki preserves judgment a transcript cannot
+reproduce; a session-history hit stays a lead until re-verified against its source.
 
-`x-memory` (this repo's `x-memory/` directory) also drives the project folder's session-history index: it recovers what happened in past sessions via the CLI (`x-memory index|query --project <dir>`). The wiki preserves judgment that re-reading transcripts cannot reliably reproduce; x-memory surfaces leads to verify. Use both: x-memory to find prior context, the wiki to record what was learned.
+That separation is what keeps the global tier publishable.
 
-### Writing to the wiki
-
-Never write to the wiki silently — see the `x-memory-curate` skill for
-write triggers, classification, and how to keep this bootstrap file
-lean before writing anything to `.agents/x-memory/` or the global wiki.
+Write to a tier through the `x-memory-curate` skill, never silently: it owns
+the triggers, the classification and the draft-first rule.
 
 ### Domain modeling namespacing
 
@@ -31,10 +35,6 @@ lean before writing anything to `.agents/x-memory/` or the global wiki.
 (`.agents/CONTEXT.md`, `.agents/docs/adr/`), never at repo root — keeps
 agent-owned files in one tree instead of a second, root-level "agents"
 lookalike.
-
-## Session memory (x-memory)
-
-The session-history index lives in `x-memory/spec/` (start at `x-memory/spec/README.md`) and is exposed via the `x-memory` binary (`x-memory index|query|reject|pin --project <dir>`). Claude Code and opencode discover prior sessions through their own native conventions, plus the `x-memory-recall` skill (on-demand deep recall). The startup breadcrumb is the only automatic injection point; full recaps are on demand.
 
 ## Workflow
 
