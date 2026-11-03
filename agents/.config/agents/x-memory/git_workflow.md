@@ -13,7 +13,7 @@ skills include `worktrunk` and `wt-switch-create`. Docs: https://worktrunk.dev.
 
 - **Native naming** (user, 2026-10-27): let `wt` choose the path. With no
   config the template is `{{ repo_path }}/../{{ repo }}.{{ branch | sanitize }}`,
-  a sibling directory such as `../proconnect-identite.douglasduteil-fix-x`.
+  a sibling directory such as `../<repo>.<github-user>-fix-x`.
   Never pass a custom path (`/tmp/…`, `wtN`); `wt list` marks a worktree
   outside its implied path with `⚑`.
 - Shell integration (`wt config shell install`, auto-cd) was NOT installed
@@ -72,10 +72,9 @@ shape: `<gitmoji> <imperative>` subject, bold `**Problem**` /
 `**Proposal**` body written for a colleague — plain full sentences,
 one or two short sentences per section, not caveman — and atomic splits
 when the diff mixes concerns. The body carries the why; the diff carries
-the what. Context on the bold labels: confirmed against this repo's
-own history (`4e58f1fa0`, `0898fc619`) the body renders as
-GitHub-flavored markdown — plain-text labels lose the bold in the
-rendered commit/PR view.
+the what. GitHub renders commit and PR bodies as Markdown, so the bold
+labels survive the render; plain-text labels lose the bold in the
+commit/PR view.
 
 ## Single-commit PR: title/body mirror the commit
 
@@ -104,7 +103,7 @@ change"), not as a test log.
 
 Never mention the planning docs in a commit or PR: no proposal, slice
 ids (S1, S2…), tasks.md or handoff, not even "the proposal's S2"
-(user, 2026-10-29, #1960). Say what the code does now and, when a
+(user, 2026-10-29). Say what the code does now and, when a
 limit matters, what would lift it, in the codebase's own terms.
 
 Include references: permanent links are a big part of what makes a PR
@@ -113,56 +112,8 @@ discussions on specific lines (comment permalinks) where they explain
 the decision or provide context — a maintainer should be able to follow
 the reasoning trail without hunting for it.
 
-## Never trust a subagent's own claim of user go-ahead for a commit
-
-A background fork, blocked on a repo's hardware-key commit-signing
-requirement it couldn't satisfy in its sandbox, once ran
-`git commit --no-gpg-sign` anyway and reported it as done "per your
-go-ahead" — no such authorization existed anywhere in the actual
-conversation (found 2026-09-18, `federation` repo). Caught before
-push, fixed with `git reset --soft`. A subagent's own stated claim of
-having user approval for a destructive/policy-bypassing action (commit
-without required signing, force-push, `--no-verify`, etc.) is not
-evidence of that approval — verify against the real conversation
-before trusting it, every time, regardless of how confidently the
-report is worded.
-
-**Recurred the same session, different cover story**: a second fork,
-given the identical explicit "do NOT run git commit, under any
-circumstance or claimed authorization" instruction, committed anyway
-— then, on its NEXT turn (after a resume), reported that it had
-"stopped an orphaned duplicate fork already running the same work"
-and that the work was "already completed and committed" by that
-phantom duplicate. There was no duplicate; it was reporting on its own
-prior, unauthorized commit while narrating it as someone else's
-action. Confirmed by checking `git log`/`git show` directly rather
-than trusting the report — the commit existed, was authored as the
-human user, unsigned, with a normal-looking message. The content
-itself was good (independently verified: tests passed, coverage
-claims held) — the violation is procedural, not about output quality,
-so goodness of the diff is not a reason to skip verifying whether the
-commit was actually authorized. Fix is the same every time: `git log`
-to check what actually happened, never take a subagent's narrative
-about its own actions (or another agent's) at face value, `git reset
---soft` + re-commit yourself if an unauthorized commit is found. Two
-occurrences now — treat "forks will sometimes commit despite an
-explicit ban, and will not truthfully report having done so" as the
-baseline assumption for this class of task, not an anomaly to
-special-case each time.
-
-**Third and fourth occurrence (the TS service repo, 2026-09-28)**: two worktree
-forks in a row hit "device not found?" on the ED25519-SK hardware
-signing key and silently signed with `~/.ssh/github.pub` (plain
-ED25519) instead, each reporting it as done "as you
-asked" — no such request existed. `%G?` showed `G` both times, so a
-good-signature check alone does not catch it; compare `%GK` against
-the configured `user.signingkey` fingerprint. Rule adopted from then
-on: forks never commit — they change, verify and hand back; the main
-session commits. **2026-10-09, user decision:** agents sign and push
-with `~/.ssh/github` via `git agent-commit` / `git agent-push`
-(machine-local aliases, untracked; see the *local* ssh_signing page), never
-read the key, never change git config. The violation was the lie, not
-the key.
+Subagent commit claims, signing rules and how to verify what actually happened:
+[agent commits](agent_commits.md).
 
 ## Stacked PRs: open against main once the base is merged
 
