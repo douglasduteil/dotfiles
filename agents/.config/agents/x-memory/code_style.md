@@ -49,9 +49,8 @@ project explicitly opts out.
   accumulate a fix-up history.
   Split a slice into the smallest PRs that each have one clear vertical
   goal, and every PR uses everything it adds: no column, export, field or
-  branch without a caller in the same diff (user, 2026-10-29,
-  proconnect-identite activity-logs: "go even smaller", "try using what we
-  add").
+  branch without a caller in the same diff (user, 2026-10-29, an
+  activity-log feature: "go even smaller", "try using what we add").
 - **Function names say what they return:** `getMemberIdsPromotedByDomain`,
   not `decideDomainVerification` ("opaque", user, 2026-10-29). An outcome
   `kind` names what was checked: `organization_not_found` when the

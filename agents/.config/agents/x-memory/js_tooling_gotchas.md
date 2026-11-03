@@ -4,7 +4,7 @@ Descriptive only: how a tool behaved at a given version, found by hands-on testi
 
 ## TypeScript 7
 
-- `prettier-plugin-organize-imports` 4.3.0 is a silent no-op on `typescript` 7.0.2: TS 7.0 ships no compiler API (`require("typescript").createLanguageService` is `undefined`), Prettier exits 0 and leaves imports unsorted and unused ones in place. Affects every TS 7 repo listing the plugin (four private repos here, plus `federation` mocks). Check: pipe a file with an unused import through `prettier --stdin-filepath src/x.ts` (2026-10-19). Fix options: `"typescript": "npm:@typescript/typescript6@6.0.2"` (plugin works, `tsc` runs TS 6; untested: `oxlint-tsgolint` should keep TS 7 type-aware lint), or `prettier-plugin-sort-imports`, or drop the plugin. `@typescript/native` is a 404 on npm (2026-10-22).
+- `prettier-plugin-organize-imports` 4.3.0 is a silent no-op on `typescript` 7.0.2: TS 7.0 ships no compiler API (`require("typescript").createLanguageService` is `undefined`), Prettier exits 0 and leaves imports unsorted and unused ones in place. Affects every TS 7 repo listing the plugin (every repo here, plus their mocks). Check: pipe a file with an unused import through `prettier --stdin-filepath src/x.ts` (2026-10-19). Fix options: `"typescript": "npm:@typescript/typescript6@6.0.2"` (plugin works, `tsc` runs TS 6; untested: `oxlint-tsgolint` should keep TS 7 type-aware lint), or `prettier-plugin-sort-imports`, or drop the plugin. `@typescript/native` is a 404 on npm (2026-10-22).
 
 ## Bun runtime
 

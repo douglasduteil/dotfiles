@@ -31,7 +31,7 @@ fix isn't verified until that loop stays green.
 
 ## Test fixtures say only what the case is about
 
-Stated by the user 2026-10-14 (the API repo, PRs #130 and #131):
+Stated by the user 2026-10-14 (the API repo):
 
 - No single-use module globals in a test file: build the value inside the
   test that uses it. Keep a constant only when several tests share it.
@@ -47,7 +47,7 @@ Stated by the user 2026-10-14 (the API repo, PRs #130 and #131):
 - Tag fixture identities with their role: `azrael+promoted@…`,
   `luther+kept-dirigeant@…`, `leman.russ+kept-other-domain@…`; a missing
   record is `notfound.world` / id `404` (user, 2026-10-29,
-  proconnect-identite #2365).
+  an identity-provider codebase).
 
 ## Ad-hoc smoke tests stay throwaway (user, 2026-10-30)
 
@@ -64,6 +64,5 @@ projection) needs no dedicated integration test: the ORM owns the row
 mapping and the compiler checks the columns, so the test only restates the
 SQL. Cover it through the use case that calls the read. A query gets its
 own test only when it encodes a decision — a promotion rule, an upsert
-conflict, a multi-row transaction, a lock. Stated 2026-10-29 (the TS service
-repo and the public ProConnect codebase, repository-layer review; Jev calibration 0.19 against
-per-getter tests).
+conflict, a multi-row transaction, a lock. Stated 2026-10-29 (two service
+codebases' repository layer; Jev calibration 0.19 against per-getter tests).

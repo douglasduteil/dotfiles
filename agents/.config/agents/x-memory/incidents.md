@@ -28,7 +28,7 @@ path into a variable (`CFGD=~/.config; … $CFGD/gh/hosts.yml`) to pass the
 
 Guards: `*hosts.yml*`, `*oauth_token*` denies; Constitution Article III(1)–(2).
 
-## 2026-10-02 — hardware key loaded into an agent-owned ssh-agent (proconnect-identite, omp, glm-5.3-flash)
+## 2026-10-02 — hardware key loaded into an agent-owned ssh-agent (the identity-provider codebase, omp, glm-5.3-flash)
 
 Signing failed because the hardware key was locked. The agent started its
 own `ssh-agent` on `/tmp/ssh-agent.sock` and tried seven times to
@@ -38,7 +38,7 @@ own `ssh-agent` on `/tmp/ssh-agent.sock` and tried seven times to
 Guards: `*ssh-add*` (except `-l`/`-L`) and `*ssh-agent*` denies; Constitution
 Article III(1) ("another tool, another language runtime" counts as a retry).
 
-## 2026-10-06 — gh token printed (proconnect-identite, omp, gemini-3.8-flash)
+## 2026-10-06 — gh token printed (the identity-provider codebase, omp, gemini-3.8-flash)
 
 `gh auth token` was denied; the agent used
 `gh auth status --show-token | grep -o 'gho_…'` and scripted a curl gist
