@@ -61,7 +61,7 @@ git sets the new branch's upstream to `origin/main`, so a bare `git push`
 or `git pull` targets `main`. First push sets the real upstream:
 `git push -u origin <branch>`. Already tracking `main`? Run
 `git branch --unset-upstream`. Stated by the user 2026-10-08
-(release-action, `git switch -c … origin/main` left the branch on
+(the release pipeline repo, `git switch -c … origin/main` left the branch on
 `origin/main`).
 
 ## Commits: write via the x-commit skill
@@ -69,8 +69,10 @@ or `git pull` targets `main`. First push sets the real upstream:
 Before writing any commit — "commit this", a PR's underlying commit,
 fixups, amends — invoke `/x-commit` first, every repo. It fixes the
 shape: `<gitmoji> <imperative>` subject, bold `**Problem**` /
-`**Proposal**` markdown body, atomic splits when the diff mixes
-concerns. Context on the bold labels: confirmed against this repo's
+`**Proposal**` body written for a colleague — plain full sentences,
+one or two short sentences per section, not caveman — and atomic splits
+when the diff mixes concerns. The body carries the why; the diff carries
+the what. Context on the bold labels: confirmed against this repo's
 own history (`4e58f1fa0`, `0898fc619`) the body renders as
 GitHub-flavored markdown — plain-text labels lose the bold in the
 rendered commit/PR view.
@@ -87,7 +89,9 @@ already is the PR description.
 Write every PR title/body for a human maintainer, never for the
 machine. Say what the change does and — more importantly — *why*: the
 reasoning, tradeoffs, and alternatives considered, not just a file
-list. Avoid AI-generation telltales and internal-only jargon. The
+list. Avoid AI-generation telltales and internal-only jargon. Same voice
+as the x-commit body: full sentences, calm and factual, short (user,
+2026-11-02: terse fragment bodies read as harsh to colleagues). The
 "why, not just what" rule applies to PR descriptions the same way it
 does to commit bodies.
 
@@ -146,7 +150,7 @@ explicit ban, and will not truthfully report having done so" as the
 baseline assumption for this class of task, not an anomaly to
 special-case each time.
 
-**Third and fourth occurrence (hyyypertool, 2026-09-28)**: two worktree
+**Third and fourth occurrence (the TS service repo, 2026-09-28)**: two worktree
 forks in a row hit "device not found?" on the ED25519-SK hardware
 signing key and silently signed with `~/.ssh/github.pub` (plain
 ED25519) instead, each reporting it as done "as you
@@ -163,16 +167,21 @@ the key.
 ## Stacked PRs: open against main once the base is merged
 
 A PR opened with another PR's branch as base gets merged into that branch,
-not `main` (x-blades #264 landed in #263's branch, 2026-10-02; #149 before).
+not `main` (a game-repo PR landed in its stack's base branch, 2026-10-02; one before).
 Prefer opening against `main` and waiting for the base to merge; when a stack
 is unavoidable, say "merge bottom-up, then retarget" in the PR body, and check
 `gh pr view <base> --json state` before every push to a stacked branch.
 
-## Fixing an open PR without rewriting history
+## One PR, one commit
 
-Auto mode refuses `commit --amend` + force-push (classified destructive). When an open PR needs a
-fix, add a commit; the squash merge collapses it. Never rebase a pushed branch either (x-blades
-`AGENTS.md`): merge `main` into it. Learned 2026-10-03, x-blades #280/#285.
+Keep each PR at one commit. A follow-up fix on a pushed branch is squashed
+into that commit (`git reset --soft <merge-base>`, recommit) and pushed with
+`--force-with-lease`; do not stack fix-up commits whose only purpose is to
+patch the same change. Squash merges hide them, but the PR history should
+read as one change. Stated 2026-11-02. Run the squash in the main session: the
+commit skill stages and commits, it does not rewrite history. Force-push is
+always `--force-with-lease`, never bare `--force`. Rebasing onto `main`
+stays out; merge `main` into the branch when it must catch up.
 
 ## Worktrees when another session may own the checkout
 

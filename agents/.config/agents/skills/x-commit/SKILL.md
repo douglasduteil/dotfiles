@@ -1,6 +1,6 @@
 ---
 name: x-commit
-description: Write a git commit with a gitmoji subject and a caveman Problem/Proposal body, split into atomic commits when the diff mixes concerns. Fixed personal convention, every repo. Use for "/x-commit", "commit this atomically", or gitmoji + Problem/Proposal style regardless of repo history.
+description: Write a git commit with a gitmoji subject and a short, human Problem/Proposal body, split into atomic commits when the diff mixes concerns. Fixed personal convention, every repo. Use for "/x-commit", "commit this atomically", or gitmoji + Problem/Proposal style regardless of repo history.
 user-invocable: true
 allowed-tools:
   - Bash(git status:*)
@@ -42,23 +42,29 @@ what commit does:
 Title names the change itself: "fix X", no filenames, no versions unless
 version is the change.
 
-## 3. Body: caveman Problem / Proposal
+## 3. Body: Problem / Proposal, written for a colleague
 
-Body is **caveman**: drop articles, filler, hedging. Fragments. Each section
-**one line, 20 words max**. Problem = what broke + consequence. Proposal =
-fix mechanism + why this approach. Diff already shows *what*; body carries
-only *why*. Exact identifiers stay exact.
+Write the body the way you'd explain the change to a teammate: plain, full
+sentences, calm and factual. Each section is **one or two short
+sentences**. Problem = what went wrong and who or what it affected.
+Proposal = what this change does about it and why this approach. Diff
+already shows *what*; body carries *why*. Exact identifiers stay exact, in
+backticks.
+
+Tone: describe the code and its behaviour ("the handler drops the retry
+header"), with neutral verbs (misses, skips, can drop). Credit the
+previous approach where it made sense ("worked until X").
 
 ```
 **Problem**
-Ctrl-d/Ctrl-a maps permanent in normal mode. Broke half-page scroll and increment everywhere.
+`Ctrl-d` and `Ctrl-a` were mapped in normal mode, so half-page scroll and number increment stopped working everywhere.
 
 **Proposal**
-Bind to Visual Find/Visual All instead. Visual-mode only, normal mode untouched.
+Bind them to Visual Find and Visual All instead. They only apply in visual mode, so normal mode keeps its defaults.
 ```
 
 Lists of items (packages, deny rules) → name the category, not each item.
-Why not fitting one caveman line → body too big, or commit not atomic.
+Needs more than two sentences per section → body too big, or commit not atomic.
 Trivial commit (typo, one config value) → subject only.
 
 Body speaks only about codebase. Leave out `.agents/` paths, skill/agent
