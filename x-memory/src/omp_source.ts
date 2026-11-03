@@ -6,7 +6,7 @@ import type { SourceSession } from "./index_action";
 // omp keeps no session-list/export CLI, so we read its on-disk JSONL
 // sessions directly: `~/.omp/agent/sessions/<slug>/<timestamp>_<uuid>.jsonl`,
 // where slug is "-" + the project cwd's basename (e.g.
-// /home/nixos/.dotfiles -> `-.dotfiles`; bare `-` is the home dir).
+// /home/<user>/.dotfiles -> `-.dotfiles`; bare `-` is the home dir).
 export function ompSessionsDir(project: string): string {
   return join(homedir(), ".omp", "agent", "sessions", `-${basename(project)}`);
 }
