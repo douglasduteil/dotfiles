@@ -14,8 +14,9 @@ concept and points at the owner, it never redefines it.
 - **Page** — one curated Markdown file inside a tier.
 - **Entry** — one indexed session record. `x-memory` returns entries; routers point at
   pages.
-- **Router** — a tier's `index.md`: a list of trigger lines, read whole, then exactly
-  one page followed. It summarizes nothing.
+- **Router** — a folder's bare `index.md`, at any depth: a list of trigger lines, read
+  whole, then exactly one child followed. It summarizes nothing. A router may route a
+  subfolder's `index.md`, which routes its own pages the same way.
 - **Trigger line** — the "before X" clause on a router entry, the only thing deciding
   whether the page gets opened.
 - **Breadcrumb** — the session-start line reporting how many sessions are indexed and

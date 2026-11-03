@@ -19,10 +19,11 @@ start:
 3. **Local** — `~/.local/share/agents/x-memory/`, this machine only, never tracked: anything carrying a secret, key fingerprint, hostname, drive letter or private repo name, routed by its own `index.md`.
 4. **Session history** — what actually happened, via the `x-memory` binary (`index|query|reject|pin --project <dir>`). It indexes Claude Code, opencode and omp sessions; the `x-memory-recall` skill goes deeper on demand. At session start the host injects both router pages plus a one-line breadcrumb; page bodies are read on demand.
 
-Where a tier has an `index.md`, it is a **router**, not a summary: read it, follow
-the single link matching the topic, skip the rest. The global one is public, so it
-lists only publicly openable pages. The wiki preserves judgment a transcript cannot
-reproduce; a session-history hit stays a lead until re-verified against its source.
+An `index.md` is a **router**, not a summary, at every depth — a tier's, or a
+subfolder's reached from its parent: read it, follow the single link matching the
+topic, skip the rest. The global one is public, so it lists only publicly openable
+pages. The wiki preserves judgment a transcript cannot reproduce; a session-history
+hit stays a lead until re-verified against its source.
 
 That separation is what keeps the global tier publishable.
 

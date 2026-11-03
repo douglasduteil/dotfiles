@@ -18,8 +18,9 @@ Judge each page against three gates:
    tool version, an upstream URL, a `~`-relative path a stranger could recreate such
    as `~/.ssh/github.pub`) or replaced by its role: *the hardware signing key*,
    *the photos drive*, *the client repo*, *the sibling worktree*. A key handle file
-   name, a serial, a fingerprint or an account id is never generic. A stranger
-   reading the page learns the lesson, never the setup.
+   name, a fingerprint or an account id is never generic; a hardware serial names a
+   device, not a secret, so it stays publishable. A stranger reading the page learns
+   the lesson, never the setup.
 2. **Machine-independent** — still true and useful on a fresh machine of yours. A
    reference that only makes sense on one host fails this gate.
 3. **Reusable** — earns its place on more than one machine *and* more than one project.
@@ -28,6 +29,11 @@ All three gates pass → global tier, drafted so a stranger could follow it. Any
 fails → local tier. Project-specific but shareable → project tier, which is gitignored
 and unpublished, so gates 1 and 2 do not apply there — a credential still never
 appears in any tier.
+
+**Citations.** A date is the receipt a public page keeps. A project, repository or PR
+name never appears in the public tier — public ones included: the page teaches the
+lesson, it does not log where it happened. A commit hash is worth citing only when it
+resolves in the reader's clone.
 
 ## One session, several destinations
 
@@ -58,6 +64,20 @@ Worked example, one session: a container's default trigger fires on every click 
 public gotcha in the topic page; the drive letter and mount command → the local page;
 the click-path bug in this particular stack → project tier; "it took an hour" →
 nowhere.
+
+## Size: one page, one subtopic
+
+A page that keeps growing stops being read. Every wiki page stays under **200 lines**,
+at every tier.
+
+- Check before extending: `wc -l <page>`. Past 150, plan the split.
+- Past 200, split instead of appending: move one whole subtopic into a sibling page
+  named after it, keep the moved text verbatim, add the sibling to the same router
+  with its own trigger line, and leave a one-line pointer where it stood.
+- A subtopic that is itself several pages becomes a subfolder with a bare
+  `index.md`: the parent router links that `index.md`, and it routes its own pages
+  one line each. A bare `index.md` is a router at every depth, same rules.
+- Routers are exempt from the line limit: one line per child by design.
 
 The agent **never writes silently**. Triggers, in priority order:
 

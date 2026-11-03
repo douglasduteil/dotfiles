@@ -16,6 +16,9 @@ Before re-deriving a fact, walk the tiers in order and stop at the first hit:
    [--scope project|global]`. Returns ranked session leads, each with its
    source tool, id and date.
 
+An entry may point at a subfolder's `index.md` instead of a page: follow it the
+same way, one level deeper, and stop at the first page that answers.
+
 Done when a page answers the topic, or the question is reduced to session
 leads you have opened and read. A lead is not a fact: read the session before
 acting on it.
