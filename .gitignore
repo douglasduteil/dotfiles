@@ -1,6 +1,5 @@
 .scratch/
 
-agents/.config/agents/x-memory/index.db
 agents/.config/agents/skills/synced/
 
 # project-scoped omp settings for this repo (see .omp/config.yml) --
