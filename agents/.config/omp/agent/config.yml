@@ -364,6 +364,7 @@ modelRoles:
   smol: openrouter/~deepseek/deepseek-flash-latest:auto
   slow: anthropic/claude-opus-5-5:auto
   plan: anthropic/claude-opus-5-5:auto
+  tiny: anthropic/claude-haiku-5-5
 task:
   agentModelOverrides:
     scout: openrouter/~deepseek/deepseek-flash-latest
