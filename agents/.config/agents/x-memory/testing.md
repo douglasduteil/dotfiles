@@ -66,3 +66,12 @@ SQL. Cover it through the use case that calls the read. A query gets its
 own test only when it encodes a decision — a promotion rule, an upsert
 conflict, a multi-row transaction, a lock. Stated 2026-10-29 (two service
 codebases' repository layer; Jev calibration 0.19 against per-getter tests).
+
+## mongodb-memory-server on NixOS (mms 11.2, mongod 8.2.6, 2026-11-04)
+
+- Default run fails: `Unknown/unsupported linux "<id>" id_like's: [nixos]`.
+- `MONGOMS_DISTRO=ubuntu-22.04` downloads a binary, but it exits 127: NixOS can't run generic Linux binaries (stub-ld), and it lacks libcurl and libssl.
+- nixpkgs-unstable libs need a newer glibc than the system one. Run the binary through that glibc's loader in a wrapper script:
+  `exec <glibc>/lib/ld-linux-x86-64.so.2 --library-path <curl>/lib:<openssl>/lib:<glibc>/lib:<gcc-lib>/lib ~/.cache/mongodb-binaries/mongod-… "$@"`
+  (paths from `nix build --no-link --print-out-paths nixpkgs#curl.out nixpkgs#openssl.out nixpkgs#glibc.out nixpkgs#stdenv.cc.cc.lib`)
+- Then run jest with `MONGOMS_SYSTEM_BINARY=<wrapper> MONGOMS_VERSION=<version>`.
