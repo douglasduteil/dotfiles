@@ -45,11 +45,13 @@
   # Smartcard daemon so gpg's scdaemon can talk to the YubiKey once attached.
   services.pcscd.enable = true;
 
+  # Python 3 interpreter, system-wide.
+  #
   # ykman (YubiKey Manager CLI) -- inspecting/managing the physical keys
   # (ykman info, ykman fido info, etc.) is host-level tooling, not something
   # tied to a per-user profile, so it lives here rather than in
   # packages/flake.nix.
-  environment.systemPackages = [ pkgs.yubikey-manager ];
+  environment.systemPackages = [ pkgs.python3 pkgs.yubikey-manager ];
 
   # Rootless container runtime. dockerCompat aliases `docker` to podman for
   # tools that shell out to the docker CLI by name. podman's `compose`
