@@ -36,6 +36,7 @@
       packages.${system}.default = pkgs.buildEnv {
         name = "nixos-wsl-profile";
         paths = with pkgs; [
+          age-plugin-yubikey
           atuin
           bat
           bash-language-server
