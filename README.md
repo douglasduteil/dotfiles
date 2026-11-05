@@ -165,6 +165,16 @@ Then also add its `IdentityFile` line to `ssh/.ssh/config` (tracked -- commit an
 x-update
 ```
 
+What `x-update` does **not** cover -- do these by hand:
+
+- **Fixed-version pins in `packages/flake.nix`**: `typescript-mcp` is `fetchFromGitHub` at a fixed tag with its own `sha256` and `vendorHash`. `nix flake update` only moves flake inputs, so it stays on that tag. To bump: change `version`/`rev`, get the source hash with `nix-prefetch-url --unpack https://github.com/paulvanbrenk/typescript-mcp/archive/refs/tags/<tag>.tar.gz`, set `vendorHash = pkgs.lib.fakeHash;`, build, and paste the `got:` hash from the error.
+- **The NixOS system itself**: `/etc/nixos/configuration.nix` and its channel are per-machine and need root -- `sudo nixos-rebuild switch --upgrade`.
+- **Neovim plugins**: `nvim/.config/nvim/lazy-lock.json` moves only on `:Lazy sync` (the lazy.nvim checker only checks, with `notify = false`).
+- **`x-memory` dependencies**: `x-memory/bun.lock` moves only on `bun update` inside `x-memory/`.
+- **claude.ai-synced Claude Code plugins** (`scope == "synced"`): skipped on purpose -- they refuse `claude plugin update`, claude.ai updates them.
+- **Surviving a broken nixpkgs-unstable**: if the bumped lock fails to build (e.g. a nixpkgs fixed-output hash mismatch), `set -e` stops at `nix profile upgrade` -- the profile stays on its old generation, but the Claude Code steps never run and `packages/flake.lock` keeps the broken bump. `git checkout packages/flake.lock` returns to the last committed lock.
+- **Committing the bump**: `x-update` leaves `packages/flake.lock` modified. Commit and push it, or each machine ends up on whatever nixpkgs revision it last ran against.
+
 ### Updating the package set only
 
 Edit `packages/flake.nix`, then from anywhere (no `cd` into `packages/` needed):
