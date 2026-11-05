@@ -361,10 +361,19 @@ theme:
 modelRoleStorage: project
 modelRoles:
   default: anthropic/claude-opus-5-5
-  smol: openrouter/~deepseek/deepseek-flash-latest:auto
+  smol: albert/deepseek-v4-flash-0731
   slow: anthropic/claude-opus-5-5:auto
   plan: anthropic/claude-opus-5-5:auto
-  tiny: anthropic/claude-haiku-5-5
+  tiny: albert/gemma-4-31b-it
+  commit: albert/deepseek-v4-flash-0731
+  memory: albert/gpt-oss-120b
+retry:
+  rateLimitWalksChain: true
+  fallbackChains:
+    commit: [openrouter/~deepseek/deepseek-flash-latest]
+    memory: [albert/gemma-4-31b-it, anthropic/claude-haiku-5-5]
+    smol: [openrouter/~deepseek/deepseek-flash-latest]
+    tiny: [anthropic/claude-haiku-5-5]
 task:
   agentModelOverrides:
     scout: openrouter/~deepseek/deepseek-flash-latest
@@ -376,3 +385,5 @@ setupVersion: 2
 dev:
   autoqaConsent: granted
 defaultThinkingLevel: auto
+display:
+  hideToolActivity: false
