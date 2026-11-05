@@ -10,7 +10,6 @@ const image_input: Record<string, true> = {
 };
 const max_output = 32768;
 const reasoning: Record<string, true> = { "gpt-oss-120b": true };
-const tool_choice_auto: Record<string, true> = { "deepseek-v4-flash": true };
 
 const cost_field = (costs: unknown, key: "completion_tokens" | "prompt_tokens") => {
   const value: unknown = typeof costs === "object" && costs !== null ? Reflect.get(costs, key) : undefined;
@@ -18,7 +17,7 @@ const cost_field = (costs: unknown, key: "completion_tokens" | "prompt_tokens") 
 };
 
 const albert_model = (id: string, context_window: number, costs: unknown) => ({
-  compat: tool_choice_auto[id] ? { extraBody: { tool_choice: "auto" } } : undefined,
+  compat: id.startsWith("deepseek-v4-flash") ? { extraBody: { tool_choice: "auto" } } : undefined,
   contextWindow: context_window,
   cost: { cacheRead: 0, cacheWrite: 0, input: cost_field(costs, "prompt_tokens"), output: cost_field(costs, "completion_tokens") },
   id,
