@@ -64,6 +64,7 @@
           kubernetes-helm
           mkcert
           neovim
+          nix-your-shell
           nixd
           nodejs
           oh-my-zsh
