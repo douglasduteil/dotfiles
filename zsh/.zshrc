@@ -27,7 +27,7 @@ autoload -Uz compinit && compinit
 # Oh My Zsh libs
 # ===========================================================================
 
-for lib in compfix completion correction directories functions grep history key-bindings spectrum termsupport misc; do
+for lib in compfix completion correction directories functions grep history key-bindings spectrum termsupport theme-and-appearance misc; do
   source "$OMZ_LIB/$lib.zsh"
 done
 
@@ -168,7 +168,8 @@ nix-your-shell zsh | source /dev/stdin
 # ===========================================================================
 
 # :: https://github.com/can1357/oh-my-pi
-eval "$(omp completions zsh)"
+_omp() { eval "$(omp completions zsh)" }
+compdef _omp omp
 
 # ===========================================================================
 #
