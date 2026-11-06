@@ -68,7 +68,6 @@
           nodejs
           oh-my-zsh
           omp
-          opencode
           podman-compose
           ripgrep
           scalingo
