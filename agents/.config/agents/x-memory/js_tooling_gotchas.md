@@ -33,4 +33,4 @@ Descriptive only: how a tool behaved at a given version, found by hands-on testi
 
 ## Editor tooling
 
-- typescript-mcp `ts_diagnostics` can keep a stale buffer after on-disk edits: it reported 30 phantom "Duplicate identifier" errors on a 441-line file. Trust `tsc --noEmit` (2026-10-14).
+- typescript-mcp `ts_diagnostics` can keep a stale buffer after on-disk edits: it reported 30 phantom "Duplicate identifier" errors on a 441-line file. Trust `tsc --noEmit` (2026-10-14; recurred 2026-11-12: errors reported on lines past the end of a file after an edit).
