@@ -28,6 +28,10 @@ with a short **dream code** sketch (non-functional call-site/API shape, not
 an implementation) and get explicit confirmation before dispatching work
 gated on that decision.
 
+A rejection like "not an additional X" can target the name or the whole
+idea. Ask which before rewriting; picking one cost a wrong commit and a
+force-push (2026-11-12).
+
 ## Token economy is symmetric
 
 Applies to every delegate/subagent dispatch, not just chat. Input: name
