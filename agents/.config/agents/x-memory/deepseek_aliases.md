@@ -20,3 +20,17 @@ Tradeoffs accepted with that choice:
   in/out price ratio matters more than input price when picking the tier.
 - Pro tier buys nothing for location/scout work; escalate per-slice, not
   by default.
+
+## Routing an edit to the cheap tier (omp 18.18.9, verified 2026-11-13)
+
+Descriptive.
+
+- The bundled `sonic` agent resolves the `smol` model role, so it is the
+  route for mechanical edits on the cheap tier. The generic `task` agent
+  stays on the main model unless `task.agentModelOverrides.task` names a
+  role or `task.prewalk` hands off to `@smol` at the first edit.
+- A per-call `model` on `task` fails preflight while
+  `task.perCallModel: off` (the shipped default).
+- Proof of what ran is the subagent transcript's `session_init` model,
+  never the agent's own answer: asked for its model id, a `sonic` worker
+  replied with its agent name.
