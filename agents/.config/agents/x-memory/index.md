@@ -33,6 +33,7 @@ of them is listed below.
 - [Browser rendering performance](web_perf.md) — before measuring page CPU, blaming compositing, or debugging Canvas 2D artifacts.
 - [Nix packaging](nix_packaging.md) — only when packaging a Go binary via `buildGoModule`, or pinning an external binary into a flake profile.
 - [Shell gotchas](shell_gotchas.md) — before writing separators or `=`-prefixed words in a command that may run under zsh.
+- [Postgres data migrations](postgres_migrations.md) — before writing a data-changing migration (node-pg-migrate transaction model, planner traps on unnest/CTE, PGlite smoke testing).
 
 ## Cross-references
 
