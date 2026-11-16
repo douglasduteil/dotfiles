@@ -370,10 +370,19 @@ modelRoles:
 retry:
   rateLimitWalksChain: true
   fallbackChains:
-    commit: [openrouter/~deepseek/deepseek-flash-latest]
-    memory: [albert/gemma-4-31b-it, anthropic/claude-haiku-5-5]
-    smol: [openrouter/~deepseek/deepseek-flash-latest]
-    tiny: [anthropic/claude-haiku-5-5]
+    commit:
+      - albert/deepseek-v4-flash-0731
+      - openrouter/~deepseek/deepseek-flash-latest
+    memory:
+      - albert/deepseek-v4-flash-0731
+      - albert/gemma-4-31b-it
+      - anthropic/claude-haiku-5-5
+    smol:
+      - albert/deepseek-v4-flash-0731
+      - openrouter/~deepseek/deepseek-flash-latest
+    tiny:
+      - albert/deepseek-v4-flash-0731
+      - anthropic/claude-haiku-5-5
 task:
   agentModelOverrides:
     scout: openrouter/~deepseek/deepseek-flash-latest
