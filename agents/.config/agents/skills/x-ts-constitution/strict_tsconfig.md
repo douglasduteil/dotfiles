@@ -53,4 +53,4 @@ Pin exact versions of the `@tsconfig/*` packages: they follow runtime versions, 
 
 ## Verify
 
-`tsc --showConfig` lists every flag above as set; `tsc --noEmit` exits 0.
+`tsc --showConfig` lists every flag above as set; `bun check` exits 0 (`tsc --noEmit` off Bun).

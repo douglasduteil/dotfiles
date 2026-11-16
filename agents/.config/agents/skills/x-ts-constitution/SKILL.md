@@ -5,7 +5,7 @@ description: TypeScript constitution (proof by type) — core rules for any Type
 
 # TypeScript Constitution (Proof by Type)
 
-v2.4, 2026-10-29: body split into this file (the rules) and `references/` (rationale, worked examples, logging detail, tooling detail); no rule changed. v2.3, 2026-10-28: types derive from the code (`as const`, `ReturnType`, `typeof`) over hand-written `type` or `interface` declarations of the same shape (Article III §6). v2.2, 2026-10-26: error events carry the context to rebuild what happened; fields take OpenTelemetry registry names (Article V). v2.1, 2026-10-21: discriminants and log events name a precise state (Article III §3, Article V). v2, 2026-10-19: split into core, baseline and opt-in modules. v1 (2026-10-14) applied everything at once; no repo had adopted it.
+v2.5, 2026-11-16: the Bun baseline moves to bun 1.4.4 and `@tsconfig/bun` 1.0.11: the tsconfig is one line, and `bun check` and `bun fmt` replace the separate tsc and Prettier steps. v2.4, 2026-10-29: body split into this file (the rules) and `references/` (rationale, worked examples, logging detail, tooling detail); no rule changed. v2.3, 2026-10-28: types derive from the code (`as const`, `ReturnType`, `typeof`) over hand-written `type` or `interface` declarations of the same shape (Article III §6). v2.2, 2026-10-26: error events carry the context to rebuild what happened; fields take OpenTelemetry registry names (Article V). v2.1, 2026-10-21: discriminants and log events name a precise state (Article III §3, Article V). v2, 2026-10-19: split into core, baseline and opt-in modules. v1 (2026-10-14) applied everything at once; no repo had adopted it.
 
 ## Scope
 
@@ -30,9 +30,9 @@ TypeScript's checker is unsound by design. This constitution makes the unsound s
 ## Baseline: what the user practises
 
 - **TypeScript 7**: native `tsc` since 7.0 (2026-07-08), no compiler API until 7.1, so tools importing `typescript` break, some silently. TS 7 adopts the 6.0 defaults (`strict` on, `types: []`, `rootDir: ./`, `module: esnext`, `noUncheckedSideEffectImports` on).
-- **tsconfig**: extend `@tsconfig/bun` on Bun, `@tsconfig/node-lts` plus `@tsconfig/node-ts` on Node, `@tsconfig/vite-react` on Vite. More strictness comes from the strict tsconfig module.
+- **tsconfig**: on Bun the whole file is one line, `{ "extends": "@tsconfig/bun/tsconfig.json" }`, with `@tsconfig/bun` 1.0.11 or newer and `@types/bun` in `devDependencies` (the base sets `types: ["bun"]`); Node takes `@tsconfig/node-lts` plus `@tsconfig/node-ts`, Vite `@tsconfig/vite-react`. More strictness comes from the strict tsconfig module.
 - **Naming**: `snake_case` wherever a name is chosen: files and directories, values and functions. Types, interfaces and classes stay PascalCase. Object keys alpha-ordered after the discriminant.
-- **Prettier**: default config, declared in `package.json` (not `.prettierrc`), with `prettier-plugin-organize-imports`.
+- **Formatting and checking**: on Bun 1.4.4 or newer, `bun fmt` (Prettier-compatible, settings in `[fmt]` of `bunfig.toml`, `sortImports` for import order) and `bun check` (type-checks the nearest `tsconfig.json` on every core). On Node and Vite, Prettier's default config in `package.json` (not `.prettierrc`) with `prettier-plugin-organize-imports`.
 - **Tests**: `*.test.ts` next to the source it covers; `bun test` on Bun, vitest on Node and Vite. Assert the whole result (`expect(verdict).toEqual(ok(…))`, `toMatchObject`), never `verdict.ok && verdict.value`: the `&&` hides the discriminant. Fix leftovers in files you touch.
 - **Module resolution**: `package.json#imports` and `#exports` over `../../` traversal; add an `imports` key once a path needs `../../../`.
 
@@ -40,7 +40,7 @@ Version-sensitive detail behind these bullets (tool breakage, `*` target expansi
 
 ## Article I — Axioms: the checker and the linter
 
-The checker runs at the strictness of the strict tsconfig module once adopted; until then, at `@tsconfig/bun` (or the repo's own) settings. Lint is the second half of the axioms: the oxlint type-aware module. A flag is relaxed only with a written reason in the repo.
+The checker runs at the strictness of the strict tsconfig module once adopted; until then, at `@tsconfig/bun` (or the repo's own) settings. `bun check` runs it on Bun. Lint is the second half of the axioms: the oxlint type-aware module. A flag is relaxed only with a written reason in the repo.
 
 ## Article II — Architecture: decisions are pure, effects live at the edge
 

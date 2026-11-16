@@ -10,7 +10,7 @@ New rules go in as `error`, never `warn`: warnings pile up unread. Existing viol
 2. **Stage 1**: install `oxlint-tsgolint`, set `options.typeAware`, enable `typescript/no-floating-promises`, `typescript/no-misused-promises`, `typescript/switch-exhaustiveness-check`.
 3. **Stage 2**: add the remaining rules of the target config below, one per PR.
 
-Pin `oxlint-tsgolint` to the repo's TypeScript version: its version encodes it (`7.0.2000` is tsgolint patch 0 for TS 7.0.2). `options.typeCheck: true` also reports `tsc` diagnostics from the same program, replacing a separate `tsc --noEmit` step.
+Pin `oxlint-tsgolint` to the repo's TypeScript version: its version encodes it (`7.0.2000` is tsgolint patch 0 for TS 7.0.2). `options.typeCheck: true` also reports `tsc` diagnostics from the same program, replacing a separate `bun check` (or `tsc --noEmit`) step.
 
 ## Target config
 
