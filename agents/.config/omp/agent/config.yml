@@ -390,7 +390,7 @@ task:
 symbolPreset: unicode
 composer:
   shape: band
-setupVersion: 2
+setupVersion: 3
 dev:
   autoqaConsent: granted
 defaultThinkingLevel: auto
