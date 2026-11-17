@@ -14,11 +14,11 @@ Current git repo, npm only. Every **stop** ends the run with a short report: wha
 for bot in app/dependabot app/renovate; do
   gh pr list --state open --author "$bot" --limit 50 \
     --json number,title,author,headRefName,baseRefName,statusCheckRollup \
-    --jq '.[] | select(any(.statusCheckRollup[]; .conclusion == "FAILURE")) | {number, title, author: .author.login, head: .headRefName, base: .baseRefName, failing: [.statusCheckRollup[] | select(.conclusion == "FAILURE") | .name]}'
+    --jq '.[] | select(any(.statusCheckRollup[]; .conclusion == "FAILURE")) | {number, title, author: .author.login, head: .headRefName, base: .baseRefName, failing: [.statusCheckRollup[] | select(.conclusion == "FAILURE") | {check: .name, workflow: .workflowName}]}'
 done
 ```
 
-Offer the results as a single-choice question: `#number title (failing checks)`. None → report "no failing bot PR", stop.
+Offer the results as a single-choice question: `#number title (failing checks)`. None → report "no failing bot PR", stop. Keep each failing check's `workflow`: steps 2 and 5 need it.
 
 ## 2. Pre-flight
 
@@ -26,7 +26,7 @@ All on the chosen PR, before any checkout:
 
 - **Commit authors**: `gh pr view <n> --json commits --jq '[.commits[].authors[].login] | unique'` lists only the bot that opened the PR. A human or other account → stop.
 - **Lockfile**: the head tree holds `package-lock.json` and none of `bun.lock`, `bun.lockb`, `pnpm-lock.yaml`, `yarn.lock` (`gh pr view <n> --json files --jq '.files[].path'` plus `git ls-tree`). Anything else → stop, naming the lockfile.
-- **Base health**: for each failing check, the latest run of the same workflow on the base branch (`gh run list --branch <base> --workflow <workflow> --limit 1 --json conclusion`) is green. Red on base too → stop: the bump did not cause it.
+- **Base health**: for each failing check, the latest run of its workflow on the base branch (`gh run list --branch <base> --workflow "<workflow>" --limit 1 --json conclusion`, `<workflow>` from step 1, never the check name) is green. Red on base too → stop: the bump did not cause it.
 
 ## 3. Worktree
 
@@ -67,7 +67,7 @@ Any signature or attestation failure → stop.
 
 ## 5. Read the failure
 
-Per failing check: `gh pr checks <n>` → run id; `gh run view <run-id> --log-failed`, trimmed to the error lines (compiler errors, failing test names, assertion diffs). Read the full log only when the trimmed one leaves the cause open. Find the failing step's `run:` line in `.github/workflows/`. The step needs a service container, `secrets.*`, or env you lack → stop.
+Per failing check: `gh pr checks <n>` → run id; `gh run view <run-id> --log-failed`, trimmed to the error lines (compiler errors, failing test names, assertion diffs). Read the full log only when the trimmed one leaves the cause open. Find the failing step's `run:` line in the workflow from step 1 under `.github/workflows/`. The step needs a service container, `secrets.*`, or env you lack → stop.
 
 State the cause in one sentence, tied to the bumped package's changelog or release notes when the cause is an API change.
 
