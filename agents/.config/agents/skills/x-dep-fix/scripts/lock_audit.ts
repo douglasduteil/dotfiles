@@ -28,7 +28,7 @@ const optional_string = (x: unknown) => (typeof x === "string" ? x : undefined);
 
 const parse_json = (text: string): Result<unknown, { readonly kind: "invalid_json" }> => {
   try {
-    return ok(JSON.parse(text));
+    return ok(Bun.JSONC.parse(text));
   } catch {
     return err({ kind: "invalid_json" } as const);
   }
@@ -40,7 +40,7 @@ const dependency_names = (entry: Readonly<Record<string, unknown>>) =>
     return is_record(deps) ? Object.keys(deps) : [];
   });
 
-const parse_entry = ({ entry, path }: { entry: Readonly<Record<string, unknown>>; path: string }) => {
+const parse_npm_entry = ({ entry, path }: { entry: Readonly<Record<string, unknown>>; path: string }) => {
   const marker = path.lastIndexOf("node_modules/");
   return {
     dependencies: dependency_names(entry),
@@ -54,17 +54,40 @@ const parse_entry = ({ entry, path }: { entry: Readonly<Record<string, unknown>>
   };
 };
 
-type LockEntry = ReturnType<typeof parse_entry>;
+type LockEntry = ReturnType<typeof parse_npm_entry>;
 
-const parse_lock = (text: string) => {
+const parse_bun_entry = ({ entry, path }: { entry: readonly unknown[]; path: string }): LockEntry => {
+  const spec = optional_string(entry[0]) ?? "";
+  const at = spec.indexOf("@", 1);
+  const name = at > 0 ? spec.slice(0, at) : spec;
+  const version = at > 0 ? spec.slice(at + 1) : undefined;
+  const from_registry = typeof entry[1] === "string";
+  const meta = entry.find(is_record);
+  const integrity = entry.at(-1);
+  return {
+    dependencies: meta === undefined ? [] : dependency_names(meta),
+    has_install_script: false,
+    installed: !(version?.startsWith("workspace:") || version?.startsWith("link:")),
+    integrity: typeof integrity === "string" && integrity.startsWith("sha") ? integrity : undefined,
+    name,
+    path,
+    resolved: from_registry ? `${entry[1] || registry}${name}` : version,
+    version,
+  };
+};
+
+const lockfiles = ["bun.lock", "package-lock.json"] as const;
+
+const parse_lock = ({ lockfile, text }: { lockfile: (typeof lockfiles)[number]; text: string }) => {
   const json = parse_json(text);
   if (!json.ok) return json;
   if (!is_record(json.value) || !is_record(json.value.packages)) return err({ kind: "lockfile_without_packages" } as const);
+  const packages = Object.entries(json.value.packages);
+  if (lockfile === "bun.lock")
+    return ok(packages.flatMap(([path, entry]) => (Array.isArray(entry) ? [parse_bun_entry({ entry, path })] : [])));
   const lockfile_version = typeof json.value.lockfileVersion === "number" ? json.value.lockfileVersion : 0;
   if (lockfile_version < 2) return err({ kind: "lockfile_version_unsupported", lockfile_version } as const);
-  return ok(
-    Object.entries(json.value.packages).flatMap(([path, entry]) => (is_record(entry) ? [parse_entry({ entry, path })] : [])),
-  );
+  return ok(packages.flatMap(([path, entry]) => (is_record(entry) ? [parse_npm_entry({ entry, path })] : [])));
 };
 
 //
@@ -138,13 +161,15 @@ const without_dependency_fields = (manifest: unknown) =>
 
 const file_flags = ({
   changed_files,
+  lockfile,
   manifests,
 }: {
   changed_files: readonly string[];
+  lockfile: (typeof lockfiles)[number];
   manifests: readonly { readonly after: unknown; readonly before: unknown; readonly file: string }[];
 }) => [
   ...changed_files
-    .filter((file) => file !== "package-lock.json" && !/(^|\/)package\.json$/.test(file))
+    .filter((file) => file !== lockfile && !/(^|\/)package\.json$/.test(file))
     .map((file) => ({ file, kind: "file_outside_manifests" }) as const),
   ...manifests
     .filter(
@@ -192,12 +217,18 @@ const [base, head] = Bun.argv.slice(2);
 if (base === undefined || head === undefined) fail({ reason: "usage: lock_audit.ts <base-ref> <head-ref>" });
 
 const changed_files = (await $`git diff --name-only ${base}...${head}`.text()).split("\n").filter(Boolean);
-const base_lock_text = await git_show({ file: "package-lock.json", ref: base });
-const head_lock_text = await git_show({ file: "package-lock.json", ref: head });
-if (base_lock_text === undefined || head_lock_text === undefined) fail({ reason: "package-lock.json missing at a ref" });
+const head_locks = await Promise.all(
+  lockfiles.map(async (lockfile) => ({ lockfile, text: await git_show({ file: lockfile, ref: head }) })),
+);
+const [head_lock_found, ...extra_locks] = head_locks.filter((found) => found.text !== undefined);
+if (head_lock_found?.text === undefined || extra_locks.length > 0)
+  fail({ reason: `need exactly one of ${lockfiles.join(", ")} at ${head}` });
+const { lockfile, text: head_lock_text } = head_lock_found;
+const base_lock_text = await git_show({ file: lockfile, ref: base });
+if (base_lock_text === undefined) fail({ reason: `${lockfile} missing at ${base}` });
 
-const base_lock = parse_lock(base_lock_text);
-const head_lock = parse_lock(head_lock_text);
+const base_lock = parse_lock({ lockfile, text: base_lock_text });
+const head_lock = parse_lock({ lockfile, text: head_lock_text });
 if (!base_lock.ok) fail({ ref: base, ...base_lock.error });
 if (!head_lock.ok) fail({ ref: head, ...head_lock.error });
 const base_entries = base_lock.value;
@@ -219,7 +250,7 @@ const manifests = await Promise.all(
 );
 
 const flags = [
-  ...file_flags({ changed_files, manifests }),
+  ...file_flags({ changed_files, lockfile, manifests }),
   ...lock_flags({ base: base_entries, changed }),
   ...release_flags({
     now: new Date(),

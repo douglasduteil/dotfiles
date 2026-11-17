@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # x-dep-fix
 
-Current git repo, npm only. Every **stop** ends the run with a short report: what tripped, the evidence, what you would need from the user. A stop is a finished run, never a problem to route around; only the user clears it.
+Current git repo, npm (`package-lock.json`) or Bun (`bun.lock`). Every **stop** ends the run with a short report: what tripped, the evidence, what you would need from the user. A stop is a finished run, never a problem to route around; only the user clears it.
 
 ## 1. Pick the PR
 
@@ -25,7 +25,7 @@ Offer the results as a single-choice question: `#number title (failing checks)`.
 All on the chosen PR, before any checkout:
 
 - **Commit authors**: `gh pr view <n> --json commits --jq '[.commits[].authors[].login] | unique'` lists only the bot that opened the PR. A human or other account → stop.
-- **Lockfile**: the head tree holds `package-lock.json` and none of `bun.lock`, `bun.lockb`, `pnpm-lock.yaml`, `yarn.lock` (`gh pr view <n> --json files --jq '.files[].path'` plus `git ls-tree`). Anything else → stop, naming the lockfile.
+- **Lockfile**: the head tree holds exactly one of `package-lock.json` or `bun.lock`, and none of `bun.lockb`, `pnpm-lock.yaml`, `yarn.lock` (`gh pr view <n> --json files --jq '.files[].path'` plus `git ls-tree`). Anything else → stop, naming the lockfile. The one found picks the package manager for steps 4 and 6.
 - **Base health**: for each failing check, the latest run of its workflow on the base branch (`gh run list --branch <base> --workflow "<workflow>" --limit 1 --json conclusion`, `<workflow>` from step 1, never the check name) is green. Red on base too → stop: the bump did not cause it.
 
 ## 3. Worktree
@@ -47,23 +47,21 @@ Exit 0 with no output: gate passed. Exit 1: one JSON line per flag → stop, quo
 
 | flag | meaning |
 | --- | --- |
-| `file_outside_manifests` | PR touches a file other than `package.json` / root `package-lock.json` (workflows, `.npmrc`, sources) |
-| `manifest_non_dependency_change` | a `package.json` changed outside dependency fields (`scripts`, `bin`, …), or was added/removed |
-| `foreign_source` | `resolved` outside `registry.npmjs.org`: git, tarball, http |
-| `install_script_added` | a package gains `hasInstallScript` it never had in base |
+| `file_outside_manifests` | PR touches a file other than `package.json` / the root lockfile (workflows, `.npmrc`, `bunfig.toml`, sources) |
+| `manifest_non_dependency_change` | a `package.json` changed outside dependency fields (`scripts`, `bin`, `trustedDependencies`, …), or was added/removed |
+| `foreign_source` | package source outside `registry.npmjs.org`: git, github, tarball, http |
+| `install_script_added` | npm only: a package gains `hasInstallScript` it never had in base (Bun's equivalent, `trustedDependencies`, trips `manifest_non_dependency_change`) |
 | `integrity_changed` | same name@version, different integrity: republished or swapped tarball |
 | `unexplained_package` | new package no changed entry depends on |
 | `fresh_release` | version published < 7 days ago |
 | `publish_time_unknown` | registry gave no publish time: unverifiable |
 
-Then:
+Then install with every lifecycle script off:
 
-```sh
-npm ci --ignore-scripts
-npm audit signatures
-```
-
-Any signature or attestation failure → stop.
+| lockfile | install | then |
+| --- | --- | --- |
+| `package-lock.json` | `npm ci --ignore-scripts` | `npm audit signatures`: any signature or attestation failure → stop |
+| `bun.lock` | `bun install --frozen-lockfile --ignore-scripts` | Bun has no signature audit; the gate's integrity check is the tarball check |
 
 ## 5. Read the failure
 
@@ -80,7 +78,7 @@ The bump stays exactly as the bot wrote it: same versions, same lockfile, no pin
 Bounds, any one → stop with a plan instead of a fix:
 
 - the fix exceeds ~30 changed lines, or needs a migration across many call sites;
-- the local failure comes from a package whose install script was skipped. Ask the user to approve that package by name; approved and its `hasInstallScript` already present in base → `npm rebuild <pkg>`, rerun. Otherwise stop.
+- the local failure comes from a package whose install script was skipped. npm: ask the user to approve that package by name; approved and its `hasInstallScript` already present in base → `npm rebuild <pkg>`, rerun. Bun, or anything else → stop.
 
 Done when the step's command passes locally and `git diff --stat` shows only the fix.
 
