@@ -80,3 +80,13 @@ volumes from one fast read-only grouped `SELECT` the user runs on production: on
 bucket, plus an activity column such as last sign-in. Avoid per-row `EXISTS` on unindexed tables in it.
 The counts decide the mechanism: a plan that looked right on paper would have added 34× the moderation
 queue (user, 2026-11-12).
+
+## A review correction is a principle, not a patch (2026-11-16)
+
+When a reviewer corrects one instance (a duplicated list, half of a diff
+journaled, a helper copied instead of reused), name the principle behind it
+and sweep the whole diff for siblings before pushing again. A push that only
+fixes the named line invites the next correction on its neighbour, and the
+reviewer ends up leading the design.
+"Kept for its callers" is a claim: list the callers from every consumer of
+the published package, not only the monorepo, before relying on it.
