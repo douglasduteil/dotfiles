@@ -31,6 +31,10 @@ project explicitly opts out.
   or more arguments gets one object argument
   (`candidate_row({ domain, id })`); stated 2026-10-15 after
   `candidate_row(domain, id)` slipped through.
+- **Inline one statement:** one simple statement repeated at a few call
+  sites stays inline; extract a shared function only for logic, not for one
+  chained call (user, 2026-11-16). Reuse still wins for anything
+  non-trivial, such as a field mapping.
 - **Git branches:** prefix new branches `douglasduteil/<name>` (see `cmm`
   alias in `git/.gitconfig`, dotfiles repo).
 - **PR/branch shape:** atomic PRs — one branch, one commit, one minimal
