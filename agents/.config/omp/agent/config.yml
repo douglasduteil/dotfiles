@@ -396,3 +396,5 @@ dev:
 defaultThinkingLevel: auto
 display:
   hideToolActivity: false
+claudeResets:
+  autoRedeemFable: "no"
