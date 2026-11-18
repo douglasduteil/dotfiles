@@ -34,3 +34,5 @@ call `fetch`. Rigor comes from small trusted kernels, not clever types.
 | Scoped reads require a principal (Article V) | Compiler (provenance brand); Postgres RLS underneath |
 | Every `as` is visible; the hatch count never grows silently (Article VI) | Review; oxlint and CI (oxlint, hatch ledger modules) |
 | Behavioral properties (Article VII) | CI tests (property tests module) |
+| Constant-table invariants no type states (Article VII) | Module-load assertion |
+| Use cases do what users expect (Article VII) | Integration tests through each runtime's entry point (Article V) |

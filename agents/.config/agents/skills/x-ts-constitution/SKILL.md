@@ -5,7 +5,7 @@ description: TypeScript constitution (proof by type) — core rules for any Type
 
 # TypeScript Constitution (Proof by Type)
 
-v2.5, 2026-11-16: the Bun baseline moves to bun 1.4.4 and `@tsconfig/bun` 1.0.11: the tsconfig is one line, and `bun check` and `bun fmt` replace the separate tsc and Prettier steps. v2.4, 2026-10-29: body split into this file (the rules) and `references/` (rationale, worked examples, logging detail, tooling detail); no rule changed. v2.3, 2026-10-28: types derive from the code (`as const`, `ReturnType`, `typeof`) over hand-written `type` or `interface` declarations of the same shape (Article III §6). v2.2, 2026-10-26: error events carry the context to rebuild what happened; fields take OpenTelemetry registry names (Article V). v2.1, 2026-10-21: discriminants and log events name a precise state (Article III §3, Article V). v2, 2026-10-19: split into core, baseline and opt-in modules. v1 (2026-10-14) applied everything at once; no repo had adopted it.
+v2.6, 2026-11-18: Article VII becomes construction first: a guarantee lives on the first rung that holds it (type, derivation, module-load assertion, integration test, unit test); name the bug before writing a test; integration tests follow user intent through each runtime's entry point (new Article V column), with databases in process and fakes only for what the app does not own; tautologies and `@ts-expect-error` compile checks go. Article VI: a test guarding a hatch points at the hatch. v2.5, 2026-11-16: the Bun baseline moves to bun 1.4.4 and `@tsconfig/bun` 1.0.11: the tsconfig is one line, and `bun check` and `bun fmt` replace the separate tsc and Prettier steps. v2.4, 2026-10-29: body split into this file (the rules) and `references/` (rationale, worked examples, logging detail, tooling detail); no rule changed. v2.3, 2026-10-28: types derive from the code (`as const`, `ReturnType`, `typeof`) over hand-written `type` or `interface` declarations of the same shape (Article III §6). v2.2, 2026-10-26: error events carry the context to rebuild what happened; fields take OpenTelemetry registry names (Article V). v2.1, 2026-10-21: discriminants and log events name a precise state (Article III §3, Article V). v2, 2026-10-19: split into core, baseline and opt-in modules. v1 (2026-10-14) applied everything at once; no repo had adopted it.
 
 ## Scope
 
@@ -187,12 +187,12 @@ Each runtime owns one mapping from domain errors to its protocol: HTTP status, C
 
 The core is the same everywhere. Only the shell changes: where input is parsed, which effects run, and how errors are mapped.
 
-| Runtime | Parse at the boundary | Effects the shell runs | Error mapping |
-| --- | --- | --- | --- |
-| HTTP server | Body, query, params, headers; JSONB and raw SQL rows | DB transaction, outbound calls, response | Domain error to status code and body |
-| CLI | argv, env, stdin, file contents | File writes, stdout, network | Domain error to exit code and stderr |
-| Frontend (React) | Server responses, URL params, form input, browser storage | Fetch, navigation, storage writes | Domain error to a UI state variant |
-| Message worker (RabbitMQ) | Message payload and headers | Ack, nack, publish, DB writes | Domain error to ack, retry, or dead-letter |
+| Runtime | Parse at the boundary | Effects the shell runs | Error mapping | Integration entry point |
+| --- | --- | --- | --- | --- |
+| HTTP server | Body, query, params, headers; JSONB and raw SQL rows | DB transaction, outbound calls, response | Domain error to status code and body | The app's request handler in process (`app.request(…)` on Hono), database in process |
+| CLI | argv, env, stdin, file contents | File writes, stdout, network | Domain error to exit code and stderr | `main(argv, { env, stdin, stdout })`; assert exit code and output |
+| Frontend (React) | Server responses, URL params, form input, browser storage | Fetch, navigation, storage writes | Domain error to a UI state variant | The rendered page driven by user events, queried by role and label |
+| Message worker (RabbitMQ) | Message payload and headers | Ack, nack, publish, DB writes | Domain error to ack, retry, or dead-letter | The handler given a raw message; assert ack, retry or dead-letter and the rows written |
 
 Rules for all four:
 
@@ -256,19 +256,32 @@ zod's `.brand()` is itself a type-level cast, accepted once as a library axiom f
 
 Tests may use `as` freely, but fixtures still come from parsers (or fast-check arbitraries), so a test never builds an illegal state.
 
-## Article VII — What types cannot prove, tests check
+A test that exists because a hatch dropped information (an `as`, a `Record<string, …>` where a union fits) points at the hatch: fix the type first, and keep the test only for what the fixed type still cannot state.
 
-Types prove shape. Behavior ("never grants a membership on an expired invite") needs a test; a pure core makes it cheap, with nothing to mock. The property tests module turns such claims into fast-check properties.
+## Article VII — Construction first; integration tests prove what users get
 
-### Negative type tests prove impossibility
+A guarantee lives on the first rung that holds it:
 
-The most Lean-like test in TypeScript asserts that something does not compile:
+1. **The type**: a union, a brand, `Record<Union, …>`, an exhaustive switch. A missing key or an unhandled variant does not compile.
+2. **A derivation**: one table built from another, `as const satisfies Record<K, V>`. Two hand-written tables that must agree become one table and a derivation.
+3. **A module-load assertion**, beside a constant table whose invariant no type states (distinct values, a one-to-one map). It fails on every boot and every test run: `if (new Set(Object.values(STATUS_COLOUR)).size !== 4) throw new Error("two statuses share a colour");`
+4. **An integration test** for every use case, through its runtime's entry point (Article V): its success path and each domain-error variant.
+5. **A unit test** of a core decision only when its cases outnumber what integration can enumerate: a fast-check property (property tests module) or a table of boundary values.
 
-```ts
-// @ts-expect-error: a pending payment has no paid_at
-const bad: Payment = { paid_at: now, status: "pending" };
-```
+### Name the bug before the test
 
-If someone loosens the type, the expected error disappears and `tsc` fails, under any runner. vitest packages may add `expectTypeOf` for positive type assertions.
+Before writing a test, name the bug it catches. When code containing that bug would not compile, or a derivation makes it unwritable, write rung 1 or 2 instead. A test that restates the formula or literal it checks catches nothing: pin the design value (`expect(signup_fee()).toBe(30)`), not the formula (`toBe(BASE_FEE * 3 + DEPOSIT)`).
 
-Test pyramid: many unit tests on the core, few integration tests on the shell against a real Postgres and RabbitMQ in containers, almost nothing in between.
+Rungs 1 to 4 are the check that "leave one small test" rules (ponytail, tdd) ask for: a branch the type makes unrepresentable, an exhaustive switch, or the use case's integration test already counts.
+
+A type change is proven by a positive call whose result is asserted. A refusal the type enforces is held by review, not by a `@ts-expect-error` test; name those refusals in the PR body.
+
+### Integration tests follow user intent
+
+- The name states what a user does and gets: "a member joining with an expired invite sees the expiry page".
+- Assertions read only what that user or the next request observes (the response, the rendered text, a row read back through the API), never which internal function ran. Each assertion discriminates: a green test may assert nothing (`testing.md` in the global wiki).
+- Everything the app owns runs for real. Databases run in the test process: PGlite, `mongodb-memory-server`, SQLite when production uses SQLite. A container only for what the in-process engine lacks: locks and concurrency (PGlite is single-connection), extensions, the message broker. A hand-written in-memory repository is a mock, not an integration layer.
+- A fake only for what the app neither owns nor can run (a third-party HTTP API, DNS, the clock), passed into the factory, the happy path by default.
+- Coverage is a report, not a gate. Code no integration test reaches is a use case missing its test (write it) or dead code (delete it); a unit test is not the fix. An infrastructure-fault branch (timeout, dropped connection) is reached through an injected failing dependency.
+
+Test shape: types and derivations first, an integration test for every use case, unit tests only for combinatorial core decisions, nothing in between.

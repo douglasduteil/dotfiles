@@ -69,12 +69,9 @@ codebases' repository layer; Jev calibration 0.19 against per-getter tests).
 
 ## Prove a type change by using the API (user, 2026-11-12)
 
-Show a widened or new type works with a positive call whose result is
-asserted (record the action, read back the row), not with `@ts-expect-error`
-compile-error checks. The compiler proves the call type-checks; the assertion
-proves it does the right thing. A refusal the types enforce (wrong context,
-`db` instead of `tx`) is no longer proven by a test; review catches any
-loosening. Name those refusals in the PR body when deleting such checks.
+Folded into the `x-ts-constitution` skill, Article VII (v2.6): construction
+first, name the bug before the test, no `@ts-expect-error` compile checks,
+integration tests follow user intent.
 
 ## mongodb-memory-server on NixOS (mms 11.2, mongod 8.2.6, 2026-11-04)
 

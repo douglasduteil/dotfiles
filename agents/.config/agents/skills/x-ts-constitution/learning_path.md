@@ -16,7 +16,7 @@ Exercises, each on a real module:
 - [ ] Move the core into `src/core/` with its own tsconfig (`lib: ["ES2023"]`, `types: []`); list what stops compiling.
 - [ ] Take one handler and draw its sandwich: what it reads, what it decides, what it writes.
 - [ ] Replace one boolean-flag type with a union; count representable versus legal states before and after.
-- [ ] Write one negative type test proving an illegal state cannot be built.
+- [ ] Take one test file; for each assertion, name the bug it catches and move it up a rung (type, derivation, assertion, integration test) where one holds it.
 - [ ] Write three fast-check properties for one core decision.
 - [ ] Count your escape hatches (the ledger), then halve the number.
 - [ ] Port one small pure function to Lean and prove one property about it, for example that a discount is never negative.
