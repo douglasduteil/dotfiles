@@ -3,11 +3,11 @@
     "caveman": {
       "flake": false,
       "locked": {
-        "lastModified": 1794801912,
-        "narHash": "sha256-1X2DjYa4xqO1ZqwxdFjCmaypp0+HYncEpXaut4i9LkE=",
+        "lastModified": 1794953899,
+        "narHash": "sha256-qG7njZgc+JCg+AAVNcFmOYjWMIAy73q4BociYG+WsEw=",
         "owner": "JuliusBrussee",
         "repo": "caveman",
-        "rev": "9b243662ff98d392bc0a95b865a554583d71be75",
+        "rev": "a192894723a8f47e7f504c7b5041967ff1f18e55",
         "type": "github"
       },
       "original": {
@@ -18,11 +18,11 @@
     },
     "nixpkgs": {
       "locked": {
-        "lastModified": 1794644783,
-        "narHash": "sha256-3GnIGIy15bMduoS9RnWqKTmsJLWThla42UFtm0S7+us=",
+        "lastModified": 1794840529,
+        "narHash": "sha256-ySrWnmZB5UsZTYGHHnBjllT05O5iFjElCRS+mabtfP0=",
         "owner": "NixOS",
         "repo": "nixpkgs",
-        "rev": "5d2b81a7a3be3e2f832879028e4d60abbf58e9a0",
+        "rev": "e21fec321d73511849707a7585e4ea155ee4bf40",
         "type": "github"
       },
       "original": {
@@ -59,11 +59,11 @@
     "worktrunk": {
       "flake": false,
       "locked": {
-        "lastModified": 1794813651,
-        "narHash": "sha256-MKICE9FS9t4WQCTFOOpsiXhpU14SnPNPNsvjd1I4fI4=",
+        "lastModified": 1794991495,
+        "narHash": "sha256-XCwEovPV74TpQAnWbcAV4MVJD15TAX+hBcv8Ek578JA=",
         "owner": "max-sixty",
         "repo": "worktrunk",
-        "rev": "da19b76d11fd0d59ef2663a6dada35cef551111b",
+        "rev": "af889698fbcee2f07386ebc2f10f0dc0e64840bc",
         "type": "github"
       },
       "original": {
