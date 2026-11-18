@@ -49,3 +49,10 @@ session commits. **2026-10-09, user decision:** agents sign and push
 with `~/.ssh/github` via `git agent-commit` / `git agent-push`
 (machine-local, untracked aliases), never read the key, never change
 git config. The violation was the lie, not the key.
+
+## The eval `commit` namespace: selective commits in a shared worktree
+
+`commit.draft()` in eval (JS/Python) journals your edits and commits only those lines. Two traps:
+
+- **Globs are repo-root-relative, not cwd-relative.** With the session cwd in a subdirectory of the repo, `only("src/**")` fails (`No changed path matches src/**`); prefix the repo-relative path. (2026-11-18.)
+- **A prior session's uncommitted edits are not attributed.** They appear under Review as "unrecorded" or "pre-existing" and are left out of the preselection; `take("**")` brings them in. Resuming uncommitted work means reading Review, not trusting the preselection. (2026-11-18.)

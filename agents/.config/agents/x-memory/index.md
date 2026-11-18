@@ -21,7 +21,7 @@ of them is listed below.
 - [x-memory CLI usage](x-memory-tool.md) — before any memory lookup: the four tiers, lookup order, and what an empty result does not prove.
 - [Testing preferences](testing.md) — jest CPU/worker cap, mongodb-memory-server on NixOS; before running any jest-backed test command, and before writing a test for a type change (no `@ts-expect-error` checks).
 - [npm preferences / quirks](npm.md) — allowScripts advisory-only status, before relying on npm's script-approval mechanism.
-- [Agent commits](agent_commits.md) — before a fork commits, or when a commit's author or signature looks off.
+- [Agent commits](agent_commits.md) — before a fork commits, when a commit's author or signature looks off, or when using the eval `commit` namespace.
 - [Git / PR workflow preferences](git_workflow.md) — before naming a branch, committing, or opening a PR; includes the `wt` (worktrunk) worktree routing.
 - [Guard config edits: tmp-script procedure](guard_config_edits.md) — the moment a guard blocks a config edit or any command naming a guarded path; also before proposing to verify such a file.
 - [DeepSeek aliases on OpenRouter](deepseek_aliases.md) — before picking a cheap/fast model tier for agents or subagents.
@@ -31,6 +31,7 @@ of them is listed below.
 - [Session cost: Pro windows, statusline signals, context levers](session_cost.md) — before designing cost/usage notifications, trimming agent context, or when a session is getting expensive.
 - [opencode plugin API version gotchas](opencode_plugins.md) — before writing or wiring any opencode plugin or hook.
 - [Browser rendering performance](web_perf.md) — before measuring page CPU, blaming compositing, or debugging Canvas 2D artifacts.
+- [Browser screens](browser_screens.md) — before writing, debugging or proving a `requestAnimationFrame` screen: frame-loop death, an entity added mid-state, and the harness that lives outside the repo.
 - [Nix packaging](nix_packaging.md) — only when packaging a Go binary via `buildGoModule`, or pinning an external binary into a flake profile.
 - [Shell gotchas](shell_gotchas.md) — before writing separators or `=`-prefixed words in a command that may run under zsh.
 - [HDMI capture from WSL2](hdmi_capture_wsl.md) — before viewing another computer's screen through a USB HDMI capture card on a WSL2 machine.
