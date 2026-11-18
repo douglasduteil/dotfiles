@@ -8,6 +8,7 @@ Adopt when a repo has CI and at least one hatch to count, usually once the oxlin
    - `oxlint-disable` directives
    - `@ts-expect-error` comments
    - entries in oxlint's bulk-suppressions file
+   - `shortcut:` markers on bridges (Article VI)
 2. **Fail CI** when the total grows. Growth passes only with an explicit review note in the PR.
 3. **Snapshot the compiler config**: CI commits `tsc --showConfig` output per package and fails when it changes, so a base upgrade (`@tsconfig/*`, TypeScript itself) cannot loosen a flag silently.
 
