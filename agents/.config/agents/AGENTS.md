@@ -43,6 +43,7 @@ lookalike.
 - Fewest files, shortest diff, reuse before invention. No unrequested abstractions.
 - Skills live in one canonical place: `~/.config/agents/skills/`. Don't duplicate one, extend or reuse it.
 - Any new local skill/command/agent gets an `x-` prefix — marks it as ours vs a plugin's, not just on name collision.
+- Where an `x-` skill or a wiki page conflicts with a plugin skill (`ponytail`, `tdd`, `caveman`, mattpocock), ours wins. The repo's own config and history still win over both.
 - Load `mattpocock-skills:writing-for-agents` before writing or editing any skill file.
 
 ## User preferences
