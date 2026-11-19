@@ -8,27 +8,9 @@ Binding on every session and subagent; outranks everything below. Single source:
 
 @~/.config/agents/rules/constitution.md
 
-## Memory: four places to look
+## Memory
 
-Working knowledge lives in three wiki tiers plus a session index, not in a chat
-transcript. Check them in this order, at every topic switch, not only at session
-start:
-
-1. **Project** — `<project>/.agents/x-memory/` (gitignored): architecture, decisions, pitfalls for this repo, beside its own session index.
-2. **Global** — `~/.config/agents/x-memory/`: cross-project conventions, preferences, methodology, published with this dotfiles repo — write every page as a public blog post anyone may read.
-3. **Local** — `~/.local/share/agents/x-memory/`, this machine only, never tracked: anything carrying a secret, key fingerprint, hostname, drive letter or private repo name, routed by its own `index.md`.
-4. **Session history** — what actually happened, via the `x-memory` binary (`index|query|reject|pin --project <dir>`). It indexes Claude Code, opencode and omp sessions; the `x-memory-recall` skill goes deeper on demand. At session start the host injects both router pages plus a one-line breadcrumb; page bodies are read on demand.
-
-An `index.md` is a **router**, not a summary, at every depth — a tier's, or a
-subfolder's reached from its parent: read it, follow the single link matching the
-topic, skip the rest. The global one is public, so it lists only publicly openable
-pages. The wiki preserves judgment a transcript cannot reproduce; a session-history
-hit stays a lead until re-verified against its source.
-
-That separation is what keeps the global tier publishable.
-
-Write to a tier through the `x-memory-curate` skill, never silently: it owns
-the triggers, the classification and the draft-first rule.
+The four tiers, the lookup order, the router convention, and the `x-memory-curate` skill: see `x-memory-tool.md` in the global wiki.
 
 ### Domain modeling namespacing
 

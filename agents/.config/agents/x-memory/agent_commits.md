@@ -56,3 +56,4 @@ git config. The violation was the lie, not the key.
 
 - **Globs are repo-root-relative, not cwd-relative.** With the session cwd in a subdirectory of the repo, `only("src/**")` fails (`No changed path matches src/**`); prefix the repo-relative path. (2026-11-18.)
 - **A prior session's uncommitted edits are not attributed.** They appear under Review as "unrecorded" or "pre-existing" and are left out of the preselection; `take("**")` brings them in. Resuming uncommitted work means reading Review, not trusting the preselection. (2026-11-18.)
+- **Bash heredocs bypass the journal.** Edits through `python3 - <<'PY'` or `sed -i` land as "unrecorded" in Review; the draft cannot attribute them. Use the `edit` tool. (2026-11-18.)

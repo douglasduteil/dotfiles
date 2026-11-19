@@ -35,3 +35,4 @@ Descriptive only: how a tool behaved at a given version, found by hands-on testi
 ## Editor tooling
 
 - typescript-mcp `ts_diagnostics` can keep a stale buffer after on-disk edits: it reported 30 phantom "Duplicate identifier" errors on a 441-line file. Trust `tsc --noEmit` (2026-10-14; recurred 2026-11-12: errors reported on lines past the end of a file after an edit).
+- `xd://lsp` hover/references without a `line` argument match on line 1 and return "Symbol not found"; pass the definition's line or use `symbols` first. Diagnostics and `symbols` need no line. (2026-11-18.)
