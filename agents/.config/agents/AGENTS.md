@@ -26,6 +26,7 @@ lookalike.
 - Skills live in one canonical place: `~/.config/agents/skills/`. Don't duplicate one, extend or reuse it.
 - Any new local skill/command/agent gets an `x-` prefix — marks it as ours vs a plugin's, not just on name collision.
 - Where an `x-` skill or a wiki page conflicts with a plugin skill (`ponytail`, `tdd`, `caveman`, mattpocock), ours wins. The repo's own config and history still win over both.
+- **Proof order: types first, tests last.** Before writing a rule, list its claims and put each on the lowest rung that holds it — a union or branded id, a derivation (`as const satisfies`, `Record<Union, …>`), a schema at the boundary, a module-load assertion. Only claims no rung can express get a test, and a *unit* test is the rarest rung: written when a decision's cases outnumber what one integration test can enumerate, never for arithmetic, wiring, or a rule the type already carries. In `implement`/`tdd`, a seam is a seam only where no type, derivation, schema or assertion holds the guarantee already; a guarantee the compiler holds is never re-tested (`x-ts-constitution`, Article VII). An `??` default on a fresh field, or a branch that "cannot happen", is the tell: remove the duplicate fact rather than defend it.
 - Load `mattpocock-skills:writing-for-agents` before writing or editing any skill file.
 
 ## User preferences
