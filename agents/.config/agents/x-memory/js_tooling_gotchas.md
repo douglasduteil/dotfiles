@@ -23,6 +23,8 @@ Descriptive only: how a tool behaved at a given version, found by hands-on testi
 
 `bun <file>.html` (dev server, HMR) wraps each module; inside an import cycle the imported binding is still `null` while the module body runs. The production bundle (`bun build`) hoists and works, so a build-only smoke test misses it. Never read an imported function at module load (`el.onclick = show_menu`); wrap it (`el.onclick = () => show_menu()`). Hit in game screens, 2026-10-02 (`TypeError: … import_menu3 is null`).
 
+A second dev-server-only failure: `bun <file>.html --port` showed a resolve-error overlay ("Could not resolve: #alias/…", five errors in four files) while `bun build <file>.html` bundled in 15 ms and the built page ran (Bun 1.4.4, 2026-11-19). The overlay is a lead, not the truth: run `bun build` before believing a page is broken, and screenshot the built output served from `dist/`.
+
 ## Sentry local testing
 
 - Self-hosted compatibility is enforced by SDK major: SDK 11 needs self-hosted >= 26.4.2, SDK 10 needs >= 24.4.2 (`https://docs.sentry.io/platforms/javascript/migration/v10-to-v11/`). On an older server the newer SDK may still ship errors and static transactions, but streamed spans, span attributes set via `setAttribute`, logs and continuous profiles do not land (2026-10-30).

@@ -67,6 +67,14 @@ own test only when it encodes a decision — a promotion rule, an upsert
 conflict, a multi-row transaction, a lock. Stated 2026-10-29 (two service
 codebases' repository layer; Jev calibration 0.19 against per-getter tests).
 
+## Test size: one call shape, no scenario script (user, 2026-11-19)
+
+A 45-line test that played three rounds in a row was refused as "too long".
+What landed on rewrite: build the fixture once, drive the seam twice at most,
+and assert the outcome as one `toMatchObject({ … })` of pinned literals. A test
+whose length grows with its cases means the seam is too low — move up to the
+use-case entry point.
+
 ## Prove a type change by using the API (user, 2026-11-12)
 
 Folded into the `x-ts-constitution` skill, Article VII (v2.6): construction

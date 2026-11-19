@@ -19,6 +19,7 @@ of them is listed below.
 - [htmx](htmx.md) — before adding `hx-get` to a container, or debugging a second request or reset state after a click.
 - [Code style preferences](code_style.md) — before writing any comment, and for general conventions (alpha ordering, branch/PR shape, CI pinning, config validation, Intl for user-facing formatting) that apply across projects unless opted out.
 - [x-memory CLI usage](x-memory-tool.md) — before any memory lookup: the four tiers, lookup order, and what an empty result does not prove.
+- [Subtle rule shapes](state_and_draws.md) — before writing a rule that tracks a milestone, a best-so-far, or a random pick from a table.
 - [Testing preferences](testing.md) — jest CPU/worker cap, mongodb-memory-server on NixOS; before running any jest-backed test command, and before writing a test for a type change (no `@ts-expect-error` checks).
 - [npm preferences / quirks](npm.md) — allowScripts advisory-only status, before relying on npm's script-approval mechanism.
 - [Agent commits](agent_commits.md) — before a fork commits, when a commit's author or signature looks off, or when using the eval `commit` namespace.
