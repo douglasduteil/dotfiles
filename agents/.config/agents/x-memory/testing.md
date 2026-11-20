@@ -52,7 +52,10 @@ the duplicate rather than defend it.
 ### Where this overrides plugin skills
 
 Plugin skills set different test defaults without contradicting this page
-outright, so read each one through this list:
+outright, so read each one through this list. In omp, `skills.manualSkills`
+hides `tdd` and `surgical-patch` from the skill list (2026-11-20): these
+entries bind when one is loaded by hand, through `implement`, or in Claude
+Code, which cannot hide a single plugin skill.
 
 - `tdd`, `implement`: red is a compile error when rungs 1–3 can hold the
   claim; a failing test is the red only for rungs 4 and 5. A use case's seam
