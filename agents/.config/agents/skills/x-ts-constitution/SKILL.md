@@ -5,6 +5,7 @@ description: TypeScript constitution (proof by type) — core rules for any Type
 
 # TypeScript Constitution (Proof by Type)
 
+v2.9, 2026-11-20: the proof order moves to `testing.md` in the global wiki as the single source for every language, with named overrides of plugin skills' test defaults; Article VII keeps only the TypeScript form of each rung. The pure core is justified by compiler-enforced purity, not by mock-free tests (Article II, pure core module). Integration tests sit beside the entry point they drive (Baseline).
 v2.8, 2026-11-18: a fix follows the repo's style, and moving a repo to this constitution is its own shift PR (Scope, global wiki `git_workflow.md`); a bridge left by a shift that cannot finish in one PR is a hatch with a `shortcut:` marker, counted by the hatch ledger (Article VI). v2.7, 2026-11-18: a core function the user asked for before its use case exists keeps rung-5 boundary tests until that use case's integration test lands; a hand-written in-memory store is the port's fake until the app owns a database (Article VII). v2.6, 2026-11-18: Article VII becomes construction first: a guarantee lives on the first rung that holds it (type, derivation, module-load assertion, integration test, unit test); name the bug before writing a test; integration tests follow user intent through each runtime's entry point (new Article V column), with databases in process and fakes only for what the app does not own; tautologies and `@ts-expect-error` compile checks go. Article VI: a test guarding a hatch points at the hatch. v2.5, 2026-11-16: the Bun baseline moves to bun 1.4.4 and `@tsconfig/bun` 1.0.11: the tsconfig is one line, and `bun check` and `bun fmt` replace the separate tsc and Prettier steps. v2.4, 2026-10-29: body split into this file (the rules) and `references/` (rationale, worked examples, logging detail, tooling detail); no rule changed. v2.3, 2026-10-28: types derive from the code (`as const`, `ReturnType`, `typeof`) over hand-written `type` or `interface` declarations of the same shape (Article III §6). v2.2, 2026-10-26: error events carry the context to rebuild what happened; fields take OpenTelemetry registry names (Article V). v2.1, 2026-10-21: discriminants and log events name a precise state (Article III §3, Article V). v2, 2026-10-19: split into core, baseline and opt-in modules. v1 (2026-10-14) applied everything at once; no repo had adopted it.
 
 ## Scope
@@ -33,7 +34,7 @@ TypeScript's checker is unsound by design. This constitution makes the unsound s
 - **tsconfig**: on Bun the whole file is one line, `{ "extends": "@tsconfig/bun/tsconfig.json" }`, with `@tsconfig/bun` 1.0.11 or newer and `@types/bun` in `devDependencies` (the base sets `types: ["bun"]`); Node takes `@tsconfig/node-lts` plus `@tsconfig/node-ts`, Vite `@tsconfig/vite-react`. More strictness comes from the strict tsconfig module.
 - **Naming**: `snake_case` wherever a name is chosen: files and directories, values and functions. Types, interfaces and classes stay PascalCase. Object keys alpha-ordered after the discriminant.
 - **Formatting and checking**: on Bun 1.4.4 or newer, `bun fmt` (Prettier-compatible, settings in `[fmt]` of `bunfig.toml`, `sortImports` for import order) and `bun check` (type-checks the nearest `tsconfig.json` on every core). On Node and Vite, Prettier's default config in `package.json` (not `.prettierrc`) with `prettier-plugin-organize-imports`.
-- **Tests**: `*.test.ts` next to the source it covers; `bun test` on Bun, vitest on Node and Vite. Assert the whole result (`expect(verdict).toEqual(ok(…))`, `toMatchObject`), never `verdict.ok && verdict.value`: the `&&` hides the discriminant. Fix leftovers in files you touch.
+- **Tests**: `*.test.ts` next to the code it drives: an integration test beside its entry point (route handler, `main`, page, message handler), a rung-5 test beside its core decision; `bun test` on Bun, vitest on Node and Vite. Assert the whole result (`expect(verdict).toEqual(ok(…))`, `toMatchObject`), never `verdict.ok && verdict.value`: the `&&` hides the discriminant. Fix leftovers in files you touch.
 - **Module resolution**: `package.json#imports` and `#exports` over `../../` traversal; add an `imports` key once a path needs `../../../`.
 
 Version-sensitive detail behind these bullets (tool breakage, `*` target expansion, `rootDir`/TS2210): [references/tooling.md](references/tooling.md).
@@ -48,7 +49,7 @@ The core receives values and returns decisions as data. The shell gathers inputs
 
 ```mermaid
 flowchart LR
-  G["1. Gather (shell, impure)<br/>parse request, read DB, clock, config"] --> D["2. Decide (core)<br/>pure, sync, total; tested without mocks"]
+  G["1. Gather (shell, impure)<br/>parse request, read DB, clock, config"] --> D["2. Decide (core)<br/>pure, sync, total"]
   D --> E["3. Execute (shell, impure)<br/>run commands, write, respond, map errors"]
   D -. "need more data" .-> G
 ```
@@ -60,7 +61,7 @@ flowchart LR
 3. Returns data describing what should happen: a discriminated union of outcomes or commands.
 4. Imports only other core modules and pure libraries (zod, ts-pattern).
 5. No classes: plain data and functions.
-6. A test of the core needs no mock. Needing one is a violation signal.
+6. Calling the core never needs a mock. Needing one means an effect leaked into the core.
 
 The pure core module makes the compiler enforce rules 1, 2 and 4.
 
@@ -261,28 +262,12 @@ A test that exists because a hatch dropped information (an `as`, a `Record<strin
 
 ## Article VII — Construction first; integration tests prove what users get
 
-A guarantee lives on the first rung that holds it:
+The proof order lives in `testing.md` in the global wiki: the five rungs, naming the bug before the test, the integration-test rules, and how they override plugin skills' test defaults. Read it before writing, planning or reviewing a test. In TypeScript the rungs take these forms:
 
-1. **The type**: a union, a brand, `Record<Union, …>`, an exhaustive switch. A missing key or an unhandled variant does not compile.
-2. **A derivation**: one table built from another, `as const satisfies Record<K, V>`. Two hand-written tables that must agree become one table and a derivation.
-3. **A module-load assertion**, beside a constant table whose invariant no type states (distinct values, a one-to-one map). It fails on every boot and every test run: `if (new Set(Object.values(STATUS_COLOUR)).size !== 4) throw new Error("two statuses share a colour");`
-4. **An integration test** for every use case, through its runtime's entry point (Article V): its success path and each domain-error variant.
-5. **A unit test** of a core decision only when its cases outnumber what integration can enumerate: a fast-check property (property tests module) or a table of boundary values.
-
-### Name the bug before the test
-
-Before writing a test, name the bug it catches. When code containing that bug would not compile, or a derivation makes it unwritable, write rung 1 or 2 instead. A test that restates the formula or literal it checks catches nothing: pin the design value (`expect(signup_fee()).toBe(30)`), not the formula (`toBe(BASE_FEE * 3 + DEPOSIT)`).
-
-Rungs 1 to 4 are the check that "leave one small test" rules (ponytail, tdd) ask for: a branch the type makes unrepresentable, an exhaustive switch, or the use case's integration test already counts.
+1. **The type**: a union, a brand, a zod schema at the boundary, `Record<Union, …>`, an exhaustive switch reaching `assert_never`.
+2. **A derivation**: `as const satisfies Record<K, V>`, `ReturnType<typeof f>`, `z.infer<typeof S>`.
+3. **A module-load assertion**: `if (new Set(Object.values(STATUS_COLOUR)).size !== 4) throw new Error("two statuses share a colour");`
+4. **An integration test**: through the entry point in Article V's last column. Databases in process: PGlite, `mongodb-memory-server`, SQLite when production uses SQLite; a container for locks and concurrency (PGlite is single-connection), extensions and the message broker.
+5. **A unit test**: a fast-check property (property tests module) or a table of boundary values.
 
 A type change is proven by a positive call whose result is asserted. A refusal the type enforces is held by review, not by a `@ts-expect-error` test; name those refusals in the PR body.
-
-### Integration tests follow user intent
-
-- The name states what a user does and gets: "a member joining with an expired invite sees the expiry page".
-- Assertions read only what that user or the next request observes (the response, the rendered text, a row read back through the API), never which internal function ran. Each assertion discriminates: a green test may assert nothing (`testing.md` in the global wiki).
-- Everything the app owns runs for real. Databases run in the test process: PGlite, `mongodb-memory-server`, SQLite when production uses SQLite. A container only for what the in-process engine lacks: locks and concurrency (PGlite is single-connection), extensions, the message broker. A hand-written in-memory store is the port's fake only while the app owns no database; once one exists, it is a mock and the test runs on the real engine.
-- A fake only for what the app neither owns nor can run (a third-party HTTP API, DNS, the clock), passed into the factory, the happy path by default.
-- Coverage is a report, not a gate. Code no integration test reaches is a use case missing its test (write it) or dead code (delete it); a unit test is not the fix. A core function the user asked for before its use case exists is neither: it keeps rung-5 boundary tests until that use case's integration test lands, then they go. An infrastructure-fault branch (timeout, dropped connection) is reached through an injected failing dependency.
-
-Test shape: types and derivations first, an integration test for every use case, unit tests only for combinatorial core decisions, nothing in between.

@@ -1,6 +1,6 @@
 # Module: pure core
 
-Adopt when a repo has domain decisions worth testing without mocks (Article II): typically a new repo, or one module being retrofitted. Moving code into `src/core/` is the adoption step, one decision at a time.
+Adopt when a repo has domain decisions whose purity is worth having the compiler enforce (Article II): typically a new repo, or one module being retrofitted. Moving code into `src/core/` is the adoption step, one decision at a time.
 
 ## Steps
 

@@ -21,12 +21,12 @@ lookalike.
 
 ## Workflow
 
-- Every wiki topic (branch naming, commit/PR shape, jest worker cap, npm allowScripts, Bun/TS conventions, code-style ordering, x-memory reindex): handled by the `x-conventions` skill — a plain `index.md` pointer read once at session start proved unreliable, tested empirically (`.agents/x-research/1-model-capability-vs-framing.md`, `2-generalize-to-whole-wiki.md`).
+- Every wiki topic (branch naming, commit/PR shape, test proof order and jest worker cap, npm allowScripts, Bun/TS conventions, code-style ordering, x-memory reindex): handled by the `x-conventions` skill — a plain `index.md` pointer read once at session start proved unreliable, tested empirically (`.agents/x-research/1-model-capability-vs-framing.md`, `2-generalize-to-whole-wiki.md`).
 - Fewest files, shortest diff, reuse before invention. No unrequested abstractions.
 - Skills live in one canonical place: `~/.config/agents/skills/`. Don't duplicate one, extend or reuse it.
 - Any new local skill/command/agent gets an `x-` prefix — marks it as ours vs a plugin's, not just on name collision.
 - Where an `x-` skill or a wiki page conflicts with a plugin skill (`ponytail`, `tdd`, `caveman`, mattpocock), ours wins. The repo's own config and history still win over both.
-- **Proof order: types first, tests last.** Before writing a rule, list its claims and put each on the lowest rung that holds it — a union or branded id, a derivation (`as const satisfies`, `Record<Union, …>`), a schema at the boundary, a module-load assertion. Only claims no rung can express get a test, and a *unit* test is the rarest rung: written when a decision's cases outnumber what one integration test can enumerate, never for arithmetic, wiring, or a rule the type already carries. In `implement`/`tdd`, a seam is a seam only where no type, derivation, schema or assertion holds the guarantee already; a guarantee the compiler holds is never re-tested (`x-ts-constitution`, Article VII). An `??` default on a fresh field, or a branch that "cannot happen", is the tell: remove the duplicate fact rather than defend it.
+- **Proof order: types first, tests last.** Each claim goes on the first rung that holds it, and a *unit* test is the rarest rung. The ladder lives in `testing.md` (global wiki): read it before writing, planning or reviewing a test, and whenever `tdd`, `implement`, `diagnosing-bugs`, `codebase-design`, `surgical-patch` or `ponytail` asks for one; it overrides their test defaults by name.
 - Load `mattpocock-skills:writing-for-agents` before writing or editing any skill file.
 
 ## User preferences

@@ -55,8 +55,9 @@ path needs `../../../`.
 - Prettier default config on Node and Vite, declared in `package.json` (not
   `.prettierrc`), with `prettier-plugin-organize-imports` (silent no-op on
   TS 7.0: see `js_tooling_gotchas.md`).
-- `*.test.ts` next to the source it covers; `bun test` on Bun, vitest on Node
-  and Vite.
+- `*.test.ts` next to the code it drives: an integration test beside its
+  entry point, a rung-5 test beside its core decision; `bun test` on Bun,
+  vitest on Node and Vite.
 - Assert the whole result: `expect(verdict).toEqual(ok(…))` or
   `toMatchObject({ ok: false, error: { … } })`, never
   `verdict.ok && verdict.value`: the `&&` hides the discriminant and compares

@@ -1,5 +1,81 @@
 # Testing preferences
 
+## Proof order: types first, tests last (user, 2026-11-19)
+
+Single source for every language; `AGENTS.md` and `x-ts-constitution`
+Article VII point here. Before writing a rule or a test, list its claims and
+put each on the first rung that holds it:
+
+1. **A type**: a union, a branded id, a schema that parses at the boundary,
+   an exhaustive switch. Code containing the bug does not compile.
+2. **A derivation**: one table built from another. Two hand-written tables
+   that must agree become one table and a derivation.
+3. **A module-load assertion** beside a constant table whose invariant no
+   type states (distinct values, a one-to-one map). It fails on every boot
+   and every test run.
+4. **An integration test** per use case, through its runtime's entry point
+   (request handler, CLI `main`, rendered page, message handler): its success
+   path and each domain-error variant.
+5. **A unit test** of a decision only when its cases outnumber what one
+   integration test can enumerate: a property or a table of boundary values.
+   Arithmetic, wiring and a rule a type already carries stay on rungs 1–4.
+
+Name the bug before the test. When code containing it would not compile, or
+a derivation makes it unwritable, write rung 1 or 2. A test that restates the
+formula it checks catches nothing: pin the design value (`toBe(30)`), not the
+formula (`toBe(BASE_FEE * 3 + DEPOSIT)`). An `??` default on a fresh field,
+or a branch that "cannot happen", is the tell of a duplicated fact: remove
+the duplicate rather than defend it.
+
+### Integration tests follow user intent
+
+- The name states what a user does and gets: "a member joining with an
+  expired invite sees the expiry page".
+- Assertions read only what that user or the next request observes (the
+  response, the rendered text, a row read back through the API), never which
+  internal function ran.
+- Everything the app owns runs for real: its database in the test process
+  (PGlite, mongodb-memory-server, SQLite), a container only for what the
+  in-process engine lacks (locks, extensions, the message broker), its own
+  services across a network too. A hand-written in-memory store is the
+  port's fake only while the app owns no database; once one exists, it is a
+  mock and the test runs on the real engine.
+- A fake only for what the app neither owns nor can run (a third-party HTTP
+  API, DNS, the clock), passed into the factory, the happy path by default.
+- Coverage is a report, not a gate. Code no integration test reaches is a
+  use case missing its test (write it) or dead code (delete it); a unit test
+  is not the fix. A core function the user asked for before its use case
+  exists keeps rung-5 boundary tests until that use case's integration test
+  lands, then they go. An infrastructure-fault branch (timeout, dropped
+  connection) is reached through an injected failing dependency.
+
+### Where this overrides plugin skills
+
+Plugin skills set different test defaults without contradicting this page
+outright, so read each one through this list:
+
+- `tdd`, `implement`: red is a compile error when rungs 1–3 can hold the
+  claim; a failing test is the red only for rungs 4 and 5. A use case's seam
+  is its runtime entry point; a lower seam is a rung-5 decision. Cycles
+  follow use cases, not slices of a module.
+- `tdd` `tests.md`: assert the whole result in one `toEqual` or
+  `toMatchObject`, not one field of it.
+- `tdd` `mocking.md`, `codebase-design` `DEEPENING.md`: the app's database,
+  filesystem and its own remote services (dependency categories 2 and 3) run
+  for real. A port over something the app owns needs a second production
+  adapter; a test fake alone is not one. "Accept dependencies" is a shell
+  rule: the core receives values. Internal-seam tests are rung 5 and meet its
+  bar.
+- `diagnosing-bugs` Phase 5, `surgical-patch`: the regression proof is the
+  lowest rung that holds the fix. When a type makes the bug unwritable, that
+  type is the proof. Otherwise lift the minimised repro to the use case's
+  entry point; the low-level repro stays a throwaway loop.
+- `ponytail` "one small test or assert-based self-check": rungs 1–4 satisfy
+  it.
+- `ponytail-review`, `ponytail-audit` "missing test": check rungs 1–3
+  first; a branch a type or an exhaustive switch holds has its proof. The
+  finding is a use case with no integration test.
+
 ## Jest CPU limit
 
 Never run jest (bare or via `npm test`/`yarn test`) at full CPU/worker
@@ -77,9 +153,9 @@ use-case entry point.
 
 ## Prove a type change by using the API (user, 2026-11-12)
 
-Folded into the `x-ts-constitution` skill, Article VII (v2.6): construction
-first, name the bug before the test, no `@ts-expect-error` compile checks,
-integration tests follow user intent.
+The rule lives in `x-ts-constitution` Article VII: a positive call whose
+result is asserted. A refusal the type enforces is held by review and named
+in the PR body, never by a `@ts-expect-error` check.
 
 ## mongodb-memory-server on NixOS (mms 11.2, mongod 8.2.6, 2026-11-04)
 
