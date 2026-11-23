@@ -21,6 +21,23 @@ Tradeoffs accepted with that choice:
 - Pro tier buys nothing for location/scout work; escalate per-slice, not
   by default.
 
+## Measured price realization (2026-11-23)
+
+A 116-trial bench inside an agent harness (≈13.4k-token fixed overhead)
+separated advertised from billed price. `deal×` = realized $/M input ÷ the
+advertised endpoint price:
+
+- Unpinned `deepseek/deepseek-v4-flash` advertised $0.01456/M input on a
+  provider with 89.6% off; it realized 11–22× that, ≈$0.28–0.32/M, because
+  routing landed on a non-discounted endpoint. The factor varied per run.
+- `tencent/hy4-flash` (50% off) and `qwen/qwen3.7-flash` (list) realized
+  exactly 1.00×. A discount is an endpoint property, never a model property.
+- `~deepseek/deepseek-flash-latest` passed the locate and multi-step fix
+  cases 4/4 and the commit case 2/4 at $0.00014–$0.0019 per trial; the two
+  cheapest-per-token unpinned models failed locate.
+- Rule: budget from reported `cost.total` and the routed provider, not the
+  catalog headline. `deal× ≈ 1` is the only evidence a discount is real.
+
 ## Routing an edit to the cheap tier (omp 18.18.9, verified 2026-11-13)
 
 Descriptive.
