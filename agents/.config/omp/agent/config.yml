@@ -384,11 +384,13 @@ retry:
       - albert/deepseek-v4-flash-0731
       - anthropic/claude-haiku-5-5
 task:
+  completionProbe: false
   agentModelOverrides:
     scout: openrouter/~deepseek/deepseek-flash-latest
     cavecrew-investigator: openrouter/~deepseek/deepseek-flash-latest
 symbolPreset: unicode
 composer:
+  predictions: false
   shape: band
 setupVersion: 3
 dev:
@@ -398,3 +400,19 @@ display:
   hideToolActivity: false
 claudeResets:
   autoRedeemFable: "no"
+hideThinkingBlock: true
+skills:
+  manualSkills:
+    - investigate-first
+    - lean-build
+    - safe-refactor
+    - surgical-patch
+    - tdd
+    - verify-and-stop
+
+recap:
+  enabled: false
+
+session:
+  maxCost: 50
+  warnCost: 10
