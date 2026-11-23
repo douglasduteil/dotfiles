@@ -18,6 +18,20 @@ echo "==> nix: bumping packages/flake.lock to latest nixpkgs-unstable and applyi
 nix flake update --flake "$DOTFILES_DIR/packages"
 nix profile upgrade packages
 
+# A marketplace pinned to a directory under the nix profile outlives the
+# plugin it points at: dropping an input from packages/flake.nix removes
+# the path, while Claude Code keeps the registration. `marketplace update`
+# then fails with ENOENT and `set -e` stops the script, so prune first.
+echo "==> claude: removing marketplaces whose directory is gone"
+claude plugin marketplace list --json |
+  jq -r '.[] | select(.source == "directory") | [.name, (.path // .installLocation)] | @tsv' |
+  while IFS=$'\t' read -r name dir; do
+    dir="${dir/#\~/$HOME}"
+    [ -e "$dir" ] && continue
+    echo "    $name ($dir is gone)"
+    claude plugin marketplace remove "$name"
+  done
+
 echo "==> claude: refreshing every configured marketplace"
 claude plugin marketplace update
 

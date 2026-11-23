@@ -159,7 +159,7 @@ Then also add its `IdentityFile` line to `ssh/.ssh/config` (tracked -- commit an
 
 ## Updating
 
-`x-update` (the `bin` package, on `PATH` via `$XDG_BIN_DIR`) runs every per-machine update step in one go: bumps and applies the `packages` flake (below), then runs `claude plugin marketplace update` and `claude plugin update` for every installed plugin. Safe to rerun -- each step is itself idempotent.
+`x-update` (the `bin` package, on `PATH` via `$XDG_BIN_DIR`) runs every per-machine update step in one go: bumps and applies the `packages` flake (below), removes marketplaces whose pinned directory under the nix profile no longer exists, then runs `claude plugin marketplace update` and `claude plugin update` for every installed plugin. Safe to rerun -- each step is itself idempotent.
 
 ```sh
 x-update
