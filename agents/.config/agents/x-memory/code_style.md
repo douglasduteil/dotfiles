@@ -67,8 +67,8 @@ project explicitly opts out.
   landing, same as any other unrequested addition. An urge to explain is
   a signal to fix naming/structure first, not license to comment. The
   one exception (non-obvious why, a constraint, a workaround — nothing
-  the code itself can say): propose it caveman-compressed to the
-  tersest one-liner, and let the human approve or refuse it.
+  the code itself can say): propose it as the tersest one-liner, and let
+  the human approve or refuse it.
   Bare `//` separator lines are the exception to "zero comments": they
   stay, the user uses them for spatial awareness (2026-10-30). Strip
   only prose comments that no longer describe the code.

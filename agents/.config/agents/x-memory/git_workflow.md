@@ -70,7 +70,7 @@ Before writing any commit — "commit this", a PR's underlying commit,
 fixups, amends — invoke `/x-commit` first, every repo. It fixes the
 shape: `<gitmoji> <imperative>` subject, bold `**Problem**` /
 `**Proposal**` body written for a colleague — plain full sentences,
-one or two short sentences per section, not caveman — and atomic splits
+one or two short sentences per section, not terse fragments — and atomic splits
 when the diff mixes concerns. The body carries the why; the diff carries
 the what. GitHub renders commit and PR bodies as Markdown, so the bold
 labels survive the render; plain-text labels lose the bold in the
@@ -95,11 +95,13 @@ as the x-commit body: full sentences, calm and factual, short (user,
 does to commit bodies.
 
 Neither the PR body nor the commit body carries verification lines:
-no "Checked locally: …", no test counts, no "tests pass" (user,
-2026-10-29). CI says whether it is green; the human says what they
+no "Checked locally: …", no test counts, no "tests pass", no
+"jest suites pass (30/30)." (user, 2026-10-29; repeated 2026-11-20).
+CI says whether it is green; the human says what they
 verified, in chat. Describe the change and its reasoning only — state
 behaviour parity as an intent ("no moderator-visible behaviour
-change"), not as a test log.
+change"), not as a test log. This overrides the plugin `pr` skill's
+"passing test run" Before/After and "execution-based evidence" sections.
 
 Never mention the planning docs in a commit or PR: no proposal, slice
 ids (S1, S2…), tasks.md or handoff, not even "the proposal's S2"

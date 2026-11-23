@@ -53,9 +53,9 @@ the duplicate rather than defend it.
 
 Plugin skills set different test defaults without contradicting this page
 outright, so read each one through this list. In omp, `skills.manualSkills`
-hides `tdd` and `surgical-patch` from the skill list (2026-11-20): these
-entries bind when one is loaded by hand, through `implement`, or in Claude
-Code, which cannot hide a single plugin skill.
+hides `tdd` from the skill list (2026-11-20): these entries bind when it is
+loaded by hand, through `implement`, or in Claude Code, which cannot hide a
+single plugin skill.
 
 - `tdd`, `implement`: red is a compile error when rungs 1–3 can hold the
   claim; a failing test is the red only for rungs 4 and 5. A use case's seam
@@ -69,15 +69,10 @@ Code, which cannot hide a single plugin skill.
   adapter; a test fake alone is not one. "Accept dependencies" is a shell
   rule: the core receives values. Internal-seam tests are rung 5 and meet its
   bar.
-- `diagnosing-bugs` Phase 5, `surgical-patch`: the regression proof is the
+- `diagnosing-bugs` Phase 5: the regression proof is the
   lowest rung that holds the fix. When a type makes the bug unwritable, that
   type is the proof. Otherwise lift the minimised repro to the use case's
   entry point; the low-level repro stays a throwaway loop.
-- `ponytail` "one small test or assert-based self-check": rungs 1–4 satisfy
-  it.
-- `ponytail-review`, `ponytail-audit` "missing test": check rungs 1–3
-  first; a branch a type or an exhaustive switch holds has its proof. The
-  finding is a use case with no integration test.
 
 ## Jest CPU limit
 
@@ -159,6 +154,30 @@ use-case entry point.
 The rule lives in `x-ts-constitution` Article VII: a positive call whose
 result is asserted. A refusal the type enforces is held by review and named
 in the PR body, never by a `@ts-expect-error` check.
+
+## A refactor proves parity on a deterministic harness (2026-11-21)
+
+Extract HEAD beside the worktree (`git archive HEAD <dir> | tar -x -C "$(mktemp -d)"`, then
+symlink `node_modules`), run the seeded harness in both, and `diff` the outputs: byte-identical
+means the shape moved and the behaviour did not. Diff the default seeds after each commit and the
+full seed range before writing numbers down. Scratch folders come from `mktemp -d`; the
+`rm -rf /*` guard blocks deleting them, so leave cleanup to the user.
+
+## A review lead is a bug claim: prove it on the outcome (user, 2026-11-21)
+
+- Judge a reviewed rule by what it produces, not by how its code reads. Two copies of a rule
+  that agree on intermediate values can still disagree on the outcome (one chance rolled twice
+  halves it); a test on an id's suffix can pick the wrong entity once spawn order changes.
+- For a seeded or stochastic core: play many seeds through the real entry point, check
+  invariants on every state, round-trip persistence every few states, and compare each decided
+  chance with its observed rate within k standard deviations. Write the resolution down: at 4σ,
+  n tries resolve a drift of 4·√(p(1−p)/n).
+- Count rates on fresh random streams. A stream reseeded per area replays its draws on every
+  visit, and selection on the replayed values skews the observed rate though each roll is fair.
+- Before calling a rate a bug, find every writer of the field you count: an outcome reached by
+  two paths inflated a measured rate with no game bug behind it.
+- A gate is trusted once it fired: plant one bug per class it claims to catch in a scratch copy,
+  watch each turn it red, and record the drift it misses.
 
 ## mongodb-memory-server on NixOS (mms 11.2, mongod 8.2.6, 2026-11-04)
 

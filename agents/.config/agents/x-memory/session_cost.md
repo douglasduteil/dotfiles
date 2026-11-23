@@ -15,6 +15,11 @@
 - Explore in subagents; their context never enters the main conversation.
 - Compact at task boundaries, not mid-task. Abandoning a path → `/rewind`
   (truncates to an already-cached prefix), not `/compact`.
+- A router read at session start never accumulates. Append-only entries (dated state
+  lines, a summary per resolved ticket, a list of every file) go to a history page that
+  the router marks "never read at session start". A check caps the router's line count
+  so the habit cannot regrow it. Seen 2026-11-20: a project wiki's index plus its map
+  came to 120 KB (~30k tokens) before any work; after the move they came to ~9 KB.
 
 ## Signals
 
@@ -49,3 +54,6 @@
   absent). Test booleans with `== false`, or a cold-cache check never fires.
 - `notify-send` is absent on this WSL host; the status line falls back to a
   Windows toast through `powershell.exe` (~0.3 s per toast).
+- omp 19.0.0 (2026-11-20): `edit` refuses to CUT lines it has not displayed, so moving
+  a long block verbatim costs a full read of it. Hand large moves to a subagent so that
+  read stays out of the main context.

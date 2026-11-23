@@ -77,6 +77,10 @@ at every tier.
 - A subtopic that is itself several pages becomes a subfolder with a bare
   `index.md`: the parent router links that `index.md`, and it routes its own pages
   one line each. A bare `index.md` is a router at every depth, same rules.
+- When inbound links already point at the page, keep its path as the router and put
+  the children in a sibling folder of the same name (`run.md` + `run/`). Before the
+  split, grep `page.md#` anchors and repoint them: a file-only link check still passes
+  while every anchor silently lands on the router.
 - Routers are exempt from the line limit: one line per child by design.
 
 The agent **never writes silently**. Triggers, in priority order:

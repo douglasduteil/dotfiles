@@ -20,10 +20,10 @@ of them is listed below.
 - [Code style preferences](code_style.md) — before writing any comment, and for general conventions (alpha ordering, branch/PR shape, CI pinning, config validation, Intl for user-facing formatting) that apply across projects unless opted out.
 - [x-memory CLI usage](x-memory-tool.md) — before any memory lookup: the four tiers, lookup order, and what an empty result does not prove.
 - [Subtle rule shapes](state_and_draws.md) — before writing a rule that tracks a milestone, a best-so-far, or a random pick from a table.
-- [Testing preferences](testing.md) — proof order (types first, tests last) and where it overrides plugin skills' test defaults; before writing, planning or reviewing any test, and before running any jest-backed test command (worker cap, mongodb-memory-server on NixOS).
+- [Testing preferences](testing.md) — proof order (types first, tests last) and where it overrides plugin skills' test defaults; before writing, planning or reviewing any test, before proving a refactor changed no behaviour, before judging a review lead or a measured rate, and before running any jest-backed test command (worker cap, mongodb-memory-server on NixOS).
 - [npm preferences / quirks](npm.md) — allowScripts advisory-only status, before relying on npm's script-approval mechanism.
 - [Agent commits](agent_commits.md) — before a fork commits, when a commit's author or signature looks off, or when using the eval `commit` namespace.
-- [Git / PR workflow preferences](git_workflow.md) — before naming a branch, committing, or opening a PR; includes the `wt` (worktrunk) worktree routing.
+- [Git / PR workflow preferences](git_workflow.md) — before naming a branch, committing, or writing a commit or PR body; overrides the `pr` skill's test-run evidence sections; includes the `wt` (worktrunk) worktree routing.
 - [Guard config edits: tmp-script procedure](guard_config_edits.md) — the moment a guard blocks a config edit or any command naming a guarded path; also before proposing to verify such a file.
 - [DeepSeek aliases on OpenRouter](deepseek_aliases.md) — before picking a cheap/fast model tier for agents or subagents.
 - [Secrets: ask, never extract](secrets.md) — before reading any credential/token/config store, and the moment a task is blocked on a missing or tool-blocked credential (API token, key, password). Ask, never hunt.

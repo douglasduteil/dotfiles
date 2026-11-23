@@ -17,3 +17,7 @@ from a table.
   pick the first entries. Gate on one roll, pick on another, and test that every
   entry shows up. (2026-11-19: a shop whose items could only carry the first of four
   qualities.)
+- **One pick for every draw from a table**, over a non-empty tuple
+  (`readonly [T, ...T[]]`). An inline `TABLE[floor(v * len)] ?? fallback` invents a
+  plausible value for a missed index, and a `null` fallback can change what the rule
+  means. (2026-11-21: seven such fallbacks, `"frozen"` and `null` poles among them.)
