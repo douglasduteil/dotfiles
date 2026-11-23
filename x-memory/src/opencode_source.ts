@@ -48,7 +48,7 @@ function textFromParts(parts: unknown): string {
     .join("\n");
 }
 
-// ponytail: same tail-only cap as claude_code_source.ts, kept as a
+// shortcut: same tail-only cap as claude_code_source.ts, kept as a
 // separate literal rather than a shared constant — one number, two
 // files, not worth a module for.
 const MAX_EXTRACTED_TEXT_LENGTH = 20_000;

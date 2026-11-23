@@ -11,7 +11,7 @@ export interface QueryOptions {
 // Two-tier scope (implementation-decisions.md#two-tier-scope): a caller
 // asking about "this project" with no explicit scope gets project-scoped
 // results plus any relevant global entries, read from the two separate
-// physical files. ponytail: results are concatenated project-then-global,
+// physical files. shortcut: results are concatenated project-then-global,
 // not cross-corpus re-ranked (each file's FTS5 bm25 scores aren't
 // comparable across two separate indexes) — upgrade if that ordering
 // ever matters more than "both show up".

@@ -31,7 +31,7 @@ function textFromContent(content: unknown): string {
     .join("\n");
 }
 
-// ponytail: keeps only the tail of a very long transcript — a real
+// shortcut: keeps only the tail of a very long transcript — a real
 // recap needs the recent context most. Full-transcript retrieval or
 // LLM-synthesized compression is a future opt-in, not this seam.
 const MAX_EXTRACTED_TEXT_LENGTH = 20_000;

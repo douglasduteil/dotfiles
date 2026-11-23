@@ -40,7 +40,7 @@ function textFromParts(parts: unknown): string {
     .join("\n");
 }
 
-// ponytail: same tail-only cap as opencode_source.ts, kept as a separate
+// shortcut: same tail-only cap as opencode_source.ts, kept as a separate
 // literal rather than a shared constant — one number, two files.
 const MAX_EXTRACTED_TEXT_LENGTH = 20_000;
 

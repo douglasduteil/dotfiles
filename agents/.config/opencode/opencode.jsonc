@@ -15,8 +15,6 @@
     "paths": [
       "~/.config/agents/skills",
       "~/.config/claude/plugins/cache/claude-plugins-official/mattpocock-skills",
-      "~/.nix-profile/share/claude-plugins/caveman",
-      "~/.nix-profile/share/claude-plugins/ponytail",
       "~/.nix-profile/share/claude-plugins/worktrunk/plugins/worktrunk",
     ],
   },

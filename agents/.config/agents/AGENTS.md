@@ -22,11 +22,11 @@ lookalike.
 ## Workflow
 
 - Every wiki topic (branch naming, commit/PR shape, test proof order and jest worker cap, npm allowScripts, Bun/TS conventions, code-style ordering, x-memory reindex): handled by the `x-conventions` skill — a plain `index.md` pointer read once at session start proved unreliable, tested empirically (`.agents/x-research/1-model-capability-vs-framing.md`, `2-generalize-to-whole-wiki.md`).
-- Fewest files, shortest diff, reuse before invention. No unrequested abstractions.
+- Apply `x-lazy` (what to build) and `x-terse` (how to reply) to every response from the first turn; load each once per session. Drop one only when the user says "stop lazy" / "stop terse" / "normal mode".
 - Skills live in one canonical place: `~/.config/agents/skills/`. Don't duplicate one, extend or reuse it.
 - Any new local skill/command/agent gets an `x-` prefix — marks it as ours vs a plugin's, not just on name collision.
-- Where an `x-` skill or a wiki page conflicts with a plugin skill (`ponytail`, `tdd`, `caveman`, mattpocock), ours wins. The repo's own config and history still win over both.
-- **Proof order: types first, tests last.** Each claim goes on the first rung that holds it, and a *unit* test is the rarest rung. The ladder lives in `testing.md` (global wiki): read it before writing, planning or reviewing a test, and whenever `tdd`, `implement`, `diagnosing-bugs`, `codebase-design`, `surgical-patch` or `ponytail` asks for one; it overrides their test defaults by name.
+- Where an `x-` skill or a wiki page conflicts with a plugin skill (`tdd`, mattpocock), ours wins. The repo's own config and history still win over both.
+- **Proof order: types first, tests last.** Each claim goes on the first rung that holds it, and a *unit* test is the rarest rung. The ladder lives in `testing.md` (global wiki): read it before writing, planning or reviewing a test, and whenever `tdd`, `implement`, `diagnosing-bugs` or `codebase-design` asks for one; it overrides their test defaults by name.
 - Load `mattpocock-skills:writing-for-agents` before writing or editing any skill file.
 
 ## User preferences

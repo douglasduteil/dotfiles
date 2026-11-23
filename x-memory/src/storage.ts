@@ -165,7 +165,7 @@ export function openStore(dbPath: string): Store {
 
       // Ranks with SQLite's own FTS5 bm25() directly, combined with the
       // reducer's recency curve — the single source of relevance for
-      // real, stored data (see the ponytail note on reducer.ts's naive
+      // real, stored data (see the shortcut note on reducer.ts's naive
       // relevance(), which stays only for the in-memory/no-storage path).
       const rows = db
         .query<Row & { rank: number; snippet: string }, (string | number)[]>(`

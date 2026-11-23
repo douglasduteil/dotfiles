@@ -1,14 +1,12 @@
 {
   description = "nixos-wsl shared package profile";
 
-  # Claude Code plugins absent from claude-plugins-official, pinned here
-  # instead of followed live; each repo is its own marketplace.
-  inputs.caveman = { url = "github:JuliusBrussee/caveman"; flake = false; };
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-  inputs.ponytail = { url = "github:DietrichGebert/ponytail"; flake = false; };
+  # Claude Code plugin absent from claude-plugins-official, pinned here
+  # instead of followed live; the repo is its own marketplace.
   inputs.worktrunk = { url = "github:max-sixty/worktrunk"; flake = false; };
 
-  outputs = { self, caveman, nixpkgs, ponytail, worktrunk }:
+  outputs = { self, nixpkgs, worktrunk }:
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs {
@@ -45,8 +43,6 @@
           claude-code
           # Stable ~/.nix-profile path for `claude plugin marketplace add`.
           (pkgs.linkFarm "claude-plugins" [
-            { name = "share/claude-plugins/caveman"; path = caveman; }
-            { name = "share/claude-plugins/ponytail"; path = ponytail; }
             { name = "share/claude-plugins/worktrunk"; path = worktrunk; }
           ])
           delta

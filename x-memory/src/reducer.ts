@@ -96,7 +96,7 @@ export function withStale(entry: Entry, clock: number): QueryResultEntry {
   };
 }
 
-// ponytail: naive substring-count relevance + linear recency decay, not
+// shortcut: naive substring-count relevance + linear recency decay, not
 // FTS5. Only used by the no-storage pure-reducer path (in-memory tests,
 // fixtures). A real query() shell ranks with SQLite's own FTS5 bm25()
 // instead — see recencyBoost, exported for exactly that combination.
