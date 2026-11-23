@@ -5,6 +5,8 @@ description: TypeScript constitution (proof by type) — core rules for any Type
 
 # TypeScript Constitution (Proof by Type)
 
+v2.11, 2026-11-21: find a rule's copies before adding one (pasted blocks, names exported twice) (Article II); a closed `z.record(z.enum(…))` makes a lookup total where a branded key does not (Article III §2); an id carries no data (Article III §5).
+v2.10, 2026-11-21: a brand proves a value's kind, never its membership in a collection; membership travels as the found value or a justified container. A number brand only where its one clamping constructor removes clamps downstream (Article III §2).
 v2.9, 2026-11-20: the proof order moves to `testing.md` in the global wiki as the single source for every language, with named overrides of plugin skills' test defaults; Article VII keeps only the TypeScript form of each rung. The pure core is justified by compiler-enforced purity, not by mock-free tests (Article II, pure core module). Integration tests sit beside the entry point they drive (Baseline).
 v2.8, 2026-11-18: a fix follows the repo's style, and moving a repo to this constitution is its own shift PR (Scope, global wiki `git_workflow.md`); a bridge left by a shift that cannot finish in one PR is a hatch with a `shortcut:` marker, counted by the hatch ledger (Article VI). v2.7, 2026-11-18: a core function the user asked for before its use case exists keeps rung-5 boundary tests until that use case's integration test lands; a hand-written in-memory store is the port's fake until the app owns a database (Article VII). v2.6, 2026-11-18: Article VII becomes construction first: a guarantee lives on the first rung that holds it (type, derivation, module-load assertion, integration test, unit test); name the bug before writing a test; integration tests follow user intent through each runtime's entry point (new Article V column), with databases in process and fakes only for what the app does not own; tautologies and `@ts-expect-error` compile checks go. Article VI: a test guarding a hatch points at the hatch. v2.5, 2026-11-16: the Bun baseline moves to bun 1.4.4 and `@tsconfig/bun` 1.0.11: the tsconfig is one line, and `bun check` and `bun fmt` replace the separate tsc and Prettier steps. v2.4, 2026-10-29: body split into this file (the rules) and `references/` (rationale, worked examples, logging detail, tooling detail); no rule changed. v2.3, 2026-10-28: types derive from the code (`as const`, `ReturnType`, `typeof`) over hand-written `type` or `interface` declarations of the same shape (Article III §6). v2.2, 2026-10-26: error events carry the context to rebuild what happened; fields take OpenTelemetry registry names (Article V). v2.1, 2026-10-21: discriminants and log events name a precise state (Article III §3, Article V). v2, 2026-10-19: split into core, baseline and opt-in modules. v1 (2026-10-14) applied everything at once; no repo had adopted it.
 
@@ -79,6 +81,8 @@ A transaction that reads with `SELECT ... FOR UPDATE`, decides, then writes is s
 
 Reports, statistics, dashboards and access gates call the same core decision function. A second implementation, even a "read-only" one, drifts from the first. When performance demands a second implementation, such as a SQL aggregation, the core function becomes its oracle (property tests module).
 
+Find the copies before adding a rule: `bunx jscpd --min-tokens 45` for pasted blocks, and exported names declared in two modules for rules rewritten twice. On 2026-11-21 two copies that had drifted each held a bug: an item-loss chance rolled twice, and a "regular" read off an id suffix.
+
 Worked sandwich code: [references/examples.md](references/examples.md).
 
 ## Article III — Types as propositions: illegal states do not compile
@@ -107,6 +111,12 @@ Conventions:
 
 A zod brand is forgeable without a cast: any module can declare `z.object({...}).brand<"Principal">()` and its `.parse` output type-checks as the real one. A `unique symbol` brand cannot be built outside its module without an `as`, which review (and the lint, when active) flags. Use a zod brand only for shape claims.
 
+A brand proves a value's kind, never its membership: an id looked up in a map or a state it did not come from fails the same with or without one. Pass the found value instead of its key; where a key must travel, prove membership with a justified container (Noonan, [Ghosts of Departed Proofs](https://kataskeue.com/gdp.pdf); in TypeScript, [gdp-ts](https://github.com/rauchg/gdp-ts) `name()`).
+
+Arithmetic drops a number brand (`a - b` is `number`), so brand a number only when its one constructor clamps and removes the clamps downstream: a 0–100 gauge, not HP or damage.
+
+A brand on a record key still reads `T | undefined` under `noUncheckedIndexedAccess`; a closed `z.record(z.enum(KEYS), …)` makes the lookup total. Close the set when the code knows it; brand only an open set (checked on tsc 7.0.2, 2026-11-21).
+
 ### 3. Unions over flags
 
 ```ts
@@ -134,6 +144,8 @@ Encode counts in the type only when the decision branches on them: non-empty is 
 ### 5. Identifiers are canonical brands
 
 Any value used as a map key, in an equality check or as an identity (domain, email, SIREN) has exactly one parser, and that parser normalizes it: trim, lowercase where the domain allows, drop a trailing dot from domain names. Equality on an unnormalized string is a hidden bug.
+
+An id identifies; it carries no data. A field read off an id (`split("#")`, `endsWith("_0")`) is a parse outside the boundary: store the field, and read it off the id only in the parser of an older save.
 
 Normalization is domain logic and can be wrong. Domain names need IDNA handling, not just lowercasing; an email's local part is technically case-sensitive. Decide each rule once, in the parser. When the original form matters for display or audit, store `{ canonical, raw }` and compare only on `canonical`.
 
