@@ -360,34 +360,73 @@ theme:
   light: light
 modelRoleStorage: project
 modelRoles:
+  advisor: albert/gpt-oss-120b
+  alt-gemma: albert/gemma-4-31b-it
+  alt-gptoss: albert/gpt-oss-120b
+  alt-hy4: openrouter/tencent/hy4-flash
   default: anthropic/claude-opus-5-5
-  smol: albert/deepseek-v4-flash-0731
+  smol: "albert/gemma-4-31b-it,openrouter/tencent/hy4-flash,openrouter/~deepseek/deepseek-flash-latest"
   slow: anthropic/claude-opus-5-5:auto
   plan: anthropic/claude-opus-5-5:auto
   tiny: albert/gemma-4-31b-it
-  commit: albert/deepseek-v4-flash-0731
-  memory: albert/gpt-oss-120b
+  commit: albert/gemma-4-31b-it
+  memory: albert/gemma-4-31b-it
+cycleOrder:
+  - smol
+  - default
+  - alt-hy4
+  - alt-gemma
+  - alt-gptoss
+  - slow
+modelTags:
+  alt-gemma:
+    name: Gemma 31B
+  alt-gptoss:
+    name: GPT-OSS 120B
+  alt-hy4:
+    name: Hy4 Flash
 retry:
   rateLimitWalksChain: true
   fallbackChains:
+    advisor:
+      - openrouter/tencent/hy4-flash
+      - openrouter/~deepseek/deepseek-flash-latest
+    alt-gemma:
+      - openrouter/tencent/hy4-flash
+      - openrouter/~deepseek/deepseek-flash-latest
+    alt-gptoss:
+      - openrouter/tencent/hy4-flash
+      - openrouter/~deepseek/deepseek-flash-latest
+    alt-hy4:
+      - openrouter/~deepseek/deepseek-flash-latest
+      - albert/gemma-4-31b-it
     commit:
       - albert/deepseek-v4-flash-0731
       - openrouter/~deepseek/deepseek-flash-latest
-    memory:
-      - albert/deepseek-v4-flash-0731
+    default:
+      - openrouter/tencent/hy4-flash
       - albert/gemma-4-31b-it
-      - anthropic/claude-haiku-5-5
+    memory:
+      - openrouter/tencent/hy4-flash
+      - openrouter/~deepseek/deepseek-flash-latest
+    scout:
+      - openrouter/tencent/hy4-flash
+      - openrouter/~deepseek/deepseek-flash-latest
     smol:
       - albert/deepseek-v4-flash-0731
+      - openrouter/tencent/hy4-flash
       - openrouter/~deepseek/deepseek-flash-latest
     tiny:
       - albert/deepseek-v4-flash-0731
-      - anthropic/claude-haiku-5-5
+      - openrouter/~deepseek/deepseek-flash-latest
+advisor:
+  enabled: true
 task:
   completionProbe: false
   agentModelOverrides:
-    scout: openrouter/~deepseek/deepseek-flash-latest
-    cavecrew-investigator: openrouter/~deepseek/deepseek-flash-latest
+    scout: albert/gemma-4-31b-it
+    cavecrew-investigator: albert/gemma-4-31b-it
+  disabledAgents: []
 symbolPreset: unicode
 composer:
   predictions: false
@@ -409,10 +448,8 @@ skills:
     - surgical-patch
     - tdd
     - verify-and-stop
-
 recap:
   enabled: false
-
 session:
   maxCost: 50
   warnCost: 10
