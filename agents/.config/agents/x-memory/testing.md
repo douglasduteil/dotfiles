@@ -163,6 +163,8 @@ means the shape moved and the behaviour did not. Diff the default seeds after ea
 full seed range before writing numbers down. Scratch folders come from `mktemp -d`; the
 `rm -rf /*` guard blocks deleting them, so leave cleanup to the user.
 
+For a screen refactor, add the real page to the parity check: after identical harness output, navigate a WebView to the changed route, drive it through the affected state, screenshot it, and assert no error overlay. A module split passed types, unit tests and byte-identical seeded output, then crashed at load because a synchronous constant read from an async module handed back null (2026-11-24). Done when the page reaches the state after the changed module and the screenshot shows the intended screen.
+
 ## A review lead is a bug claim: prove it on the outcome (user, 2026-11-21)
 
 - Judge a reviewed rule by what it produces, not by how its code reads. Two copies of a rule

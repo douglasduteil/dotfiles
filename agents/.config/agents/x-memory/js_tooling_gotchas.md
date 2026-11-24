@@ -23,6 +23,8 @@ Descriptive only: how a tool behaved at a given version, found by hands-on testi
 
 `bun <file>.html` (dev server, HMR) wraps each module; inside an import cycle the imported binding is still `null` while the module body runs. The production bundle (`bun build`) hoists and works, so a build-only smoke test misses it. Never read an imported function at module load (`el.onclick = show_menu`); wrap it (`el.onclick = () => show_menu()`). Hit in game screens, 2026-10-02 (`TypeError: … import_menu3 is null`).
 
+- The same dev bundle can give an importer a null namespace for a module whose own body has a top-level `await`, even without an import cycle, when the importer reads one of its bindings at module load (Bun 1.4.4, 2026-11-24). Symptom: `TypeError: Cannot read properties of null (reading '<CONSTANT>')` from a module-level constant computed from the async module's export. Call-time reads are fine. Put synchronous constants in a leaf module with no top-level await; leave the awaited value in its own module.
+
 A second dev-server-only failure: `bun <file>.html --port` showed a resolve-error overlay ("Could not resolve: #alias/…", five errors in four files) while `bun build <file>.html` bundled in 15 ms and the built page ran (Bun 1.4.4, 2026-11-19). The overlay is a lead, not the truth: run `bun build` before believing a page is broken, and screenshot the built output served from `dist/`.
 
 ## Sentry local testing
