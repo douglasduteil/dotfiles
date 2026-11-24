@@ -32,6 +32,12 @@ A rejection like "not an additional X" can target the name or the whole
 idea. Ask which before rewriting; picking one cost a wrong commit and a
 force-push (2026-11-12).
 
+## Digest owner words before build dispatch
+
+Treat a design message from the owner as an input to ingest, not a note for later. Capture it verbatim, cut it into claims, route each to a ticket or decision page, and record any decisions made since the message. Done when every claim has a home and every answer is on its decision page before a delegate edits code on that design.
+
+This keeps each code-writing brief authoritative: it can quote the recorded decision instead of re-interpreting the chat, and a later session finds the reason beside the rule (2026-11-24).
+
 ## Token economy is symmetric
 
 Applies to every delegate/subagent dispatch, not just chat. Input: name
