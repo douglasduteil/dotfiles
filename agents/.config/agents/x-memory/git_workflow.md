@@ -76,6 +76,13 @@ the what. GitHub renders commit and PR bodies as Markdown, so the bold
 labels survive the render; plain-text labels lose the bold in the
 commit/PR view.
 
+**A file-level split can leave a body describing code it does not
+carry.** Two changes that share a file cannot be separated with `git add
+<paths>`: whichever commit takes the file carries the other's lines, so
+the earlier body claims work absent from its diff. Write the body from
+the staged diff, never from a ticket's or proposal's "built" section,
+which describes the whole feature rather than the slice. (2026-11-24.)
+
 ## Single-commit PR: title/body mirror the commit
 
 When a PR carries exactly one commit, the PR title and body should

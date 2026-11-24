@@ -58,3 +58,16 @@ git config. The violation was the lie, not the key.
 - **A prior session's uncommitted edits are not attributed.** They appear under Review as "unrecorded" or "pre-existing" and are left out of the preselection; `take("**")` brings them in. Resuming uncommitted work means reading Review, not trusting the preselection. (2026-11-18.)
 - **Bash heredocs bypass the journal.** Edits through `python3 - <<'PY'` or `sed -i` land as "unrecorded" in Review; the draft cannot attribute them. Use the `edit` tool. (2026-11-18.)
 - **Command output lands under Review or is left out.** A file a command rewrites (a bench page through `--write`) and a formatter pass over lines you edited in an earlier call are not journaled: `take()` them before committing, or the commit lands incomplete or unformatted. (2026-11-21.)
+
+## When the namespace is moot
+
+`commit.draft()` exists to keep other agents' staged work out of your
+commit; its `commit()` is a second tool call, and some harnesses gate it
+behind approval. When nothing another agent or session is editing sits in
+the tree — nothing of theirs staged, dirty or untracked — `git add
+<exact paths>` + `git commit` builds the same commit without the
+round-trip; the namespace buys attribution, not permission. The moment a
+path you did not write is staged or dirty, go back to the namespace and
+its `only()`/unit `take()`. Signing and pushing stay with the `git
+agent-commit` / `git agent-push` aliases, as the 2026-10-09 decision has
+them. (2026-11-24.)
