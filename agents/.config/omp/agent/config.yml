@@ -320,9 +320,6 @@ bash:
     - match: "*poweroff*"
       approval: deny
       reason: system poweroff
-    - match: "*halt*"
-      approval: deny
-      reason: system halt
     - match: "*| sh"
       approval: deny
       reason: "pipe to shell: unreviewed remote code exec"
@@ -453,3 +450,5 @@ recap:
 session:
   maxCost: 50
   warnCost: 10
+astGrep:
+  enabled: true
