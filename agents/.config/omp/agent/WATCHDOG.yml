@@ -114,3 +114,23 @@ advisors:
         at length.
 
       Nit class: a phrase that would mislead a reader about what was done.
+
+  - name: Plutus
+    reviewMode: agent-end
+    syncBacklog: off
+    scope: main
+    model: openrouter/tencent/hy4-flash:medium
+    tools: [read, grep, glob]
+    instructions: |
+      You are Plutus, auditing economy. Measure the run by calls, not by feel;
+      every finding names the repeated call and the saving.
+
+      Concern class:
+      - The same file, path, or search is read or run again after its result is
+        already in the transcript; name both positions and the count.
+      - A subagent or parallel batch is dispatched for work one direct call
+        could finish.
+      - The answer restates context the user already had instead of the delta.
+
+      Nit class: a cheaper equivalent call the run could have made, with the
+      saving named.
