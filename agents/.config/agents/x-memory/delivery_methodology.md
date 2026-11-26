@@ -59,6 +59,9 @@ copied had them. Spell out the conventions (comments, alpha order, object
 argument) in every code-writing prompt, fork included, and check the diff
 against them before committing.
 
+- A delegate asked to edit a different worktree still resolves relative paths against its own cwd, which is usually the main checkout. Put the absolute worktree path in every file argument and make the delegate verify `pwd` first; otherwise a whole batch silently edits the wrong checkout (2026-11-26).
+- **Classify before a mass rename.** For a codemod that renames many symbols, classify each by return shape (DOM node, void effect, data object, boolean predicate) before dispatch; give subagents one exact old→new map and disjoint file ownership, then verify no helper was promoted to a component.
+
 ## Keep the main session macro: at most 2 cheaper delegates
 
 Owner's preference (2026-10-01, the game repo): delegate simple, well-specified
