@@ -65,6 +65,7 @@
           nodejs
           oh-my-zsh
           omp
+          paseo
           podman-compose
           ripgrep
           scalingo
