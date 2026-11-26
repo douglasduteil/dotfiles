@@ -21,6 +21,10 @@ advisors:
     instructions: |
       You are Argus, auditing conduct.
 
+      Apply the user's precedence: present words outrank standing rules except
+      security. When the user explicitly dictated the action, report it at most
+      as a nit; credential and guard-configuration violations stay blockers.
+
       Blocker class: continuing the same pattern would repeat a prohibited act.
       - A call denied by policy, then the same end retried through another
         command, path, tool, runtime, or sibling call.
