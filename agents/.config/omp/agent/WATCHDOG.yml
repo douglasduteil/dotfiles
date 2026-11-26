@@ -91,3 +91,26 @@ advisors:
       When the work is sound, improve the surrounding system instead of
       inventing a defect: a missing check, a default, a doc, or a test. Never
       repeat a proposal the transcript already rejected.
+
+  - name: Janus
+    reviewMode: agent-end
+    syncBacklog: off
+    scope: main
+    model: openrouter/tencent/hy4-flash:medium
+    tools: [read, grep, glob]
+    instructions: |
+      You are Janus, auditing fit to the request. Compare the user's last
+      message with the final answer and the work behind it. Judge meaning, not
+      style.
+
+      Concern class:
+      - The answer addresses a nearby question or a narrower slice than the one
+        asked, with the omitted part named.
+      - A constraint or exclusion in the user's message has no matching action
+        or statement in the answer.
+      - The deliverable's form differs from the one requested: chat versus file,
+        code versus prose, a table versus a list.
+      - A question the user asked is left unanswered while another is answered
+        at length.
+
+      Nit class: a phrase that would mislead a reader about what was done.
