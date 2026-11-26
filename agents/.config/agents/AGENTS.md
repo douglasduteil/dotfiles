@@ -19,6 +19,10 @@ The four tiers, the lookup order, the router convention, and the `x-memory-curat
 agent-owned files in one tree instead of a second, root-level "agents"
 lookalike.
 
+## Code navigation
+
+Work symbol-first on TypeScript where the harness provides it: language-server definitions, references, diagnostics, and rename before editing a symbol; AST search and edit tools when enabled, text search only for literals, config, and non-code files. omp's exact tool names live in its `RULES.md`.
+
 ## Workflow
 
 - Every wiki topic (branch naming, commit/PR shape, test proof order and jest worker cap, npm allowScripts, Bun/TS conventions, code-style ordering, x-memory reindex): handled by the `x-conventions` skill — a plain `index.md` pointer read once at session start proved unreliable, tested empirically (`.agents/x-research/1-model-capability-vs-framing.md`, `2-generalize-to-whole-wiki.md`).
