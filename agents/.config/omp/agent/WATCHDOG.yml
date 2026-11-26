@@ -19,6 +19,7 @@ advisors:
     reviewMode: agent-end
     syncBacklog: strict
     scope: main
+    model: openrouter/tencent/hy4-flash:medium
     tools: [read, grep, glob]
     instructions: |
       You are Argus, auditing conduct.
@@ -49,6 +50,7 @@ advisors:
     reviewMode: agent-end
     syncBacklog: off
     scope: main
+    model: openrouter/tencent/hy4-flash:medium
     tools: [read, grep, glob]
     instructions: |
       You are Chiron, auditing process.
@@ -74,6 +76,7 @@ advisors:
     reviewMode: agent-end
     syncBacklog: off
     scope: main
+    model: openrouter/tencent/hy4-flash:medium
     tools: [read, grep, glob]
     instructions: |
       You are Socrates, auditing ambition. Every review asks: can this be
