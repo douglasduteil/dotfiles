@@ -18,6 +18,9 @@ Descriptive only: how a tool behaved at a given version, found by hands-on testi
 - Bun 1.4.2 has no `import.meta.glob`: the bundler leaves the call in and it throws at runtime. Use a hand-written registry plus a test that lists the folders. `bun test` imports modules that import `.css` without trouble (2026-10-03, game repo).
 - `bun add` cannot install a git subdirectory (monorepo package): `'pkg@git+https://…/repo.git#main&path:packages/pkg'` parses `main&path:…` as the ref and 404s on codeload (Bun 1.4.2, 2026-10-22). Extract the package to its own repo or publish it.
 - A `file:` tarball dependency is cached by path and version: after repacking under the same file name, `bun install` (even `--force` after deleting `node_modules/.bun/<pkg>*`) installs the old contents. Copy the tarball to a new file name and point `package.json` at it; check with a `grep` in the installed `dist/` (Bun 1.4.2, 2026-10-29).
+- `bun fmt --check` scans gitignored Markdown under `.agents/` in the repo, so local research notes can fail the repo's format gate. Format those paths or keep them outside the repo before running lint (Bun 1.4.4, 2026-11-26).
+- Bun 1.4.4 transpiles TSX without React with `"jsx": "react-jsx"` and `jsxImportSource`; `jsx-dom` 8.1.6 returns real DOM nodes while KitaJS and hono's server JSX serialize handlers into strings and cannot drive pointer-attached screens. `hono/jsx/dom` returns DOM nodes but adds a dependency (checked 2026-11-26). Source: https://bun.sh/docs/runtime/jsx (consulted 2026-11-26).
+- `jsx-dom` 8.1.6 types `JSX.Element` as `HTMLElement | SVGElement`, so helpers accepting only `HTMLElement` reject JSX nodes. Widen shared DOM boundaries instead of casting at call sites, spread `readonly Node[]` children into mutable arrays, and convert a CSS-style map once at the JSX boundary (TypeScript 7, 2026-11-26).
 
 ### Dev server: imports in a cycle are `null` at load
 
