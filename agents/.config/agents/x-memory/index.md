@@ -22,7 +22,7 @@ of them is listed below.
 - [Subtle rule shapes](state_and_draws.md) — before writing a rule that tracks a milestone, a best-so-far, or a random pick from a table.
 - [Testing preferences](testing.md) — proof order (types first, tests last) and where it overrides plugin skills' test defaults; before writing, planning or reviewing any test, before proving a refactor changed no behaviour, before judging a review lead or a measured rate, and before running any jest-backed test command (worker cap, mongodb-memory-server on NixOS).
 - [npm preferences / quirks](npm.md) — allowScripts advisory-only status, before relying on npm's script-approval mechanism.
-- [Agent commits](agent_commits.md) — before a fork commits, when a commit's author or signature looks off, when using the eval `commit` namespace, or when deciding whether plain git is enough.
+- [Agent commits](agent_commits.md) — before ANY commit or push (sign with `git agent-commit`, push with `git agent-push`, main session included), before a fork commits, when a commit's author or signature looks off, when using the eval `commit` namespace, or when deciding whether plain git is enough.
 - [Git / PR workflow preferences](git_workflow.md) — before naming a branch, committing, splitting a mixed diff, or writing a commit or PR body; overrides the `pr` skill's test-run evidence sections; includes the `wt` (worktrunk) worktree routing.
 - [Guard config edits: tmp-script procedure](guard_config_edits.md) — the moment a guard blocks a config edit or any command naming a guarded path; also before proposing to verify such a file.
 - [DeepSeek aliases on OpenRouter](deepseek_aliases.md) — before picking a cheap/fast model tier for agents or subagents.
