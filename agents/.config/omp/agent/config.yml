@@ -388,34 +388,44 @@ retry:
     advisor:
       - openrouter/tencent/hy4-flash
       - openrouter/~deepseek/deepseek-flash-latest
+      - anthropic/claude-opus-5-5
     alt-gemma:
       - openrouter/tencent/hy4-flash
       - openrouter/~deepseek/deepseek-flash-latest
+      - anthropic/claude-opus-5-5
     alt-gptoss:
       - openrouter/tencent/hy4-flash
       - openrouter/~deepseek/deepseek-flash-latest
+      - anthropic/claude-opus-5-5
     alt-hy4:
       - openrouter/~deepseek/deepseek-flash-latest
       - albert/gemma-4-31b-it
+      - anthropic/claude-opus-5-5
     commit:
       - albert/deepseek-v4-flash-0731
       - openrouter/~deepseek/deepseek-flash-latest
+      - anthropic/claude-sonnet-5
     default:
       - openrouter/tencent/hy4-flash
       - albert/gemma-4-31b-it
+      - anthropic/claude-opus-5-5
     memory:
       - openrouter/tencent/hy4-flash
       - openrouter/~deepseek/deepseek-flash-latest
+      - anthropic/claude-sonnet-5
     scout:
       - openrouter/tencent/hy4-flash
       - openrouter/~deepseek/deepseek-flash-latest
+      - anthropic/claude-sonnet-5
     smol:
       - albert/deepseek-v4-flash-0731
       - openrouter/tencent/hy4-flash
       - openrouter/~deepseek/deepseek-flash-latest
+      - anthropic/claude-sonnet-5
     tiny:
       - albert/deepseek-v4-flash-0731
       - openrouter/~deepseek/deepseek-flash-latest
+      - anthropic/claude-sonnet-5
 advisor:
   enabled: true
 task:
