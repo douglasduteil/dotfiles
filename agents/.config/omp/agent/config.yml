@@ -357,7 +357,7 @@ theme:
   light: light
 modelRoleStorage: project
 modelRoles:
-  advisor: albert/gpt-oss-120b
+  advisor: openrouter/tencent/hy4-flash
   alt-gemma: albert/gemma-4-31b-it
   alt-gptoss: albert/gpt-oss-120b
   alt-hy4: openrouter/tencent/hy4-flash
