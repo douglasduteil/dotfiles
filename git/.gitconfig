@@ -242,7 +242,6 @@
   enabled = true
 [commit]
   gpgsign = true
-	gpgsign = false
 [include]
   path = ~/.config/git/gitconfig
 [gpg]

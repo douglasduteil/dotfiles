@@ -76,6 +76,13 @@ the what. GitHub renders commit and PR bodies as Markdown, so the bold
 labels survive the render; plain-text labels lose the bold in the
 commit/PR view.
 
+**Every agent commit is signed and pushed through the aliases**, main
+session included, every repo: `git agent-commit` (also for `--amend`)
+and `git agent-push` (also for `--force-with-lease`), never plain
+`git commit` / `git push`. Check `%G?` is `G` before calling a PR
+done. Missed 2026-11-26: three PR commits went out unsigned (`N`) and
+had to be amended and force-pushed. Details: [agent commits](agent_commits.md).
+
 **A file-level split can leave a body describing code it does not
 carry.** Two changes that share a file cannot be separated with `git add
 <paths>`: whichever commit takes the file carries the other's lines, so
