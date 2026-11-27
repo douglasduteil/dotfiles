@@ -7,3 +7,7 @@ agents/.config/agents/skills/synced/
 # into the tracked omp/.omp/agent/config.yml, so day-to-day model changes
 # don't dirty the shared guard config.
 /.omp/
+
+# omp writes a lock beside the configuration it deploys; it is runtime state,
+# never content.
+agents/.config/omp/agent/*.lock
