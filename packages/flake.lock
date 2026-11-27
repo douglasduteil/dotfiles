@@ -25,11 +25,11 @@
     "worktrunk": {
       "flake": false,
       "locked": {
-        "lastModified": 1795678100,
-        "narHash": "sha256-wt1CqQ+j8ISNT3xzBDztkDMpF0i5N6lSV8nK1rVLVOI=",
+        "lastModified": 1795769293,
+        "narHash": "sha256-jwRGtyUIlJUMheGjQCeHxwf8GMI5mSAqX3XZw3r/sX8=",
         "owner": "max-sixty",
         "repo": "worktrunk",
-        "rev": "6637849e81f686f21c3711db888bf39cc513519b",
+        "rev": "541579bfdd350d6d121e2f0466893b46be9369c0",
         "type": "github"
       },
       "original": {
