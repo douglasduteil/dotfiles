@@ -74,6 +74,7 @@
           starship
           steam-run
           stow
+          tmux
           tree-sitter
           # nixpkgs ships TS7 native as `tsc` only; typescript-mcp spawns `tsgo`.
           (pkgs.writeShellScriptBin "tsgo" ''exec ${pkgs.typescript}/bin/tsc "$@"'')
